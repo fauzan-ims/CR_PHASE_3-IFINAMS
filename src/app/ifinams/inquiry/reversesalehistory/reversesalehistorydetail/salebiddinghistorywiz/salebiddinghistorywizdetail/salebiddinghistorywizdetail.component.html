@@ -1,0 +1,231 @@
+<div class="main-content margin-wizard-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body ">
+                <!--#region form-->
+                <form #SaleBiddingHistoryForm="ngForm"
+                    (ngSubmit)="onFormSubmit(SaleBiddingHistoryForm.value, SaleBiddingHistoryForm.valid)">
+
+                    <!--#region button submit dan back-->
+                    <button type="submit" [hidden]="model.status != 'NEW'" class="btn btn-info btn-round"
+                        data-role="R00022060012206C">Save</button>
+                    <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                    <!--#endregion button submit dan back-->
+
+                    <!--#region row-->
+                    <div class="row">
+                        <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                        <!--#region company_code-->
+                        <input type="hidden" class="form-control" [ngModel]="model.company_code" name="p_company_code">
+                        <!--#endregion company_code-->
+
+                        <!--#region sale_code-->
+                        <input type="text" [ngModel]="this.param" maxlength="50" name="p_sale_code" hidden>
+                        <!--#endregion sale_code-->
+
+                        <!--#region code-->
+                        <div class="col-md-4">
+                            <div [hidden]="model.code_detail != null" class="row"
+                                style="margin-bottom: -15px; padding-top: 30px;">
+                                <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                    Generate-</h1>
+                            </div>
+                            <div [hidden]="model.code_detail == null" class="form-group">
+                                <label>Code </label>
+                                <input type="text" class="form-control" placeholder="Enter Code"
+                                    [ngModel]="model.code_detail" name="p_code" [readonly]="isReadOnly">
+                            </div>
+                        </div>
+                        <!--#endregion code-->
+
+                        <!--#region sale_to-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="sale_to" class="control-label">Sale To *</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.sale_to" name="p_sale_to" #sale_to="ngModel" required
+                                    maxlength="250" />
+                            </div>
+                            <small
+                                *ngIf="(sale_to.errors?.required && sale_to.touched) || (sale_to.errors?.required && SaleBiddingHistoryForm.submitted)"
+                                class="text-danger">
+                                Sale To is required
+                            </small>
+                        </div>
+                        <!--#endregion sale_to-->
+
+                        <!--#region sale_amount-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="sale_amount" class="control-label">Sale Amount *
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" type="text" style="text-align:right"
+                                        class="form-control" [ngModel]="model.sale_amount_detail | number : '1.2-2'"
+                                        amount="sale_amount_detail" required name="p_sale_amount_detail"
+                                        #sale_amount="ngModel">
+                                    <small
+                                        *ngIf="sale_amount.errors?.required && sale_amount.touched || (sale_amount.errors?.required && SaleBiddingHistoryForm.submitted)"
+                                        class="text-danger">
+                                        Sale Amount is required
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion sale_amount-->
+
+                        <!--#region phone_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="phone_no" class="control-label">Phone No
+                                </label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.phone_no" name="p_phone_no" #phone_no="ngModel" maxlength="50"
+                                    pattern={{NumberOnlyPattern}}>
+                                <small *ngIf="phone_no.errors?.pattern && phone_no.touched" class="text-danger">
+                                    Phone No is required and format should be <i>0-9</i>
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion phone_no-->
+
+                        <!--#region radio button buy_type-->
+                        <div class="col-md-4">
+                            <label>Buy Type</label>
+                            <div class="form-group col-md-12">
+                                <div class="row">
+                                    <div class="form-check-radio form-check-inline">
+                                        <label class="form-check-label">
+                                            <input [disabled]="model.status !== 'NEW'" class="form-check-input"
+                                                type="radio" name="p_buy_type" value="By Batch"
+                                                [(ngModel)]="model.buy_type">By Batch
+                                            <span class="form-check-sign"></span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check-radio form-check-inline">
+                                        <label class="form-check-label">
+                                            <input [disabled]="model.status !== 'NEW'" class="form-check-input"
+                                                type="radio" name="p_buy_type" value="By Unit"
+                                                [(ngModel)]="model.buy_type">By Unit
+                                            <span class="form-check-sign"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion radio button buy_type-->
+
+                        <!--#region is_winner-->
+                        <div class="col-md-4">
+                            <div class="form-check mt-3" style="margin-left: -35px;">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input [disabled]="this.param != null" class="form-check-input" type="checkbox"
+                                            [ngModel]="model.is_winner" name="p_is_winner">
+                                        Winner
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion is_winner-->
+
+                        <!--#region remark-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="remark" class="control-label">Remark</label>
+                                <textarea [readonly]="model.status != 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.remark_detail" maxlength="4000" name="p_remark"
+                                    #remark="ngModel"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion remark-->
+                    </div>
+                    <!--#endregion row-->
+                </form>
+                <!--#endregion form-->
+            </div>
+            <div id="ListBiddingDetail" [hidden]="model.buy_type == 'By Batch'" *ngIf="params != null">
+                <!--#region list view-->
+                <span layout="row horizontal-divider">
+                    <hr flex />
+                </span>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div>
+                            <h4 class="card-title">Sale Bidding Detail List</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar">
+                                <!--#region button add, delete-->
+                                <button [hidden]="model.status != 'NEW'" class="btn btn-info btn-round"
+                                    (click)="btnAdd()" data-role="R00022060002207C">
+                                    Add
+                                </button>
+                                <button [hidden]="model.status != 'NEW'" class="btn btn-danger btn-round"
+                                    (click)="btnDeleteAll()" data-role="R00022060002207D">
+                                    Delete
+                                </button>
+                                <!--#endregion button add, delete-->
+                            </div>
+
+                            <!--#region list view-->
+                            <table id="datatablesalebiddinghistorydetail" datatable [dtOptions]="dtOptions"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="disabled-sorting">No</th>
+                                        <th class="disabled-sorting">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" id="checkall"
+                                                        [(ngModel)]="selectedAll" (change)="selectAllTable();" />
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                        </th>
+                                        <th>Asset</th>
+                                        <th>Description</th>
+                                        <th>Sale Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of listsalebiddinghistorydetail let i=index;">
+                                        <td style="text-align: center;">{{listsalebiddinghistorydetail.numberIndex+i+1}}
+                                        </td>
+                                        <td class="disabled-sorting if-no-edit-btn">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        [(ngModel)]="row.selected"
+                                                        (change)="checkIfAllTableSelected($event, row.id);">
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td style="width: 30%;text-align: left;">{{row.asset_code}} <br>
+                                            {{row.asset_name}}</td>
+                                        <td style="width: 40%;text-align: left;">{{row.description_bidding_detail}}</td>
+                                        <td style="width: 30%;text-align: right;">{{row.sale_amount | number
+                                            : '1.2-2'}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                    </div>
+                </div>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>

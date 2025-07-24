@@ -1,0 +1,101 @@
+<div class="main-content" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card "> -->
+            <div class="card-body ">
+                <!--#region form-->
+                <form #AssetOtherForm="ngForm" (ngSubmit)="onFormSubmit(AssetOtherForm.value, AssetOtherForm.valid)">
+                    <!--#region button submit-->
+                    <button hidden type="submit" class="btn btn-info btn-round"
+                        >Save</button>
+                    <button hidden id="assetdetailotherswiz" type="button" (click)="callGetrowHeader()"></button>
+                    <!--#endregion button submit-->
+
+                    <!--#region class="row"-->
+                    <div class="row">
+                        <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                        <!--#region asset_code-->
+                        <input type="text" class="form-control" [ngModel]="this.param" maxlength="50"
+                            name="p_asset_code" hidden>
+                        <!--#endregion asset_code-->
+
+                        <!--#region license_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="license_no" class="control-label">License No</label>
+                                <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                    [ngModel]="model.license_no" name="p_license_no" #license_no="ngModel"
+                                    maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion license_no-->
+
+                        <!--#region start_date_license-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="start_date_license" class="control-label">Start Date License *</label>
+                                <input [readonly]="model.status !== 'HOLD'" class="form-control col-md-6"
+                                    placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.start_date_license"
+                                    name="p_start_date_license" [options]="myDatePickerOptions" required
+                                    (click)="start_date_license.toggleCalendar()" #p_start_date_license="ngModel"
+                                    #start_date_license="angular-mydatepicker" autocomplete="off" />
+                                <small
+                                    *ngIf="(p_start_date_license.errors?.required && p_start_date_license.touched) || (p_start_date_license.errors?.required && AssetOtherForm.submitted)"
+                                    class="text-danger">
+                                    Start Date is required
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion start_date_license-->
+
+                        <!--#region end_date_license-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="end_date_license" class="control-label">End Date License *</label>
+                                <input [readonly]="model.status !== 'HOLD'" class="form-control col-md-6"
+                                    placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.end_date_license"
+                                    name="p_end_date_license" [options]="myDatePickerOptions" required
+                                    (click)="end_date_license.toggleCalendar()" #p_end_date_license="ngModel"
+                                    #end_date_license="angular-mydatepicker" autocomplete="off" />
+                                <small
+                                    *ngIf="(p_end_date_license.errors?.required && p_end_date_license.touched) || (p_end_date_license.errors?.required && AssetOtherForm.submitted)"
+                                    class="text-danger">
+                                    End Date is required
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion end_date_license-->
+
+                        <!--#region nominal-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="nominal" class="control-label">Nominal
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.nominal | number : '1.2-2'" amount="nominal" name="p_nominal"
+                                        #nominal="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion nominal-->
+
+                        <!--#region remark-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="remark" class="control-label">Remark</label>
+                                <textarea type="text" class="form-control" [ngModel]="model.remark" name="p_remark"
+                                    #remark="ngModel" maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion remark-->
+                    </div>
+                    <!--#endregion class="row"-->
+                </form>
+                <!--#endregion form-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>

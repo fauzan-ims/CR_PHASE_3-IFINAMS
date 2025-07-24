@@ -1,0 +1,188 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="toolbar">
+                <!--#region button--->
+                <button id="reloadWiz" class="btn btn-info btn-round" (click)="this.ngOnInit()" hidden
+                    data-role="R00021970022197C">
+                    Reload
+                </button>
+                <button [hidden]="this.param == null || model.claim_status !== 'HOLD'"
+                    class="btn btn-info btn-round" type="button" (click)="btnLookupClaimAsset()"
+                    data-role="R00022090022210C" data-target="#lookupModalClaimDetail" data-toggle="modal" href="#">
+                    Add </button>
+                <button hidden class="btn btn-info btn-round" (click)="btnSaveList()" data-role="R00022090022211C">
+                    Save
+                </button>
+                <button [hidden]="this.param == null || model.claim_status !== 'HOLD'"
+                    class="btn btn-danger btn-round" (click)="btnDeleteAll()" data-role="R00022090022212D">
+                    Delete
+                </button>
+                <button hidden id="tabdetailwiz" type="button" (click)="callGetrowHeader()"></button>
+                <!--#endregion button--->
+            </div>
+
+            <input type="text" [ngModel]="model.claim_status" name="p_claim_status" hidden>
+
+            <div class="card-body">
+                <!--#region list view-->
+                <table id="datatableClaimAsset" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th class="disabled-sorting">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" id="checkall"
+                                            [(ngModel)]="selectedAll" (change)="selectAllTable();" />
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </th>
+                            <th>FA Code/Name</th>
+                            <th>Plat/Engine/Chasis No</th>
+                            <th>Sum Insured Amount</th>
+                            <th>Premi Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listclaimassetdetail;  let i=index">
+                            <td style="text-align: center;">{{listclaimassetdetail.numberIndex+i+1}}</td>
+                            <td class="disabled-sorting">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                                            (change)="checkIfAllTableSelected($event, row.id);">
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <input type="hidden" value="{{row.id}}" name="p_id">
+                            <td style="width: 35%;text-align: left;">{{row.fa_code}} <br> {{row.item_name}} </td>
+                            <td style="width: 25%;text-align: left;">{{row.plat_no}} <br> {{row.engine_no}} <br>
+                                {{row.chassis_no}}</td>
+                            <td style="width: 20%;text-align: right;" class="if-no-edit-btn">{{row.sum_insured_amount |
+                                number : '1.2-2'}}
+                            </td>
+                            <td style="width: 20%;text-align: right;" class="if-no-edit-btn">{{row.buy_amount |
+                                number : '1.2-2'}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Claim Asset Detail-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalClaimDetail"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" (click)="btnLookupClose()" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <button class="btn btn-info btn-round" (click)="btnSelectAllLookup()">
+                            add
+                        </button>
+                        <!--#endregion button add--->
+
+                        <table id="datatableClaimAssetLookup" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th class="disabled-sorting">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" id="checkallLookup"
+                                                    [(ngModel)]="selectedAllLookup" (change)="selectAllLookup();" />
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th>Sum Insured Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupClaimAsset;  let i=index">
+                                    <td style="text-align: center;">{{lookupClaimAsset.numberIndex+i+1}}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [(ngModel)]="row.selectedLookup"
+                                                    (change)="checkIfAllLookupSelected($event, row.code);">
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;width: 20%;" class="if-no-edit-btn">{{ row.code }}
+                                    </td>
+                                    <td style="text-align: left;width: 60%;">{{ row.item_name }}</td>
+                                    <td style="text-align: right;width: 20%;">{{ row.sum_insured_amount | number :
+                                        '1.2-2'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Claim Asset Detail-->
+
+<!--#region lookup cost center-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCostCenter"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupCostCenter" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupCostCenter;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupCostCenter.numberIndex+i+1}}</td>
+                                    <td style="width: 30%; text-align: center;">{{ row.code }}</td>
+                                    <td style="width: 70%;">{{ row.description }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowCostCenter(row.code,row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup cost center-->

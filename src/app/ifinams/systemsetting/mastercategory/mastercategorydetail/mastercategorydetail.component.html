@@ -1,0 +1,722 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Asset Category Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #MasterCategoryForm="ngForm"
+                        (ngSubmit)="onFormSubmit(MasterCategoryForm.value, MasterCategoryForm.valid)">
+                        <!--#region button-->
+                        <button type="submit" class="btn btn-info btn-round" data-role="R00022670000003C">Save</button>
+                        <button [hidden]="this.param == null" class="btn btn-success btn-round col-md-4" type="button"
+                            (click)="btnActive(model.code)" data-role="R00022670000004U">
+                            <span [hidden]="model.is_active === true || this.param == null">Active</span>
+                            <span [hidden]="model.is_active === false || this.param == null">Inactive</span>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code" #company_code="ngModel">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="code" class="control-label">Code *</label>
+                                    <input type="text" class="form-control" [ngModel]="model.code" name="p_code"
+                                        [readonly]="isReadOnly" required #code="ngModel" maxlength="50">
+                                    <small
+                                        *ngIf="(code.errors?.required && code.touched) || (code.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        Code is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region Description-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="description" class="control-label">Description *</label>
+                                    <textarea type="text" class="form-control" [ngModel]="model.description" maxlength="4000"
+                                    #description="ngModel" name="p_description"></textarea>
+                                    <small
+                                        *ngIf="(description.errors?.required && description.touched) || (description.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        Description is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Description-->
+
+                            <!--#region Lookup asset_type_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="asset_type_code" class="control-label labelgsubcode"
+                                        style="cursor: pointer;" >Asset Type *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupTypeCode()" data-toggle="modal"
+                                                data-target="#lookupModalTypeCode" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.general_subcode_desc}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.asset_type_code"
+                                                name="p_asset_type_code" required #asset_type_code="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="asset_type_code.valid || (asset_type_code.pristine && !MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        Asset Type is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup asset_type_code-->
+
+                            <!--#region Lookup coa_depreciation-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="transaction_depre_code" class="control-label labelmodule">GL Depreciation *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupCoaDepreciation()" data-toggle="modal"
+                                                data-target="#lookupModalCoaDepreciation" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.transaction_depre_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_depre_code" name="p_transaction_depre_code"
+                                                required #transaction_depre_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_depre_name" name="p_transaction_depre_name"
+                                                required #transaction_depre_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        *ngIf="transaction_depre_code.errors?.required && transaction_depre_code.touched || (transaction_depre_code.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        GL Depreciation is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup coa_depreciation-->
+
+                            <!--#region Lookup GL accum depreciation-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="transaction_accum_depre_code" class="control-label labelmodule">GL Accum
+                                        Depreciation *
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupCoaAccumDepreciation()"
+                                                data-toggle="modal" data-target="#lookupModalCoaAccumDepreciation"
+                                                href="#"><i class="fa fa-search-plus"></i></button>
+                                            {{model.transaction_accum_depre_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_accum_depre_code"
+                                                name="p_transaction_accum_depre_code" required
+                                                #transaction_accum_depre_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_accum_depre_name"
+                                                name="p_transaction_accum_depre_name" required
+                                                #transaction_accum_depre_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        *ngIf="transaction_accum_depre_code.errors?.required && transaction_accum_depre_code.touched || (transaction_accum_depre_code.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        GL Accum Depreciation is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup GL accum depreciation-->
+
+                            <!--#region Lookup coa_profit_sell-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="transaction_profit_sell_code" class="control-label labelmodule">GL Profit Sell
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupCoaProfitSell()" data-toggle="modal"
+                                                data-target="#lookupModalCoaProfitSell" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.transaction_profit_sell_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_profit_sell_code"
+                                                name="p_transaction_profit_sell_code" required
+                                                #transaction_profit_sell_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_profit_sell_name"
+                                                name="p_transaction_profit_sell_name" required
+                                                #transaction_profit_sell_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        *ngIf="transaction_profit_sell_code.errors?.required && transaction_profit_sell_code.touched || (transaction_profit_sell_code.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        GL Profit Sell is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup coa_profit_sell-->
+
+                            <!--#region last_depre_date-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="last_depre_date" class="control-label">Last Depre Date</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        [ngModel]="model.last_depre_date" name="p_last_depre_date"
+                                        [options]="myDatePickerOptions" (click)="last_depre_date.toggleCalendar()"
+                                        #p_last_depre_date="ngModel" readonly #last_depre_date="angular-mydatepicker"
+                                        autocomplete="off" />
+                                </div>
+                            </div> -->
+                            <!--#endregion last_depre_date-->
+
+                            <!--#region asset_amount_threshold-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="asset_amount_threshold" class="control-label">Asset Amount Threshold
+                                        *</label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.asset_amount_threshold | number : '1.2-2'"
+                                            amount="asset_amount_threshold" name="p_asset_amount_threshold" required
+                                            #asset_amount_threshold="ngModel">
+                                        <small
+                                            *ngIf="asset_amount_threshold.errors?.required && asset_amount_threshold.touched || (asset_amount_threshold.errors?.required && MasterCategoryForm.submitted)"
+                                            class="text-danger">
+                                            Asset Amount Threshold is required
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion asset_amount_threshold-->
+
+                            <!--#region depre_amount_threshold-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="depre_amount_threshold" class="control-label">Depre Amount Threshold
+                                        *</label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.depre_amount_threshold | number : '1.2-2'"
+                                            amount="depre_amount_threshold" name="p_depre_amount_threshold" required
+                                            #depre_amount_threshold="ngModel">
+                                        <small
+                                            *ngIf="depre_amount_threshold.errors?.required && depre_amount_threshold.touched || (depre_amount_threshold.errors?.required && MasterCategoryForm.submitted)"
+                                            class="text-danger">
+                                            Depre Amount Threshold is required
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion depre_amount_threshold-->
+
+                            <!--#region Lookup coa_loss_sell-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="transaction_loss_sell_code" class="control-label labelmodule">GL Loss Sell
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupCoaLossSell()" data-toggle="modal"
+                                                data-target="#lookupModalCoaLossSell" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.transaction_loss_sell_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_loss_sell_code"
+                                                name="p_transaction_loss_sell_code" required
+                                                #transaction_loss_sell_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.transaction_loss_sell_name"
+                                                name="p_transaction_loss_sell_name" required
+                                                #transaction_loss_sell_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        *ngIf="transaction_loss_sell_code.errors?.required && transaction_loss_sell_code.touched || (transaction_loss_sell_code.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        GL Loss Sell is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup coa_loss_sell-->
+
+                            <!--#region total_net_book_value_amount-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_net_book_value_amount" class="control-label">Total Net Book Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_net_book_value_amount | number : '1.2-2'"
+                                            amount="total_net_book_value_amount" name="p_total_net_book_value_amount"
+                                            (change)="VatAmount($event)" readonly
+                                            #total_net_book_value_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion total_net_book_value_amount-->
+
+                            <!--#region total_accum_depre_amount-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_accum_depre_amount" class="control-label">Total Accum Depre Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_accum_depre_amount | number : '1.2-2'"
+                                            amount="total_accum_depre_amount" name="p_total_accum_depre_amount" readonly
+                                            (change)="VatAmount($event)" #total_accum_depre_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion total_accum_depre_amount-->
+
+                            <!--#region total_asset_value-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_asset_value" class="control-label">Total Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_asset_value | number : '1.2-2'"
+                                            amount="total_asset_value" name="p_total_asset_value" readonly
+                                            (change)="VatAmount($event)" #total_asset_value="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion total_asset_value-->
+
+                            <!--#region Lookup depre_cat_fiscal_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="depre_cat_fiscal_code" class="control-label"
+                                        style="cursor: pointer;" >Depreciation Fiscal *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupDeprefiscal()" data-toggle="modal"
+                                                data-target="#lookupModalDeprefiscal" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.depre_cat_fiscal_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.depre_cat_fiscal_code" name="p_depre_cat_fiscal_code"
+                                                required #depre_cat_fiscal_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.depre_cat_fiscal_name" name="p_depre_cat_fiscal_name"
+                                                required #depre_cat_fiscal_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        *ngIf="depre_cat_fiscal_code.errors?.required && depre_cat_fiscal_code.touched || (depre_cat_fiscal_code.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        Depreciation Fiscal is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup depre_cat_fiscal_code-->
+
+                            <!--#region Lookup depre_cat_commercial_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="depre_cat_commercial_code" class="control-label"
+                                        style="cursor: pointer;" >Depreciation Commercial *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupDepreCommercial()" data-toggle="modal"
+                                                data-target="#lookupModalDepreCommercial" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.depre_cat_commercial_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.depre_cat_commercial_code"
+                                                name="p_depre_cat_commercial_code" required
+                                                #depre_cat_commercial_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.depre_cat_commercial_name"
+                                                name="p_depre_cat_commercial_name" #depre_cat_commercial_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        *ngIf="depre_cat_commercial_code.errors?.required && depre_cat_commercial_code.touched || (depre_cat_commercial_code.errors?.required && MasterCategoryForm.submitted)"
+                                        class="text-danger">
+                                        Depreciation Commercial is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup depre_cat_commercial_code-->
+
+                            <!--#region NDE-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group col-md-3" style="margin-left: -15px;">
+                                    <label for="nde" class="control-label">NDE</label>
+                                    <input type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.nde | number : '1.6-6'" name="p_nde" rate="nde" #nde="ngModel"
+                                        maxlength="250">
+                                </div>
+                            </div>
+                            <!--#endregion NDE-->
+
+                            <!--#region Value Type-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group col-md-4" style="margin-left: -15px;">
+                                    <label>Value Type</label>
+                                    <select class='form-control' [(ngModel)]="model.value_type" name="p_value_type">
+                                        <option value='HIGH VALUE'>HIGH VALUE</option>
+                                        <option value='LOW VALUE'>LOW VALUE</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--#endregion Value Type-->
+
+                            <!--#region is_active-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-3" style="margin-left: -35px; margin-top: 15px;">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input [disabled]="this.param != null" class="form-check-input"
+                                                type="checkbox" [ngModel]="model.is_active" name="p_is_active">
+                                            Active
+                                            <span class="form-check-sign"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion is_active-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Asset Type Code -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTypeCode"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupTypeCode" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuptypecode;let i=index">
+                                    <td style="text-align: center;">{{lookuptypecode.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.general_subcode_desc}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowTypeCode(row.company_code, row.code, row.general_subcode_desc)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Asset Type Code-->
+
+<!--#region lookup Depre Commercial Code -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDepreCommercial"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupDepreCommercial" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupdeprecommercial;let i=index">
+                                    <td style="text-align: center;">{{lookupdeprecommercial.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description_commercial}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowDepreCommercial(row.code, row.description_commercial)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Depre Commercial Code-->
+
+<!--#region lookup Depre Fiscal Code -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDeprefiscal"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupDeprefiscal" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupdeprefiscal;let i=index">
+                                    <td style="text-align: center;">{{lookupdeprefiscal.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description_fiscal}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowDeprefiscal(row.code, row.description_fiscal)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Depre Fiscal Code-->
+
+<!--#region lookup GL Depreciation-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCoaDepreciation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupCoaDepreciation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupcoadepreciation;let i=index">
+                                    <td style="text-align: center;">{{lookupcoadepreciation.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.gl_link_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowCoadepreciation(row.code, row.gl_link_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup GL Depreciation-->
+
+<!--#region lookup GL accum depreciation-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCoaAccumDepreciation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupCoaAccumDepreciation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupcoaaccumdepreciation;let i=index">
+                                    <td style="text-align: center;">{{lookupcoaaccumdepreciation.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.gl_link_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowCoaAccumDepreciation(row.code, row.gl_link_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Gl accum depreciation-->
+
+<!--#region lookup GL Profit Sell-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCoaProfitSell"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupCoaProfitSell" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupcoaprofitsell;let i=index">
+                                    <td style="text-align: center;">{{lookupcoaprofitsell.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.gl_link_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowcoaprofitsell(row.code, row.gl_link_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Gl Profit Sell-->
+
+<!--#region lookup Gl Loss Sell-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCoaLossSell"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupCoaLossSell" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupcoalosssell;let i=index">
+                                    <td style="text-align: center;">{{lookupcoalosssell.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.gl_link_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowcoalosssell(row.code, row.gl_link_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Gl Loss Sell-->

@@ -1,0 +1,42 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card-body">
+        <div class="toolbar">
+        </div>
+
+        <!--#region RegisterLoading List view-->
+        <table id="datatabless" datatable [dtOptions]="dtOptions"
+          class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th style="display: none;"></th>
+              <th class="disabled-sorting">No</th>
+              <th>Period (Year)</th>
+              <th>Name</th>
+              <th>Total Buy Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of listregisterloading; let i=index">
+              <td style="display: none;"></td>
+              <td style="text-align: center;">{{listregisterloading.numberIndex+i+1}}</td>
+              <td style="width: 20%;">{{row.year_period}}</td>
+              <td style="width: 50%;">{{row.loading_name}}</td>
+              <td style="width: 30%;text-align: right;">{{row.total_buy_amount | number : '1.2-2'}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <!--#endregion RegisterLoading List view-->
+      </div>
+    </div>
+  </div>
+</div>

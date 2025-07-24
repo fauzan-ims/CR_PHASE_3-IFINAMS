@@ -1,0 +1,222 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Rate Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #insuranceratenonlifedetailForm="ngForm"
+            (ngSubmit)="onFormSubmit(insuranceratenonlifedetailForm.value, insuranceratenonlifedetailForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="submit" class="btn btn-info btn-round" data-role="R00021350032135C">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region id-->
+              <input hidden type="text" [ngModel]="this.params" name="p_id">
+              <!--#endregion id-->
+
+              <!--#region rate non life code-->
+              <input hidden type="text" [ngModel]="this.param" name="p_rate_non_life_code">
+              <!--#endregion rate non life code-->
+
+              <!--#region sum insured from-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="sum_insured_from" class="control-label">Sum Insured From *</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="24"
+                    amount="sum_insured_from" [ngModel]="model.sum_insured_from | number : '1.2-2'"
+                    name="p_sum_insured_from" required #sum_insured_from="ngModel">
+                  <small
+                    *ngIf="(sum_insured_from.errors?.required && sum_insured_from.touched) || (sum_insured_from.errors?.required && insuranceratenonlifedetailForm.submitted)"
+                    class="text-danger">
+                    Sum Insured From is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion sum insured from-->
+
+              <!--#region sum insured to-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="sum_insured_to" class="control-label">Sum Insured To *</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="24"
+                    amount="sum_insured_to" [ngModel]="model.sum_insured_to | number : '1.2-2'" name="p_sum_insured_to"
+                    required #sum_insured_to="ngModel">
+                  <small
+                    *ngIf="(sum_insured_to.errors?.required && sum_insured_to.touched) || (sum_insured_to.errors?.required && insuranceratenonlifedetailForm.submitted)"
+                    class="text-danger">
+                    Sum Insured To is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion sum insured to-->
+
+              <!--#region calculate_by-->
+              <div class="col-md-4">
+                <label>Calculate Type </label>
+                <div class="form-group col-md-12">
+                  <div class="row">
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="p_calculate_by" value="AMOUNT"
+                          [(ngModel)]="model.calculate_by">AMOUNT
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div>
+                      <div class="form-check-radio form-check-inline">
+                        <label class="form-check-label">
+                          <input class="form-check-input" type="radio" name="p_calculate_by" value="PERCENTAGE"
+                            [(ngModel)]="model.calculate_by">PERCENTAGE
+                          <span class="form-check-sign"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion calculate_by-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region buy rate-->
+              <div class="col-md-4" [hidden]="model.calculate_by != 'PERCENTAGE'">
+                <div class="form-group">
+                  <label for="buy_rate" class="control-label">Premium Rate (%) *</label>
+                  <input [disabled]="model.calculate_by != 'PERCENTAGE'" type="text" style="text-align:right"
+                    class="form-control col-md-6" [ngModel]="model.buy_rate | number : '1.6-6'" name="p_buy_rate"
+                    [required]="model.calculate_by == 'PERCENTAGE'" #buy_rate="ngModel" maxlength="10" rate="buy_rate">
+                  <small
+                    *ngIf="(buy_rate.errors?.required && buy_rate.touched) || (buy_rate.errors?.required && insuranceratenonlifedetailForm.submitted)"
+                    class="text-danger">
+                    Premium Rate is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion buy rate-->
+
+              <!--#region sell rate-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="sell_rate" class="control-label">Sell Rate (%) *</label>
+                  <input [disabled]="model.calculate_by != 'PERCENTAGE'" type="text" style="text-align:right"
+                    class="form-control col-md-6" [ngModel]="model.sell_rate | number : '1.6-6'" name="p_sell_rate"
+                    #sell_rate="ngModel" maxlength="10" rate="sell_rate">
+                  <small
+                    *ngIf="(sell_rate.errors?.required && sell_rate.touched) || (sell_rate.errors?.required && insuranceratenonlifedetailForm.submitted)"
+                    class="text-danger">
+                    Sell Rate is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion sell rate-->
+
+              <!--#region buy amount-->
+              <div class="col-md-4" [hidden]="model.calculate_by != 'AMOUNT'">
+                <div class="form-group">
+                  <label for="buy_amount" class="control-label">Premium Amount *</label>
+                  <input [disabled]="model.calculate_by != 'AMOUNT'" type="text" style="text-align:right"
+                    class="form-control col-md-6" [ngModel]="model.buy_amount | number : '1.2-2'" name="p_buy_amount"
+                    [required]="model.calculate_by == 'AMOUNT'" #buy_amount="ngModel" maxlength="24"
+                    amount="buy_amount">
+                  <small
+                    *ngIf="(buy_amount.errors?.required && buy_amount.touched) || (buy_amount.errors?.required && insuranceratenonlifedetailForm.submitted)"
+                    class="text-danger">
+                    Premium Amount is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion buy amount-->
+
+              <!--#region sell amount-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="sell_amount" class="control-label">Sell Amount</label>
+                  <input [disabled]="model.calculate_by != 'AMOUNT'" type="text" style="text-align:right"
+                    class="form-control col-md-6" [ngModel]="model.sell_amount | number : '1.2-2'" name="p_sell_amount"
+                    #sell_amount="ngModel" maxlength="24" amount="sell_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion sell amount-->
+
+              <!--#region discount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="discount_pct" class="control-label">Discount (%) *</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="10"
+                    rate="discount_pct" [ngModel]="model.discount_pct | number : '1.6-6'" name="p_discount_pct" required
+                    #discount_pct="ngModel">
+                  <small
+                    *ngIf="(discount_pct.errors?.required && discount_pct.touched) || (discount_pct.errors?.required && insuranceratenonlifedetailForm.submitted)"
+                    class="text-danger">
+                    Discount is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion discount-->
+            </div>
+            <!--#endregion discount-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Is commercial-->
+              <div class="col-md-4" hidden>
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [ngModel]="model.is_commercial"
+                        name="p_is_commercial">
+                      Commercial
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Is commmercial-->
+
+              <!--#region Is authorized-->
+              <div class="col-md-4" hidden>
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [ngModel]="model.is_authorized"
+                        name="p_is_authorized">
+                      Authorized
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Is authorized-->
+
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

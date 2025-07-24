@@ -1,0 +1,416 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <!-- <div class="card"> -->
+                <div class="card-body ">
+                    <div class="card-header ">
+                        <h5 class="card-title">Public Service Info</h5>
+                    </div>
+                    <!--#region publicservice Detail form-->
+                    <form #publicserviceForm="ngForm"
+                        (ngSubmit)="onFormSubmit(publicserviceForm.value, publicserviceForm.valid)">
+
+                        <!--#region publicservice Detail button submit dan back-->
+                        <button type="submit" class="btn btn-info btn-round" data-role="R00021430012143C">Save</button>
+                        <button [hidden]="param == null || model.is_validate == true" type="button"
+                            data-role="R00021430002144U" class="btn btn-success btn-round"
+                            (click)="btnValidate()">Validate</button>
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <button hidden type="btnRefresh" class="btn btn-danger btn-round"
+                            (click)="this.callGetrow()">Back</button>
+                        <!--#publicservice detail button submit dan back-->
+
+                        <!--#region publicservice detail row-->
+                        <div class="row">
+                            <!--#region code -->
+                            <input type="text" [ngModel]="model.code" name="p_code" hidden>
+                            <!--#endregion code -->
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.public_service_no != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Public Service No</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.public_service_no == null" class="form-group">
+                                    <label>Public Service No *</label>
+                                    <input type="text" class="form-control" [ngModel]="model.public_service_no"
+                                        name="p_public_service_no" [readonly]="isReadOnly">
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+                            <!--#region publicservice public service name-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="public_service_name.invalid && public_service_name.touched">
+                                    <label for="public_service_name" class="control-label">Name *</label>
+                                    <input type="text" class="form-control" [ngModel]="model.public_service_name"
+                                        name="p_public_service_name" required #public_service_name="ngModel">
+                                </div>
+                                <small
+                                    *ngIf="(public_service_name.errors?.required && public_service_name.touched) || (public_service_name.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Name is required
+                                </small>
+                            </div>
+                            <!--#endregion publicservice public service name-->
+                            <!--#region is_active-->
+                            <div class="col-md-4">
+                                <div class="form-check mt-3" style="margin-left: -35px;">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input disabled class="form-check-input" type="checkbox"
+                                                [ngModel]="model.is_validate" name="p_is_validate">
+                                            Validated
+                                            <span class="form-check-sign"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion is_active-->
+
+                        </div>
+                        <!--#endregion publicservice detail row-->
+
+                        <!--#region publicservice detail row-->
+                        <div class="row">
+                            <!--#region publicservice detail contact person name-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="contact_person_name.invalid && contact_person_name.touched">
+                                    <label for="contact_person_name" class="control-label">Contact Person Name *</label>
+                                    <input type="text" class="form-control" [ngModel]="model.contact_person_name"
+                                        name="p_contact_person_name" required #contact_person_name="ngModel">
+                                </div>
+                                <small
+                                    *ngIf="(contact_person_name.errors?.required && contact_person_name.touched) || (contact_person_name.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Contact Person Name is required
+                                </small>
+                            </div>
+                            <!--#endregion publicservice detail contact person name-->
+
+                            <!--#region publicservice detail area phone no-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="contact_person_area_phone_no.invalid && contact_person_area_phone_no.touched && contact_person_phone_no.invalid && contact_person_phone_no.touched">
+                                    <label for="contact_person_area_phone_no && contact_person_phone_no"
+                                        class="control-label">Contact
+                                        Person Phone No *</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text"
+                                                class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                                [ngModel]="model.contact_person_area_phone_no"
+                                                name="p_contact_person_area_phone_no" required
+                                                #contact_person_area_phone_no="ngModel" maxlength="4"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                        -
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control"
+                                                [ngModel]="model.contact_person_phone_no"
+                                                name="p_contact_person_phone_no" maxlength="15" required
+                                                #contact_person_phone_no="ngModel" pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small
+                                    *ngIf="(contact_person_area_phone_no.errors?.required && contact_person_area_phone_no.touched || contact_person_phone_no.errors?.required && contact_person_phone_no.touched) || (contact_person_area_phone_no.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Contact Person Phone No is required
+                                </small>
+                                <small
+                                    *ngIf="contact_person_area_phone_no.errors?.pattern && contact_person_area_phone_no.touched || contact_person_phone_no.errors?.pattern && contact_person_phone_no.touched"
+                                    class="text-danger">
+                                    Contact Person Phone No is required and format should be <i>0-9</i>.
+                                </small>
+                            </div>
+                            <!--#endregion publicservice detail area phone no-->
+
+                            <!--#region publicservice detail tax file type-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tax File Type</label>
+                                    <select class='form-control col-md-8' name="p_tax_file_type"
+                                        [(ngModel)]="model.tax_file_type">
+                                        <option value='N21'>WITHOUT TAX - PERSONAL</option>
+                                        <option value='N23'>WITHOUT TAX - CORPORATE</option>
+                                        <option value='P21'>WITH TAX - PERSONAL</option>
+                                        <option value='P23'>WITH TAX - CORPORATE</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--#endregion publicservice detail tax file type-->
+                        </div>
+                        <!--#region publicservice detail row-->
+
+                        <!--#region publicservice detail row-->
+                        <div class="row">
+                            <!--#region tax file no-->
+                            <div class="col-md-4"
+                                [hidden]="model.tax_file_type ==='N21' || model.tax_file_type ==='N23'">
+                                <div class="form-group" [class.has-error]="tax_file_no.invalid && tax_file_no.touched">
+                                    <label for="tax_file_no" class="control-label">Tax File No *</label>
+                                    <input [disabled]="model.tax_file_type ==='N21' || model.tax_file_type ==='N23'"
+                                        type="text" class="form-control" [ngModel]="model.tax_file_no"
+                                        name="p_tax_file_no" maxlength="16" #tax_file_no="ngModel"
+                                        pattern={{NumberOnlyPattern}} required> <!-- (+) Ari 2023-10-06 ket : change maxlength to 20 , maxlength="16"-->
+                                </div>
+                                <small
+                                    *ngIf="(tax_file_no.errors?.required && tax_file_no.touched) || (tax_file_no.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Tax File No is required
+                                </small>
+                                <!-- <small *ngIf="tax_file_no.errors?.pattern && tax_file_no.touched" class="text-danger">
+                                    Tax File No is required and format should be <i>00.000.000.0–000.000</i>
+                                </small> -->
+                            </div>
+                            <!--#endregion tax file no-->
+
+                            <!--#region tax file name-->
+                            <div class="col-md-4"
+                                [hidden]="model.tax_file_type ==='N21' || model.tax_file_type ==='N23'">
+                                <div class="form-group"
+                                    [class.has-error]="tax_file_name.invalid && tax_file_name.touched">
+                                    <label for="tax_file_name" class="control-label">Tax File Name *</label>
+                                    <input [disabled]="model.tax_file_type ==='N21' || model.tax_file_type ==='N23'"
+                                        type="text" class="form-control" [ngModel]="model.tax_file_name"
+                                        name="p_tax_file_name" #tax_file_name="ngModel" required>
+                                </div>
+                                <small
+                                    *ngIf="(tax_file_name.errors?.required && tax_file_name.touched) || (tax_file_name.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Tax File Name is required
+                                </small>
+                            </div>
+                            <!--#endregion tax file name-->
+
+                            <!--#region tax file address-->
+                            <div class="col-md-4"
+                                [hidden]="model.tax_file_type ==='N21' || model.tax_file_type ==='N23'">
+                                <div class="form-group"
+                                    [class.has-error]="tax_file_address.invalid && tax_file_address.touched">
+                                    <label for="tax_file_address" class="control-label">Tax File Address *</label>
+                                    <input [disabled]="model.tax_file_type ==='N21' || model.tax_file_type ==='N23'"
+                                        type="text" class="form-control" [ngModel]="model.tax_file_address"
+                                        name="p_tax_file_address" #tax_file_address="ngModel" required>
+                                </div>
+                                <small
+                                    *ngIf="(tax_file_address.errors?.required && tax_file_address.touched) || (tax_file_address.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Tax File Address is required
+                                </small>
+                            </div>
+                            <!--#endregion tax file address-->
+
+                        </div>
+                        <!--#endregion publicservice detail row-->
+
+                        <!--#region publicservice detail row-->
+                        <div class="row">
+                            <!--#region publicservice detail area phone no-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="area_phone_no.invalid && area_phone_no.touched && phone_no.invalid && phone_no.touched">
+                                    <label for="area_phone_no && phone_no" class="control-label">Phone No. *</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text"
+                                                class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                                [ngModel]="model.area_phone_no" name="p_area_phone_no" required
+                                                #area_phone_no="ngModel" maxlength="4" pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                        -
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" [ngModel]="model.phone_no"
+                                                name="p_phone_no" maxlength="15" required #phone_no="ngModel"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small
+                                    *ngIf="(area_phone_no.errors?.required && area_phone_no.touched || phone_no.errors?.required && phone_no.touched) || (area_phone_no.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Phone No is required
+                                </small>
+                                <small
+                                    *ngIf="area_phone_no.errors?.pattern && area_phone_no.touched || phone_no.errors?.pattern && phone_no.touched"
+                                    class="text-danger">
+                                    Phone No is required and format should be <i>0-9</i>.
+                                </small>
+                            </div>
+                            <!--#endregion publicservice detail area phone no-->
+
+                            <!--#region publicservice detail fax no-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="area_fax_no.invalid && area_fax_no.touched && area_fax_no.invalid && area_fax_no.touched">
+                                    <label for="area_fax_no && fax_no" class="control-label">Fax No</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text"
+                                                class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                                [ngModel]="model.area_fax_no" name="p_area_fax_no" 
+                                                #area_fax_no="ngModel" maxlength="4" pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                        -
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" [ngModel]="model.fax_no"
+                                                name="p_fax_no" maxlength="15" #fax_no="ngModel"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <small
+                                    *ngIf="(area_fax_no.errors?.required && area_fax_no.touched || fax_no.errors?.required && fax_no.touched) || (area_fax_no.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    Fax No is required
+                                </small>
+                                <small
+                                    *ngIf="area_fax_no.errors?.pattern && area_fax_no.touched || fax_no.errors?.pattern && fax_no.touched"
+                                    class="text-danger">
+                                    Fax No is required and format should be <i>0-9</i>.
+                                </small>
+                            </div>
+                            <!--#endregion publicservice detail fax no-->
+
+                            <!--#region email-->
+                            <div class="col-md-4">
+                                <div class="form-group" [class.has-error]="email.invalid && email.touched">
+                                    <label for="email" class="control-label">Email</label>
+                                    <input type="email" class="form-control" [ngModel]="model.email" name="p_email"
+                                        #email="ngModel" pattern={{EmailPattern}}>
+                                </div>
+                                <small *ngIf="email.errors?.pattern && email.touched" class="text-danger">
+                                    Email is required and format should be <i>john@doe.com</i>.
+                                </small>
+                            </div>
+                            <!--#endregion email-->
+
+                            <!--#region publicservice detail website-->
+                            <div class="col-md-4">
+                                <div class="form-group" [class.has-error]="website.invalid && website.touched">
+                                    <label for="website" class="control-label">Website</label>
+                                    <input type="text" class="form-control" [ngModel]="model.website" name="p_website"
+                                        #website="ngModel" pattern={{WebsitePattern}}>
+                                    <small *ngIf="website.errors?.pattern && website.touched" class="text-danger">
+                                        Website format should be <i>www.example.com</i>.
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion publicservice detail website-->
+
+                            <!--#region ktp_no-->
+                            <div class="col-md-4"
+                                [hidden]="model.tax_file_type ==='N23' || model.tax_file_type ==='P23'">
+                                <div class="form-group" [class.has-error]="ktp_no.invalid && ktp_no.touched">
+                                    <label for="ktp_no" class="control-label">KTP No *</label>
+                                    <input [disabled]="model.tax_file_type ==='N23' || model.tax_file_type ==='P23'"
+                                        type="text" class="form-control" [ngModel]="model.ktp_no" name="p_ktp_no"
+                                        maxlength="16" #ktp_no="ngModel" pattern={{NumberOnlyPattern}} required>
+                                </div>
+                                <small
+                                    *ngIf="(ktp_no.errors?.required && ktp_no.touched) || (ktp_no.errors?.required && publicserviceForm.submitted)"
+                                    class="text-danger">
+                                    KTP No is required
+                                </small>
+                                <small
+                                    *ngIf="ktp_no.errors?.pattern && ktp_no.touched || ktp_no.errors?.pattern && ktp_no.touched"
+                                    class="text-danger">
+                                    KTP No is required and format should be <i>0-9</i>.
+                                </small>
+                            </div>
+                            <!--#endregion ktp_no-->
+
+                            <!--#region NITKU-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                <label for="nitku" class="control-label">NITKU</label>
+                                <input type="text" class="form-control" [ngModel]="model.nitku" name="p_nitku"
+                                    #nitku="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion NITKU-->
+
+                            <!--#region NPWP HO-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                <label for="npwp_pusat" class="control-label">NPWP HO</label>
+                                <input type="text" class="form-control" [ngModel]="model.npwp_pusat" name="p_npwp_pusat"
+                                    #npwp_pusat="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion NPWP HO-->
+                            
+                        </div>
+
+                        <!--#endregion publicservice detail row-->
+                    </form>
+                    <!--#endregion publicservice detail form-->
+                </div>
+                <!--#region wizard-->
+                <div class="wizard-custom-margin" [hidden]="param == null">
+                    <!--#region publicservice address wizard container-->
+                    <div class="wizard-container">
+                        <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+                            id="wizardProfile">
+                            <div class="text-center">
+                                <div class="wizard-navigation">
+                                    <ul>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="publicserviceaddresswiz()"
+                                                href="#publicserviceaddresslist" data-toggle="tab" role="tab"
+                                                aria-controls="publicserviceaddresslist" aria-selected="true">
+                                                Address
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="publicservicebankwiz()"
+                                                href="#publicservicebanklist" data-toggle="tab" role="tab"
+                                                aria-controls="publicservicebanklist" aria-selected="true">
+                                                Bank
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="publicservicebrachwiz()"
+                                                href="#publicservicebranchlist" data-toggle="tab" role="tab"
+                                                aria-controls="publicservicebranchlist" aria-selected="true">
+                                                Branch
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="publicservicedocumentwiz()"
+                                                href="#publicservicedocumentlist" data-toggle="tab" role="tab"
+                                                aria-controls="publicservicedocumentlist" aria-selected="true">
+                                                Document
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion publicservice address wizard container-->
+                </div>
+                <!--endregion wizard-->
+                <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>

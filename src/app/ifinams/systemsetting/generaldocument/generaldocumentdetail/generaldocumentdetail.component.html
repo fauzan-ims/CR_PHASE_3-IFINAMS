@@ -1,0 +1,80 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">General Document Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form -->
+                    <form #generaldocumentForm="ngForm"
+                        (ngSubmit)="onFormSubmit(generaldocumentForm.value, generaldocumentForm.valid)">
+
+                        <!--#region button submit dan back-->
+                        <button type="submit" class="btn btn-info btn-round" data-role="R00021210012121C">Save</button>
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button submit dan back-->
+
+                        <!--#region row-->
+                        <div class="row">
+
+                            <!--#region code -->
+                            <input type="text" [ngModel]="model.code" maxlength="50" name="p_code" hidden>
+                            <!--#endregion code -->
+
+                            <!--#region document name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="document_name" class="control-label">Description *</label>
+                                    <textarea type="text" class="form-control" [ngModel]="model.document_name"
+                                        maxlength="250" name="p_document_name" required
+                                        #document_name="ngModel"> </textarea>
+                                    <small
+                                        *ngIf="(document_name.errors?.required && document_name.touched) || (document_name.errors?.required && generaldocumentForm.submitted)"
+                                        class="text-danger">
+                                        Description is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion document name-->
+
+                            <!--#region check box is active-->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check mt-3" style="margin-left: -35px;">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [ngModel]="model.is_active" name="p_is_active">
+                                                Active
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion check box is active-->
+
+                        </div>
+                        <!--#endregion row-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+                <div class="card-footer ">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

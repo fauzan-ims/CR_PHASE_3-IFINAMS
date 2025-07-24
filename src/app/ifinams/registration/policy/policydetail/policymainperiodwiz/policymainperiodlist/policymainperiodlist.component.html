@@ -1,0 +1,39 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <!--#region List view-->
+      <table id="datatables" datatable [dtOptions]="dtOptions"
+        class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th style="display: none;"></th>
+            <th class="disabled-sorting">No</th>
+            <th>Period (Year)</th>
+            <th>Premi Amount</th>
+            <th>Coverage</th>
+            <th>Main Coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of listpolicymainperiod; let i = index">
+            <td style="display: none;"></td>
+            <td style="text-align: center;">{{listpolicymainperiod.numberIndex+i+1}}</td>
+            <td class="if-no-edit-btn" style="width: 15%;text-align: center;">{{row.year_periode}}</td>
+            <td style="width: 20%;text-align: right;">{{row.sum_coverage_premi_amount | number : '1.2-2'}}</td>
+            <td style="width: 50%;">{{row.coverage_name}} <sup>{{row.endorsement_count}}</sup></td>
+            <td style="width: 15%;text-align: center;">{{row.is_main_coverage}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <!--#endregion List view-->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header ">
+          <h5 class="card-title">Auction Fee Info</h5>
+          <div class="logo-image-small card-title col-md-2" [hidden]="this.userLog === ''">
+            <img src="./assets/img/padlock.png" alt="alternative text" title="In Use by {{this.userLog}}"
+              width="20px" />
+          </div>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #notaryserviceForm="ngForm" (ngSubmit)="onFormSubmit(notaryserviceForm.value, notaryserviceForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="save" class="btn btn-info btn-round" data-role="R00022610000003C">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#notary row-->
+            <div class="row">
+              <!--#region code-->
+              <div class="col-md-4">
+                <div [hidden]="model.code != null" class="row" style="margin-bottom: -15px; padding-top: 30px;">
+                  <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                  <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                    Generate-</h1>
+                </div>
+                <div [hidden]="model.code == null" class="form-group">
+                  <label>Code *</label>
+                  <input type="text" class="form-control" [ngModel]="model.code" name="p_code" [readonly]="isReadOnly">
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region auction_fee_name-->
+              <div class="col-md-4">
+                <div class="form-group" >
+                  <label for="auction_fee_name" class="control-label">Name *</label>
+                  <input type="text" class="form-control" [ngModel]="model.auction_fee_name" name="p_auction_fee_name"
+                    required #auction_fee_name="ngModel">
+                  <small *ngIf="(auction_fee_name.errors?.required && auction_fee_name.touched) || (auction_fee_name.errors?.required && notaryserviceForm.submitted)" class="text-danger">
+                    Name is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion auction_fee_name-->
+
+              <!--#region Process Code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Transaction *</label>
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupTransaction()" data-toggle="modal" data-target="#lookupModalTransaction"
+                        href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.transaction_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.transaction_code"
+                        name="p_transaction_code" required #transaction_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.transaction_name"
+                        name="p_transaction_name" required #transaction_name="ngModel">
+                    </span>
+                    <small
+                      [hidden]="transaction_code.valid || (transaction_code.pristine && !notaryserviceForm.submitted)"
+                      class="text-danger">
+                      Transaction is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Process Code-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region is_taxable-->
+              <div class="col-md-4">
+                <div class="form-check mt-3" style="margin-left: -35px;">
+                  <label></label>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [ngModel]="model.is_taxable" name="p_is_taxable">
+                      Taxable
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_taxable-->
+
+              <!--#region is_active-->
+              <div class="col-md-4">
+                <div class="form-check mt-3" style="margin-left: -35px;">
+                  <label></label>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [ngModel]="model.is_active" name="p_is_active">
+                      Active
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_active-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region lookup process name-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTransaction"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12">
+
+            <table id="datatableLookupTransaction" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupTransaction;let i=index ">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupTransaction.numberIndex+i+1}}</td>
+                  <td style="text-align: center; width: 25%;">{{ row.code }}</td>
+                  <td style="text-align: left; width: 75%;">{{ row.transaction_name }}</td>
+                  <td class="text-center" style="text-align: center;">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowTransaction(row.code, row.transaction_name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup process name-->

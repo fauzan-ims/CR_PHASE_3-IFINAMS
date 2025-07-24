@@ -1,0 +1,316 @@
+<div class="main-content" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card "> -->
+            <div class="card-body ">
+                <!--#region form-->
+                <form #AssetPropertyForm="ngForm"
+                    (ngSubmit)="onFormSubmit(AssetPropertyForm.value, AssetPropertyForm.valid)">
+                    <!--#region button submit, button back-->
+                    <button [hidden]="isReadOnly" type="submit" class="btn btn-info btn-round">Save</button>
+                    <!--#endregion button submit, button back-->
+
+                    <!--#region class="row"-->
+                    <div class="row">
+                        <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                        <!--#region asset_code-->
+                        <input type="text" class="form-control" [ngModel]="this.param" maxlength="50"
+                            name="p_asset_code" hidden>
+                        <!--#endregion asset_code-->
+
+                        <!--#region imb_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="imb_no" class="control-label">IMB No</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control" [ngModel]="model.imb_no"
+                                    name="p_imb_no" #imb_no="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion imb_no-->
+
+                        <!--#region certificate_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="certificate_no" class="control-label">Certificate No</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.certificate_no" name="p_certificate_no" #certificate_no="ngModel"
+                                    maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion certificate_no-->
+
+                        <!--#region land_size-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="land_size" class="control-label">Land Size</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.land_size" name="p_land_size" #land_size="ngModel" />
+                            </div>
+                        </div>
+                        <!--#endregion land_size-->
+
+                        <!--#region building_size-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="building_size" class="control-label">Building Size</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.building_size" name="p_building_size" #building_size="ngModel" />
+                            </div>
+                        </div>
+                        <!--#endregion building_size-->
+
+                        <!--#region status_of_ruko-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="status_of_ruko" class="control-label">Status Ruko</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.status_of_ruko" name="p_status_of_ruko" #status_of_ruko="ngModel"
+                                    maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion status_of_ruko-->
+
+                        <!--#region number_of_ruko_and_floor-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="number_of_ruko_and_floor" class="control-label">Number of Ruko and
+                                    Floor</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.number_of_ruko_and_floor" name="p_number_of_ruko_and_floor"
+                                    #number_of_ruko_and_floor="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion number_of_ruko_and_floor-->
+
+                        <!--#region total_square-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="total_square" class="control-label">Total Square</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.total_square" name="p_total_square" #total_square="ngModel"
+                                    maxlength="10" />
+                            </div>
+                        </div>
+                        <!--#endregion total_square-->
+
+                        <!--#region pph-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="pph" class="control-label">PPH</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control" [ngModel]="model.pph"
+                                    name="p_pph" #pph="ngModel" />
+                            </div>
+                        </div>
+                        <!--#endregion pph-->
+
+                        <!--#region vat-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="vat" class="control-label">VAT</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control" [ngModel]="model.vat"
+                                    name="p_vat" #vat="ngModel" />
+                            </div>
+                        </div>
+                        <!--#endregion vat-->
+
+                        <!--#region no_lease_agreement-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="no_lease_agreement" class="control-label">No Lease Agreement</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.no_lease_agreement" name="p_no_lease_agreement"
+                                    #no_lease_agreement="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion no_lease_agreement-->
+
+                        <!--#region date_of_lease_agreement-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="date_of_lease_agreement" class="control-label">Lease Agreement Date</label>
+                                <input [readonly]="isReadOnly" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                                    angular-mydatepicker [ngModel]="model.date_of_lease_agreement"
+                                    name="p_date_of_lease_agreement" [options]="myDatePickerOptions"
+                                    (click)="date_of_lease_agreement.toggleCalendar()"
+                                    #p_date_of_lease_agreement="ngModel" #date_of_lease_agreement="angular-mydatepicker"
+                                    autocomplete="off" />
+                            </div>
+                        </div>
+                        <!--#endregion date_of_lease_agreement-->
+
+                        <!--#region land_and_building_tax-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="land_and_building_tax" class="control-label">Land and Building Tax</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.land_and_building_tax" name="p_land_and_building_tax"
+                                    #land_and_building_tax="ngModel" maxlength="20" />
+                            </div>
+                        </div>
+                        <!--#endregion land_and_building_tax-->
+
+                        <!--#region security_deposit-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="security_deposit" class="control-label">Security Deposit
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="isReadOnly" type="text" style="text-align:right"
+                                        class="form-control" [ngModel]="model.security_deposit | number : '1.2-2'"
+                                        amount="security_deposit" name="p_security_deposit" #security_deposit="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion security_deposit-->
+
+                        <!--#region penalty-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="penalty" class="control-label">Penalty
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="isReadOnly" type="text" style="text-align:right"
+                                        class="form-control" [ngModel]="model.penalty | number : '1.2-2'"
+                                        amount="penalty" name="p_penalty" 
+                                        #penalty="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion penalty-->
+
+                        <!--#region owner-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="owner" class="control-label">Owner</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control" [ngModel]="model.owner"
+                                    name="p_owner" #owner="ngModel" maxlength="250" />
+                            </div>
+                        </div>
+                        <!--#endregion owner-->
+
+                        <!--#region address-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="address" class="control-label">Address</label>
+                                <textarea [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.address" name="p_address" #address="ngModel"
+                                    maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion address-->
+
+                        <!--#region total_rental_period-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="total_rental_period">Total Rental Period</label>
+                                <div class="col-md-4" style="margin-left: -15px;">
+                                    <input [readonly]="isReadOnly" type="text" class="form-control"
+                                        [ngModel]="model.total_rental_period" name="p_total_rental_period"
+                                        #total_rental_period="ngModel" maxlength="9" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion total_rental_period-->
+
+                        <!--#region rental_period-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="rental_period" class="control-label">Rental Period</label>
+                                <input [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.rental_period" name="p_rental_period" #rental_period="ngModel"
+                                    maxlength="15" />
+                            </div>
+                        </div>
+                        <!--#endregion rental_period-->
+
+                        <!--#region rental_price_per_year-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="rental_price_per_year" class="control-label">Rentral Price Per Year
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="isReadOnly" type="text" style="text-align:right"
+                                        class="form-control" [ngModel]="model.rental_price_per_year | number : '1.2-2'"
+                                        amount="rental_price_per_year" name="p_rental_price_per_year"
+                                         #rental_price_per_year="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion rental_price_per_year-->
+
+                        <!--#region rental_price_per_month-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="rental_price_per_month" class="control-label">Rentral Price Per Month
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="isReadOnly" type="text" style="text-align:right"
+                                        class="form-control" [ngModel]="model.rental_price_per_month | number : '1.2-2'"
+                                        amount="rental_price_per_month" name="p_rental_price_per_month"
+                                         #rental_price_per_month="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion rental_price_per_month-->
+
+                        <!--#region total_rental_price-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="total_rental_price" class="control-label">Total Rentarl Price
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="isReadOnly" type="text" style="text-align:right"
+                                        class="form-control" [ngModel]="model.total_rental_price | number : '1.2-2'"
+                                        amount="total_rental_price" name="p_total_rental_price"
+                                         #total_rental_price="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion total_rental_price-->
+
+                        <!--#region start_rental_date-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="start_rental_date" class="control-label">Start Rental Date</label>
+                                <input [readonly]="isReadOnly" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                                    angular-mydatepicker [ngModel]="model.start_rental_date" name="p_start_rental_date"
+                                    [options]="myDatePickerOptions" (click)="start_rental_date.toggleCalendar()"
+                                    #p_start_rental_date="ngModel" #start_rental_date="angular-mydatepicker"
+                                    autocomplete="off" />
+                            </div>
+                        </div>
+                        <!--#endregion start_rental_date-->
+
+                        <!--#region end_rental_date-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="end_rental_date" class="control-label">End Rental Date</label>
+                                <input [readonly]="isReadOnly" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                                    angular-mydatepicker [ngModel]="model.end_rental_date" name="p_end_rental_date"
+                                    [options]="myDatePickerOptions" (click)="end_rental_date.toggleCalendar()"
+                                    #p_end_rental_date="ngModel" #end_rental_date="angular-mydatepicker"
+                                    autocomplete="off" />
+                            </div>
+                        </div>
+                        <!--#endregion end_rental_date-->
+
+                        <!--#region remark-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="remark" class="control-label">Remark</label>
+                                <textarea [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.remark" name="p_remark" #remark="ngModel"
+                                    maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion remark-->
+                    </div>
+                    <!--#endregion class="row"-->
+                </form>
+                <!--#endregion form-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>

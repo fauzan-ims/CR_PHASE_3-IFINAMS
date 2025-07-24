@@ -1,0 +1,1188 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Asset Permit Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #AssetForm="ngForm" (ngSubmit)="onFormSubmit(AssetForm.value, AssetForm.valid)">
+            <!--#region button submit dan back-->
+            <button [hidden]="this.param === null" class="btn btn-success btn-round custom-button-width" type="button"
+              (click)="btnPermit()" data-role="R00022270002228O">
+              <span [hidden]="model.is_permit_to_sell === true">Permit</span>
+              <span [hidden]="model.is_permit_to_sell === false">Unpermit</span>
+            </button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region div-->
+
+            <br>
+
+            <div class="row">
+              <!--#region company_code-->
+              <input type="hidden" class="form-control" [ngModel]="model.company_code" name="p_company_code">
+              <!--#endregion company_code-->
+
+              <!--#region code-->
+              <div class="col-md-4">
+                <div [hidden]="model.code != null" class="row" style="margin-bottom: -15px; padding-top: 30px;">
+                  <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                  <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                    Generate-</h1>
+                </div>
+                <div [hidden]="model.code == null" class="form-group">
+                  <label>Code </label>
+                  <input type="text" class="form-control" placeholder="Enter Code" [ngModel]="model.code" name="p_code"
+                    [readonly]="isReadOnly">
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region Lookup item_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="depre_account_no" class="control-label labelmodule">Item</label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupItem()" data-toggle="modal" data-target="#lookupModalItem" href="#"><i
+                          class="fa fa-search-plus"></i></button>
+                      {{model.item_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.item_code" name="p_item_code" required
+                        #item_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.item_name" name="p_item_name"
+                        #item_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="item_code.valid || (item_code.pristine && !AssetForm.submitted)" class="text-danger">
+                    Item is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup item_code-->
+
+              <!--#region status-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="status" class="control-label">Status</label>
+                  <input type="text" class="form-control" [ngModel]="model.status" name="p_status" readonly
+                    #status="ngModel" />
+                </div>
+              </div>
+              <!--#endregion status-->
+
+              <!--#region barcode-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="barcode" class="control-label">Barcode</label>
+                  <div class="col-md-12">
+                    <input type="text" class="form-control" [ngModel]="model.barcode" name="p_barcode" readonly
+                      #barcode="ngModel">
+                  </div>
+                </div>
+              </div>
+              <!--#endregion barcode-->
+
+              <!--#region radio button condition-->
+              <div class="col-md-4">
+                <label>Condition</label>
+                <div class="form-group col-md-12">
+                  <div class="row">
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="p_condition" value="NEW"
+                          [(ngModel)]="model.condition" [disabled]="model.status !== 'NEW'">NEW
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="p_condition" value="USED"
+                          [(ngModel)]="model.condition" [disabled]="model.status !== 'NEW'">USED
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion radio button condition-->
+
+              <!--#region Lookup cost_center-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="cost_center_code" class="control-label labelmodule">Cost Center *
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalCostCenter" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.cost_center_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.cost_center_code"
+                        name="p_cost_center_code" #cost_center_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.cost_center_name"
+                        name="p_cost_center_name" #cost_center_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="cost_center_code.valid || (cost_center_code.pristine && !AssetForm.submitted)"
+                    class="text-danger">
+                    Cost Center is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup cost_center-->
+
+              <!--#region Lookup requestor_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="requestor_code" class="control-label">Requestor
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalRequestor" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.requestor_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.requestor_code" name="p_requestor_code"
+                        required #requestor_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.requestor_name" name="p_requestor_name"
+                        #requestor_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="requestor_code.valid || (requestor_code.pristine && !AssetForm.submitted)"
+                    class="text-danger">
+                    Requestor is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup requestor_code-->
+
+              <!--#region Lookup vendor_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="vendor_code" class="control-label labelmodule">Vendor
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalVendor" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.vendor_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.vendor_code" name="p_vendor_code"
+                        required #vendor_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.vendor_name" name="p_vendor_name"
+                        #vendor_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="vendor_code.valid || (vendor_code.pristine && !AssetForm.submitted)"
+                    class="text-danger">
+                    Vendor is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup vendor_code-->
+
+              <!--#region category_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="category_code" class="control-label">Category</label>
+                  <input type="hidden" class="form-control" [ngModel]="model.category_code" name="p_category_code"
+                    #category_code="ngModel">
+                  <input type="text" class="form-control" [ngModel]="model.category_name" name="p_category_name"
+                    #category_name="ngModel" readonly>
+                </div>
+              </div>
+              <!--#endregion category_code-->
+
+              <!--#region type_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="type_code" class="control-label">Type</label>
+                  <input type="text" class="form-control" [ngModel]="model.type_code" name="p_type_code"
+                    #type_code="ngModel" maxlength="50" readonly />
+                </div>
+              </div>
+              <!--#endregion type_code-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region po_no-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="po_no" class="control-label">PO No</label>
+                  <input [readonly]="model.status !== 'NEW'" type="text" class="form-control" [ngModel]="model.po_no"
+                    name="p_po_no" #po_no="ngModel" maxlength="50" />
+                </div>
+              </div>
+              <!--#endregion po_no-->
+
+              <!--#region po_date-->
+              <div class="col-md-4" hidden>
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="po_date" class="control-label">Po Date</label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.po_date" name="p_po_date" [disabled]="model.status !== 'NEW'"
+                    [options]="myDatePickerOptions" (click)="po_date.toggleCalendar()" #p_po_date="ngModel"
+                    #po_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion po_date-->
+
+              <!--#region purchase_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="purchase_date" class="control-label">Purchase Date</label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker required
+                    [ngModel]="model.purchase_date" name="p_purchase_date" [readonly]="model.status !== 'NEW'"
+                    [ngStyle]="getStyles(model.status !== 'NEW')" [options]="myDatePickerOptions"
+                    (click)="purchase_date.toggleCalendar()" #p_purchase_date="ngModel"
+                    #purchase_date="angular-mydatepicker" autocomplete="off" />
+                  <small
+                    *ngIf="(p_purchase_date.errors?.required && p_purchase_date.touched) || (p_purchase_date.errors?.required && AssetForm.submitted)"
+                    class="text-danger">
+                    Purchase Date is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion purchase_date-->
+
+              <!--#region purchase_price-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="purchase_price" class="control-label">Purchase Price
+                  </label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input [readonly]="model.status !== 'NEW'" type="text" style="text-align:right" class="form-control"
+                      amount="purchase_price" required [ngModel]="model.purchase_price | number : '1.2-2'"
+                      name="p_purchase_price" #purchase_price="ngModel">
+                    <small
+                      *ngIf="purchase_price.errors?.required && purchase_price.touched || (purchase_price.errors?.required && AssetForm.submitted)"
+                      class="text-danger">
+                      Purchase Price is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion purchase_price-->
+
+              <!--#region invoice_no-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="invoice_no" class="control-label">Invoice No</label>
+                  <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                    [ngModel]="model.invoice_no" name="p_invoice_no" #invoice_no="ngModel" maxlength="50" />
+                </div>
+              </div>
+              <!--#endregion invoice_no-->
+
+              <!--#region invoice_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="invoice_date" class="control-label">Invoice Date</label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.invoice_date" name="p_invoice_date" [disabled]="model.status !== 'NEW'"
+                    [options]="myDatePickerOptions" (click)="invoice_date.toggleCalendar()" #p_invoice_date="ngModel"
+                    #invoice_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion invoice_date-->
+
+              <!--#region original_price-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="original_price" class="control-label">Original Price</label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input [readonly]="model.status !== 'NEW'" type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.original_price | number : '1.2-2'" amount="original_price"
+                      name="p_original_price" required #original_price="ngModel">
+                    <small
+                      *ngIf="original_price.errors?.required && original_price.touched || (original_price.errors?.required && AssetForm.submitted)"
+                      class="text-danger">
+                      Original Price is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion original_price-->
+
+              <!--#region pph-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="pph" class="control-label">PPH</label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input [readonly]="model.status !== 'NEW'" type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.pph | number : '1.6-6'" name="p_pph" rate="pph" #pph="ngModel" />
+                    <small *ngIf="pph.errors?.pattern && pph.touched" class="text-danger">
+                      PPH is required and format should be <i>0-9</i>
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion pph-->
+
+              <!--#region ppn-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="ppn" class="control-label">PPN</label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input [readonly]="model.status !== 'NEW'" type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.ppn | number : '1.6-6'" name="p_ppn" rate="ppn" #ppn="ngModel" />
+                    <small *ngIf="ppn.errors?.pattern && ppn.touched" class="text-danger">
+                      PPN is required and format should be <i>0-9</i>
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion ppn-->
+
+              <!--#region residual_value-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="residual_value" class="control-label">Residual Value
+                  </label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input [readonly]="model.status !== 'NEW'" type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.residual_value | number : '1.2-2'" amount="residual_value"
+                      name="p_residual_value" #residual_value="ngModel">
+                  </div>
+                </div>
+              </div>
+              <!--#endregion residual_value-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region Lookup Branch_name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="branch" class="control-label labelmodule">Branch
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalBranch" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.branch_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_code" name="p_branch_code"
+                        required #branch_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_name" name="p_branch_name"
+                        #branch_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="branch_code.valid || (branch_code.pristine && !AssetForm.submitted)"
+                    class="text-danger">
+                    Branch is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup Branch_name-->
+
+              <!--#region Lookup location_code-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="location_code" class="control-label labelmodule">Location
+                    *</label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalLocation" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.location_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.location_code" name="p_location_code"
+                        required #location_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.location_name" name="p_location_name"
+                        required #location_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="location_code.valid || (location_code.pristine && !AssetForm.submitted)"
+                    class="text-danger">
+                    Location is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup location_code-->
+
+              <!--#region Lookup division_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="division_code" class="control-label labelmodule">Division
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalDivision" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.division_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.division_code" name="p_division_code"
+                        required #division_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.division_name" name="p_division_name"
+                        #division_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="division_code.valid || (division_code.pristine && !AssetForm.submitted)"
+                    class="text-danger">
+                    Division is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup division_code-->
+
+              <!--#region Lookup department_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="department_code" class="control-label labelmodule">Department
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalDepartment" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.department_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.department_code"
+                        name="p_department_code" required #department_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.department_name"
+                        name="p_department_name" #department_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="department_code.valid || (department_code.pristine && !AssetForm.submitted)"
+                    class="text-danger">
+                    Department is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup department_code-->
+
+              <!--#region Lookup units_code-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="units_code" class="control-label labelmodule">Units
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalUnits" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.units_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.units_code" name="p_units_code"
+                        #units_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.units_name" name="p_units_name"
+                        #units_name="ngModel">
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Lookup sub_department_code-->
+
+              <!--#region Lookup pic_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="pic_code" class="control-label labelmodule">Use By
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupModalPic" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.pic_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.pic_code" name="p_pic_code"
+                        #pic_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.pic_name" name="p_pic_name"
+                        #pic_name="ngModel">
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Lookup pic_code-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region is_rental-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input [disabled]="model.status !== 'NEW' && model.is_lock == false" class="form-check-input"
+                        type="checkbox" [(ngModel)]="model.is_rental" name="p_is_rental">
+                      For Rent
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_rental-->
+
+              <!--#region is_depre-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input disabled class="form-check-input" type="checkbox" [(ngModel)]="model.is_depre"
+                        name="p_is_depre">
+                      Depre
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_depre-->
+
+              <!--#region depre_category_comm_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="depre_category_comm_code" class="control-label">Depre
+                    Commercial</label>
+                  <input type="hidden" class="form-control" [ngModel]="model.depre_category_comm_code"
+                    name="p_depre_category_comm_code" #depre_category_comm_code="ngModel">
+                  <input type="text" class="form-control" [ngModel]="model.description_commercial"
+                    name="p_description_commercial" #description_commercial="ngModel" readonly>
+                </div>
+              </div>
+              <!--#endregion depre_category_comm_code-->
+
+              <!--#region depre_category_fiscal_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="depre_category_fiscal_code" class="control-label">Depre
+                    Fiscal</label>
+                  <input type="hidden" class="form-control" [ngModel]="model.depre_category_fiscal_code"
+                    name="p_depre_category_fiscal_code" #depre_category_fiscal_code="ngModel">
+                  <input type="text" class="form-control" [ngModel]="model.description_fiscal"
+                    name="p_description_fiscal" #description_fiscal="ngModel" readonly>
+                </div>
+              </div>
+              <!--#endregion depre_category_fiscal_code-->
+
+              <!--#region use_life-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="use_life" class="control-label">Usefull</label>
+                  <div class="col-md-4" style="margin-left: -15px;">
+                    <input readonly type="text" class="form-control" [ngModel]="model.use_life" name="p_use_life"
+                      #use_life="ngModel" maxlength="15" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion use_life-->
+
+              <!--#region Lookup last_location-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="last_location" class="control-label labelmodule">Last Location
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button [disabled]="model.status !== 'NEW'"
+                        class="btn btn-icon btn-outline-default btn-round btn-md" type="button" data-toggle="modal"
+                        data-target="#lookupLastLocation" href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.description_last_location}}
+                      <input type="hidden" class="form-control" [ngModel]="model.last_location" name="p_last_location"
+                        #last_location="ngModel">
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Lookup last_location-->
+
+              <!--#region last_service_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="last_service_date" class="control-label">Last Service Date</label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.last_service_date" name="p_last_service_date" [disabled]="model.status !== 'NEW'"
+                    [options]="myDatePickerOptions" (click)="last_service_date.toggleCalendar()"
+                    #p_last_service_date="ngModel" #last_service_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion last_service_date-->
+
+              <!--#region contractor_name-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="contractor_name" class="control-label">Vendor Name</label>
+                  <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                    [ngModel]="model.contractor_name" name="p_contractor_name" #contractor_name="ngModel"
+                    maxlength="250" />
+                </div>
+              </div>
+              <!--#endregion contractor_name-->
+
+              <!--#region contractor_address-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="contractor_address" class="control-label">Vendor Address</label>
+                  <textarea [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                    [ngModel]="model.contractor_address" name="p_contractor_address" #contractor_address="ngModel"
+                    maxlength="4000"></textarea>
+                </div>
+              </div>
+              <!--#endregion contractor_address-->
+
+              <!--#region contractor_email-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="contractor_email" class="control-label">Vendor Email</label>
+                  <input [readonly]="model.status !== 'NEW'" type="contractor_email" class="form-control"
+                    [ngModel]="model.contractor_email" name="p_contractor_email" #contractor_email="ngModel">
+                </div>
+              </div>
+              <!--#endregion contractor_email-->
+
+              <!--#region contractor_pic-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="contractor_pic" class="control-label">Vendor PIC</label>
+                  <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                    [ngModel]="model.contractor_pic" name="p_contractor_pic" #contractor_pic="ngModel"
+                    maxlength="250" />
+                </div>
+              </div>
+              <!--#endregion contractor_pic-->
+
+              <!--#region contractor_pic_phone-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="contractor_pic_phone" class="control-label">Vendor PIC Phone
+                  </label>
+                  <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                    [ngModel]="model.contractor_pic_phone" name="p_contractor_pic_phone" #contractor_pic_phone="ngModel"
+                    maxlength="25" pattern={{NumberOnlyPattern}}>
+                  <small *ngIf="contractor_pic_phone.errors?.pattern && contractor_pic_phone.touched"
+                    class="text-danger">
+                    Vendor PIC Phone is required and format should be <i>0-9</i>
+                  </small>
+                </div>
+              </div>
+              <!--#endregion contractor_pic_phone-->
+
+              <!--#region contractor_start_date-->
+              <div class="col-md-4" hidden>
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="contractor_start_date" class="control-label">Vendor Start Date
+                  </label>
+                  <input [disabled]="model.status !== 'NEW'" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                    angular-mydatepicker [ngModel]="model.contractor_start_date" name="p_contractor_start_date"
+                    [options]="myDatePickerOptions" (click)="contractor_start_date.toggleCalendar()"
+                    #p_contractor_start_date="ngModel" #contractor_start_date="angular-mydatepicker"
+                    autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion contractor_start_date-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region contractor_end_date-->
+              <div class="col-md-4" hidden>
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="contractor_end_date" class="control-label">Vendor End Date</label>
+                  <input [disabled]="model.status !== 'NEW'" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                    angular-mydatepicker [ngModel]="model.contractor_end_date" name="p_contractor_end_date"
+                    [options]="myDatePickerOptions" (click)="contractor_end_date.toggleCalendar()"
+                    #p_contractor_end_date="ngModel" #contractor_end_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion contractor_end_date-->
+
+              <!--#region warranty-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="warranty">Warranty</label>
+                  <div class="col-md-4" style="margin-left: -15px;">
+                    <input readonly type="text" class="form-control" [ngModel]="model.warranty" name="p_warranty"
+                      #warranty="ngModel" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion warranty-->
+
+              <!--#region warranty_start_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="warranty_start_date" class="control-label">Warranty Start Date
+                  </label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.warranty_start_date" name="p_warranty_start_date" disabled
+                    [options]="myDatePickerOptions" (click)="warranty_start_date.toggleCalendar()"
+                    #p_warranty_start_date="ngModel" #warranty_start_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion warranty_start_date-->
+
+              <!--#region warranty_end_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="warranty_end_date" class="control-label">Warranty End Date</label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.warranty_end_date" name="p_warranty_end_date" disabled
+                    [options]="myDatePickerOptions" (click)="warranty_end_date.toggleCalendar()"
+                    #p_warranty_end_date="ngModel" #warranty_end_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion warranty_end_date-->
+
+              <!--#region remarks_warranty-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="remarks_warranty" class="control-label">Warranty Remark</label>
+                  <textarea readonly type="text" class="form-control" [ngModel]="model.remarks_warranty"
+                    name="p_remarks_warranty" #remarks_warranty="ngModel" maxlength="4000"></textarea>
+                </div>
+              </div>
+              <!--#endregion remarks_warranty-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region insured_name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="insured_name" class="control-label">Insured Name</label>
+                  <input readonly type="text" class="form-control" [ngModel]="model.insured_name" name="p_insured_name"
+                    #insured_name="ngModel" maxlength="250" />
+                </div>
+              </div>
+              <!--#endregion insured_name-->
+
+              <!--#region policy_no-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="policy_no" class="control-label">Policy No</label>
+                  <input readonly type="text" class="form-control" [ngModel]="model.policy_no" name="p_policy_no"
+                    #policy_no="ngModel" maxlength="250" />
+                </div>
+              </div>
+              <!--#endregion policy_no-->
+
+              <!--#region policy_eff_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="policy_eff_date" class="control-label">Policy Eff Date</label>
+                  <input [ngStyle]="getStyles(model.status !== 'NEW')" [readonly]="model.status !== 'NEW'"
+                    class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.policy_eff_date" name="p_policy_eff_date" [options]="myDatePickerOptions"
+                    (click)="policy_eff_date.toggleCalendar()" #p_policy_eff_date="ngModel"
+                    #policy_eff_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion policy_eff_date-->
+
+              <!--#region policy_exp_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="policy_exp_date" class="control-label">Policy Exp Date</label>
+                  <input [ngStyle]="getStyles(model.status !== 'NEW')" [readonly]="model.status !== 'NEW'"
+                    class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.policy_exp_date" name="p_policy_exp_date" [options]="myDatePickerOptions"
+                    (click)="policy_exp_date.toggleCalendar()" #p_policy_exp_date="ngModel"
+                    #policy_exp_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion policy_exp_date-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region is_maintenance-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input disabled class="form-check-input" type="checkbox" [(ngModel)]="model.is_maintenance"
+                        name="p_is_maintenance">
+                      With Maintenance Routin
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_maintenance-->
+
+              <!--#region remarks-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="remarks" class="control-label">Remark</label>
+                  <textarea readonly type="text" class="form-control" [ngModel]="model.remarks" name="p_remarks"
+                    #remarks="ngModel" required maxlength="4000"></textarea>
+                  <small
+                    *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && AssetForm.submitted)"
+                    class="text-danger">
+                    remarks is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion remarks-->
+
+              <!--#region is_lock-->
+              <div class="col-md-4" hidden>
+                <div class="form-check mt-3" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input disabled class="form-check-input" type="checkbox" [(ngModel)]="model.is_lock"
+                        name="p_is_lock">
+                      Lock
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_lock-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region is_permit_to_sell-->
+              <div class="col-md-4">
+                <div class="form-check mt-3" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input disabled class="form-check-input" type="checkbox" [(ngModel)]="model.is_permit_to_sell"
+                        name="p_is_permit_to_sell">
+                      Permit
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_permit_to_sell-->
+
+              <!--#region permit_sell_remark-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="permit_sell_remark" class="control-label">Permit Sell Remark *</label>
+                  <textarea type="text" class="form-control" [ngModel]="model.permit_sell_remark"
+                    name="p_permit_sell_remark" required #permit_sell_remark="ngModel"
+                    (change)="remark($event)"></textarea>
+                  <small
+                    *ngIf="(permit_sell_remark.errors?.required && permit_sell_remark.touched) || (permit_sell_remark.errors?.required && AssetForm.submitted)"
+                    class="text-danger">
+                    Permit Sell Remark is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion permit_sell_remark-->
+            </div>
+            <!--#endregion div-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+
+            <br>
+
+            <!--#region div-->
+            <div class="row">
+              <!--#region last_so_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="last_so_date" class="control-label">Last SO Date
+                  </label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.last_so_date" name="p_last_so_date" readonly [ngStyle]="getStyles(true)"
+                    [options]="myDatePickerOptions" (click)="last_so_date.toggleCalendar()" #p_last_so_date="ngModel"
+                    #last_so_date="angular-mydatepicker" autocomplete="off" id="lastSoDate" />
+                </div>
+              </div>
+              <!--#endregion last_so_date-->
+
+              <!--#region last_so_condition-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="last_so_condition" class="control-label">Last SO Condition</label>
+                  <div class="col-md-8" style="margin-left: -15px;">
+                    <input type="text" class="form-control" [ngModel]="model.last_so_condition" readonly
+                      name="p_last_so_condition" #last_so_condition="ngModel" maxlength="15" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion last_so_condition-->
+
+              <!--#region sale_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="sale_amount" class="control-label">Sell Amount
+                  </label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input readonly type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.sale_amount | number : '1.2-2'" amount="sale_amount" name="p_sale_amount"
+                      #sale_amount="ngModel">
+                  </div>
+                </div>
+              </div>
+              <!--#endregion sale_amount-->
+
+              <!--#region sale_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="sale_date" class="control-label">Sell Date</label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.sale_date" name="p_sale_date" readonly [ngStyle]="getStyles(true)"
+                    [options]="myDatePickerOptions" (click)="sale_date.toggleCalendar()" #p_sale_date="ngModel"
+                    #sale_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion sale_date-->
+
+              <!--#region disposal_date-->
+              <div class="col-md-4">
+                <div class="form-group col-md-8" style="margin-left: -15px;">
+                  <label for="disposal_date" class="control-label">Disposal Date</label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.disposal_date" name="p_disposal_date" readonly [ngStyle]="getStyles(true)"
+                    [options]="myDatePickerOptions" (click)="disposal_date.toggleCalendar()" #p_disposal_date="ngModel"
+                    #disposal_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion disposal_date-->
+
+              <!--#region total_depre_comm-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="total_depre_comm" class="control-label">Total Depre Commercial
+                  </label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input readonly type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.total_depre_comm | number : '1.2-2'" amount="total_depre_comm"
+                      name="p_total_depre_comm" #total_depre_comm="ngModel">
+                  </div>
+                </div>
+              </div>
+              <!--#endregion total_depre_comm-->
+
+              <!--#region depre_period_comm-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="depre_period_comm">Depre Period Commercial</label>
+                  <div class="col-md-4" style="margin-left: -15px;">
+                    <input type="text" readonly class="form-control" [ngModel]="model.depre_period_comm"
+                      name="p_depre_period_comm" #depre_period_comm="ngModel" maxlength="6" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion depre_period_comm-->
+
+              <!--#region net_book_value_comm-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="net_book_value_comm" class="control-label">Net Book Value Commercial
+                  </label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input readonly type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.net_book_value_comm | number : '1.2-2'" amount="net_book_value_comm"
+                      name="p_net_book_value_comm" #net_book_value_comm="ngModel">
+                  </div>
+                </div>
+              </div>
+              <!--#endregion net_book_value_comm-->
+
+              <!--#region total_depre_fiscal-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="total_depre_fiscal" class="control-label">Total Depre Fiscal
+                  </label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input readonly type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.total_depre_fiscal | number : '1.2-2'" amount="total_depre_fiscal"
+                      name="p_total_depre_fiscal" #total_depre_fiscal="ngModel">
+                  </div>
+                </div>
+              </div>
+              <!--#endregion total_depre_fiscal-->
+
+              <!--#region depre_period_fiscal-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="depre_period_fiscal">Depre Period Fiscal</label>
+                  <div class="col-md-4" style="margin-left: -15px;">
+                    <input type="text" class="form-control" [ngModel]="model.depre_period_fiscal"
+                      name="p_depre_period_fiscal" readonly #depre_period_fiscal="ngModel" maxlength="6" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion depre_period_fiscal-->
+
+              <!--#region net_book_value_fiscal-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="net_book_value_fiscal" class="control-label">Net Book Value Fiscal
+                  </label>
+                  <div class="col-md-6" style="margin-left: -15px;">
+                    <input readonly type="text" style="text-align:right" class="form-control"
+                      [ngModel]="model.net_book_value_fiscal | number : '1.2-2'" amount="net_book_value_fiscal"
+                      name="p_net_book_value_fiscal" #net_book_value_fiscal="ngModel">
+                  </div>
+                </div>
+              </div>
+              <!--#endregion net_book_value_fiscal-->
+            </div>
+            <!--#endregion div-->
+          </form>
+          <!--#endregion form-->
+        </div>
+        <!--#region wizard container-->
+        <div class="wizard-custom-margin" [hidden]="param == null">
+          <div class="wizard-container">
+            <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+              id="wizardProfile">
+              <div class="text-center">
+                <div class="wizard-navigation">
+
+                  <!-- <div class="nav-tabs-navigation" [hidden]="param == null"> -->
+                  <!-- <ul id="tabs1" class="nav nav-pills nav-justified" role="tablist"> -->
+                  <ul>
+                    <li class="nav-item" id="tabassetvehicle">
+                      <a class="nav-link" (click)="assetvehiclewiz()" href="#assetvehicle" data-toggle="tab" role="tab"
+                        aria-controls="assetvehicle" aria-selected="true">
+                        Vehicle
+                      </a>
+                    </li>
+                    <li class="nav-item" id="tabassetother">
+                      <a class="nav-link" (click)="assetotherwiz()" href="#assetother" data-toggle="tab" role="tab"
+                        aria-controls="assetother" aria-selected="true">
+                        Other
+                      </a>
+                    </li>
+                    <li class="nav-item" id="tabassetelectronic">
+                      <a class="nav-link" (click)="assetelectronicwiz()" href="#assetelectronic" data-toggle="tab"
+                        role="tab" aria-controls="assetelectronic" aria-selected="true">
+                        Electronic
+                      </a>
+                    </li>
+                    <li class="nav-item" id="tabassetfurniture">
+                      <a class="nav-link" (click)="assetfurniturewiz()" href="#assetfurniture" data-toggle="tab"
+                        role="tab" aria-controls="assetfurniture" aria-selected="true">
+                        Furniture
+                      </a>
+                    </li>
+                    <li class="nav-item" id="tabassetmachine">
+                      <a class="nav-link" (click)="assetmachinewiz()" href="#assetmachine" data-toggle="tab" role="tab"
+                        aria-controls="assetmachine" aria-selected="true">
+                        Machine
+                      </a>
+                    </li>
+                    <li class="nav-item" id="tabassetproperty">
+                      <a class="nav-link" (click)="assetpropertywiz()" href="#assetproperty" data-toggle="tab"
+                        role="tab" aria-controls="assetproperty" aria-selected="true">
+                        Property
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <router-outlet></router-outlet>
+        <!--#endregion wizard container-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region lookup Item -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalItem" style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12" style="width: 100%">
+            <table id="datatableLookupItem" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th class="disabled-sorting">No</th>
+                  <th style="display: none;"></th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th style="text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupitem;let i=index">
+                  <td style="text-align: center;">{{lookupitem.numberIndex+i+1}}</td>
+                  <td class="if-no-edit-btn" style="display: none;"></td>
+                  <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                  <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                  <td class="text-right">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowItem(row.code, row.description, row.type_asset_code, row.type_asset_description, row.fa_category_code, row.fa_category_name, row.code_commercial, row.description_commercial, row.usefull, row.code_fiscal, row.description_fiscal)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Item-->

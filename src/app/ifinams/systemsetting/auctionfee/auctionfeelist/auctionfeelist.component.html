@@ -1,0 +1,51 @@
+<router-outlet></router-outlet>
+
+<div id="hideMainPanel" class="main-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title">Auction Fee List</h5>
+        </div>
+        <div class="card-body">
+          <!--#region button add-->
+          <div class="toolbar">
+            <button class="btn btn-info btn-round" (click)="btnAdd()" data-role="R00022610000002C">
+              Add
+            </button>
+          </div>
+          <!--#endregion button add-->
+
+          <!--#region list view-->
+          <table id="datatableAucationFeeList" datatable [dtOptions]="dtOptions"
+            class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th style="display: none;"></th>
+                <th class="disabled-sorting">No</th>
+                <th>Name</th>
+                <th>Taxable</th>
+                <th>Active</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of listauctionfee;let i=index ">
+                <td style="display: none;"></td>
+                <td style="text-align: center;">{{listauctionfee.numberIndex+i+1}}</td>
+                <td style="width: 60%; text-align: left;">{{row.auction_fee_name}}</td>
+                <td style="width: 20%; text-align: center;">{{row.is_taxable}}</td>
+                <td style="width: 20%; text-align: center;">{{row.is_active}}</td>
+                <td class="text-center">
+                  <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit" (click)="btnEdit(row.code)"><i
+                      class="fa fa-edit"></i></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!--#endregion list view-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,223 @@
+<div class="main-content margin-wizard-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card "> -->
+            <div class="card-body ">
+                <!--#region form-->
+                <form #AssetPropertyForm="ngForm"
+                    (ngSubmit)="onFormSubmit(AssetPropertyForm.value, AssetPropertyForm.valid)">
+                    <!--#region button-->
+                    <button hidden type="submit" class="btn btn-info btn-round"
+                       >Save</button>
+
+                    <button hidden id="assetdetailprtywiz" type="button" (click)="callGetrowHeader()"></button>
+                    <!--#endregion button-->
+
+                    <!--#region class="row"-->
+                    <div class="row">
+                        <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                        <!--#region asset_code-->
+                        <input type="text" class="form-control" [ngModel]="this.param" maxlength="50"
+                            name="p_asset_code" hidden>
+                        <!--#endregion asset_code-->
+
+                        <!--#region imb_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="imb_no" class="control-label">IMB No</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.imb_no" name="p_imb_no" #imb_no="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion imb_no-->
+
+                        <!--#region certificate_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="certificate_no" class="control-label">Certificate No</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.certificate_no" name="p_certificate_no" #certificate_no="ngModel"
+                                    maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion certificate_no-->
+
+                        <!--#region Lookup status_of_ruko-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="status_of_ruko" class="control-label" style="cursor: pointer;"
+                                    title="Clear">Status
+
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="model.status !== 'NEW'"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            data-toggle="modal" data-target="#lookupModalStatus" href="#"><i
+                                                class="fa fa-search-plus"></i></button>
+                                        {{model.general_subcode_desc}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.status_of_ruko"
+                                            name="p_status_of_ruko" #status_of_ruko="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup status_of_ruko-->
+
+                        <!--#region land_size-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="land_size" class="control-label">Land Size</label>
+                                <div class="col-md-3" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" style="text-align:right" type="text"
+                                        class="form-control" [ngModel]="model.land_size" name="p_land_size"
+                                        #land_size="ngModel" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion land_size-->
+
+                        <!--#region building_size-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="building_size" class="control-label">Building Size</label>
+                                <div class="col-md-3" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" style="text-align:right" type="text"
+                                        class="form-control" [ngModel]="model.building_size" name="p_building_size"
+                                        #building_size="ngModel" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion building_size-->
+
+                        <!--#region number_of_ruko_and_floor-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="number_of_ruko_and_floor" class="control-label">Number of Floor</label>
+                                <div class="col-md-3" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.number_of_ruko_and_floor" name="p_number_of_ruko_and_floor"
+                                        #number_of_ruko_and_floor="ngModel" maxlength="50" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion number_of_ruko_and_floor-->
+
+                        <!--#region total_square-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="total_square" class="control-label">Total Square</label>
+                                <div class="col-md-3" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.total_square" name="p_total_square" #total_square="ngModel"
+                                        maxlength="10" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion total_square-->
+
+                        <!--#region land_and_building_tax-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="land_and_building_tax" class="control-label">Land and Building Tax</label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.land_and_building_tax" name="p_land_and_building_tax"
+                                        #land_and_building_tax="ngModel" maxlength="20" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion land_and_building_tax-->
+
+                        <!--#region vat-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="vat" class="control-label">VAT</label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.vat | number : '1.6-6'" name="p_vat" #vat="ngModel"
+                                        style="text-align:right" rate="vat" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion vat-->
+
+                        <!--#region owner-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="owner" class="control-label">Owner</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.owner" name="p_owner" #owner="ngModel" maxlength="250" />
+                            </div>
+                        </div>
+                        <!--#endregion owner-->
+
+
+                        <!--#region remark-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="remark" class="control-label">Remark</label>
+                                <textarea [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.remark" name="p_remark" #remark="ngModel"
+                                    maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion remark-->
+                    </div>
+                    <!--#endregion class="row"-->
+                </form>
+                <!--#endregion form-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Status -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalStatus"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupStatus" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupstatus;let i=index">
+                                    <td style="text-align: center;">{{lookupstatus.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.general_subcode_desc}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowStatus(row.code, row.general_subcode_desc)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Status-->

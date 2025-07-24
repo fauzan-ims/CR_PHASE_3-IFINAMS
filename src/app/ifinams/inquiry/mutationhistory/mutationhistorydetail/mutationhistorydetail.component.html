@@ -1,0 +1,1289 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <div class="card-header ">
+                    <h5 class="card-title">Mutation Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #MutationForm="ngForm" (ngSubmit)="onFormSubmit(MutationForm.value, MutationForm.valid)">
+                        <!--#region button submit, button back-->
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button submit, button back-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-3">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" readonly>
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region Lookup requestor_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="requestor_code" class="control-label labelmodule">Requestor *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupRequestor()" data-toggle="modal"
+                                                data-target="#lookupModalRequestor" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.requestor_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.requestor_code"
+                                                name="p_requestor_code" required #requestor_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.requestor_name"
+                                                name="p_requestor_name" #requestor_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="requestor_code.valid || (requestor_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        Requestor is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup requestor_code-->
+
+                            <!--#region mutation_date-->
+                            <div class="col-md-3">
+                                <div class="form-group col-md-12" style="margin-left: -15px;">
+                                    <label for="mutation_date" class="control-label">Mutation Date *</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.mutation_date" name="p_mutation_date"
+                                        readonly [options]="myDatePickerOptions"
+                                        (click)="mutation_date.toggleCalendar()" #p_mutation_date="ngModel"
+                                        #mutation_date="angular-mydatepicker" autocomplete="off" />
+                                    <small
+                                        *ngIf="(p_mutation_date.errors?.required && p_mutation_date.touched) || (p_mutation_date.errors?.required && MutationForm.submitted)"
+                                        class="text-danger">
+                                        Mutation Date is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion mutation_date-->
+
+                            <!--#region status-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status</label>
+                                    <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                        readonly #status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region Lookup from_branch_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="from_branch_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">From Branch*</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupBranchFrom()" data-toggle="modal"
+                                                data-target="#lookupModalBranchFrom" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.from_branch_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.from_branch_code"
+                                                name="p_from_branch_code" required #from_branch_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.from_branch_name"
+                                                name="p_from_branch_name" #from_branch_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="from_branch_code.valid || (from_branch_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        From Office Name is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_branch_code-->
+
+                            <!--#region Lookup to_branch_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="to_branch_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">To Branch *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupBranchTo()" data-toggle="modal"
+                                                data-target="#lookupModalBranchTo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_branch_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_branch_code"
+                                                name="p_to_branch_code" required #to_branch_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_branch_name"
+                                                name="p_to_branch_name" #to_branch_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="to_branch_code.valid || (to_branch_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        To Office Name is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup to_branch_code-->
+
+                            <!--#region Lookup from_location_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="from_location_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">From Location *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupLocation()" data-toggle="modal"
+                                                data-target="#lookupModalLocation" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.from_description_location}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.from_location_code" name="p_from_location_code"
+                                                required #from_location_code="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="from_location_code.valid || (from_location_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        From Location is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_location_code-->
+
+                            <!--#region Lookup to_location_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="to_location_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">To Location *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupLocationTo()" data-toggle="modal"
+                                                data-target="#lookupModalLocationTo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_description_location}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_location_code"
+                                                name="p_to_location_code" required #to_location_code="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="to_location_code.valid || (to_location_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        To Location is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup to_location_code-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region Lookup from_division_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="from_division_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">From Division *
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupDivision()" data-toggle="modal"
+                                                data-target="#lookupModalDivision" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.from_division_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.from_division_code" name="p_from_division_code"
+                                                required #from_division_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.from_division_name" name="p_from_division_name"
+                                                #from_division_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="from_division_code.valid || (from_division_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        From Division is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup division_code-->
+
+                            <!--#region Lookup to_division_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="to_division_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">To Division *
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupDivisionTo()" data-toggle="modal"
+                                                data-target="#lookupModalDivisionTo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_division_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_division_code"
+                                                name="p_to_division_code" required #to_division_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_division_name"
+                                                name="p_to_division_name" #to_division_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="to_division_code.valid || (to_division_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        To Division is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup to_division_code-->
+
+                            <!--#region Lookup from_department_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="from_department_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">From Department *
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupDepartment()" data-toggle="modal"
+                                                data-target="#lookupModalDepartment" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.from_department_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.from_department_code" name="p_from_department_code"
+                                                required #from_department_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.from_department_name" name="p_from_department_name"
+                                                #from_department_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="from_department_code.valid || (from_department_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        From Department is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_department_code-->
+
+                            <!--#region Lookup to_department_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="to_department_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">To Department *
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupDepartmentTo()" data-toggle="modal"
+                                                data-target="#lookupModalDepartmentTo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_department_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.to_department_code" name="p_to_department_code"
+                                                #to_department_code="ngModel" required>
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.to_department_name" name="p_to_department_name"
+                                                #to_department_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="to_department_code.valid || (to_department_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        To Department is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup to_department_code-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region Lookup from_sub_department_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="from_sub_department_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear"
+                                        (click)="btnClearLookupFromSubDepartment()">From Sub Department
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupSubDepartment()" data-toggle="modal"
+                                                data-target="#lookupModalSubDepartment" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.from_sub_department_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.from_sub_department_code"
+                                                name="p_from_sub_department_code" #from_sub_department_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.from_sub_department_name"
+                                                name="p_from_sub_department_name" #from_sub_department_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <!-- <small
+                                        [hidden]="from_sub_department_code.valid || (from_sub_department_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        From Sub Departmen is required
+                                    </small> -->
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_sub_department_code-->
+
+                            <!--#region Lookup to_sub_department_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="to_sub_department_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear"
+                                        (click)="btnClearLookupToSubDepartment()">To Sub Department
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupSubDepartmentTo()" data-toggle="modal"
+                                                data-target="#lookupModalSubDepartmentTo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_sub_department_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.to_sub_department_code" name="p_to_sub_department_code"
+                                                #to_sub_department_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.to_sub_department_name" name="p_to_sub_department_name"
+                                                #to_sub_department_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <!-- <small
+                                        [hidden]="to_sub_department_code.valid || (to_sub_department_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        To Sub Departmen is required
+                                    </small> -->
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_sub_department_code-->
+
+                            <!--#region Lookup from_units_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="from_units_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear" (click)="btnClearLookupFromUnits()">From
+                                        Units
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupUnits()" data-toggle="modal"
+                                                data-target="#lookupModalUnits" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.from_units_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.from_units_code"
+                                                name="p_from_units_code" #from_units_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.from_units_name"
+                                                name="p_from_units_name" #from_units_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <!-- <small
+                                        [hidden]="from_units_code.valid || (from_units_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        From Units is required
+                                    </small> -->
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_units_code-->
+
+                            <!--#region Lookup to_units_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="to_units_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear" (click)="btnClearLookupToUnits()">To
+                                        Units
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupUnitsTo()" data-toggle="modal"
+                                                data-target="#lookupModalUnitsTo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_units_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_units_code"
+                                                name="p_to_units_code" #to_units_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_units_name"
+                                                name="p_to_units_name" #to_units_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <!-- <small
+                                        [hidden]="to_units_code.valid || (to_units_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        To Units is required
+                                    </small> -->
+                                </div>
+                            </div>
+                            <!--#endregion Lookup to_units_code-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region Lookup from_pic_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="from_pic_code" class="control-label labelmodule" (click)="btnClearPic()"
+                                        style="cursor: pointer;" title="Clear">From PIC
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupPic()" data-toggle="modal"
+                                                data-target="#lookupModalPic" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.from_pic_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.from_pic_code"
+                                                name="p_from_pic_code" #from_pic_code="ngModel">
+                                        </span>
+                                    </div>
+                                    <!-- <small
+                                        [hidden]="from_pic_code.valid || (from_pic_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        From PIC is required
+                                    </small> -->
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_pic_code-->
+
+                            <!--#region Lookup to_pic_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="to_pic_code" class="control-label labelmodule" (click)="btnClearPicTo()"
+                                        style="cursor: pointer;" title="Clear">To PIC
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupPicTo()" data-toggle="modal"
+                                                data-target="#lookupModalPicTo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_pic_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_pic_code"
+                                                name="p_to_pic_code" #to_pic_code="ngModel">
+                                        </span>
+                                    </div>
+                                    <!-- <small
+                                        [hidden]="to_pic_code.valid || (to_pic_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        To PIC is required
+                                    </small> -->
+                                </div>
+                            </div>
+                            <!--#endregion Lookup to_pic_code-->
+
+                            <!--#region Lookup branch_request_code-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="branch_request_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">Branch Request *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupBranchRequest()" data-toggle="modal"
+                                                data-target="#lookupModalBranchRequest" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.branch_request_name}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.branch_request_code" name="p_branch_request_code"
+                                                required #branch_request_code="ngModel">
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.branch_request_name" name="p_branch_request_name"
+                                                #branch_request_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="branch_request_code.valid || (branch_request_code.pristine && !MutationForm.submitted)"
+                                        class="text-danger">
+                                        Office Name Request is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup branch_request_code-->
+
+                            <!--#region remark-->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark</label>
+                                    <textarea readonly type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remark="ngModel"
+                                        maxlength="4000"></textarea>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+
+                <!--#region wizard-->
+                <div class="wizard-custom-margin" [hidden]="param == null">
+                    <!--#region wizard container -->
+                    <div class="wizard-container">
+                        <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+                            id="wizardProfile">
+                            <div class="text-center">
+                                <div class="wizard-navigation">
+                                    <ul>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="mutationdetailwiz()" href="#mutationdetail"
+                                                data-toggle="tab" role="tab" aria-controls="mutationdetail"
+                                                aria-selected="true">
+                                                Asset
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="mutationdocumentwiz()" href="#mutationdocument"
+                                                data-toggle="tab" role="tab" aria-controls="mutationdocument"
+                                                aria-selected="true">
+                                                Document
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion wizard container-->
+                </div>
+                <!--endregion wizard-->
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Requestor -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalRequestor"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupRequestor" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuprequestor;let i=index">
+                                    <td style="text-align: center;">{{lookuprequestor.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowRequestor(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Requestor-->
+
+<!--#region lookup Branch Request -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranchRequest"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBranchRequest" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Branch Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbranchrequest;let i=index">
+                                    <td style="text-align: center;">{{lookupbranchrequest.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBranchRequest(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Branch Request-->
+
+<!--#region lookup Branch From -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranchFrom"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBranchFrom" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Branch Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbranchfrom;let i=index">
+                                    <td style="text-align: center;">{{lookupbranchfrom.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBranchFrom(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Branch From-->
+
+<!--#region lookup Division -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDivision"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupDivision" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupdivision;let i=index">
+                                    <td style="text-align: center;">{{lookupdivision.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowDivision(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Division-->
+
+<!--#region lookup Department -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDepartment"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupDepartment" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupdepartment;let i=index">
+                                    <td style="text-align: center;">{{lookupdepartment.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowDepartment(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Department-->
+
+<!--#region lookup SubDepartment -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalSubDepartment"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupSubDepartment" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupsubdepartment;let i=index">
+                                    <td style="text-align: center;">{{lookupsubdepartment.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowSubDepartment(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup SubDepartment-->
+
+<!--#region lookup Units -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalUnits" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupUnits" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupunits;let i=index">
+                                    <td style="text-align: center;">{{lookupunits.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowUnits(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Units-->
+
+<!--#region lookup Location -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLocation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupLocation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuplocation;let i=index">
+                                    <td style="text-align: center;">{{lookuplocation.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description_location}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowLocation(row.code, row.description_location)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Location-->
+
+<!--#region lookup PIC -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalPic" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupPic" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuppic;let i=index">
+                                    <td style="text-align: center;">{{lookuppic.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowPic(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup PIC-->
+
+<!--#region lookup Branch To -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranchTo"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBranchTo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Branch Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbranchto;let i=index">
+                                    <td style="text-align: center;">{{lookupbranchto.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBranchTo(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Branch To-->
+
+<!--#region lookup Division To -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDivisionTo"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupDivisionTo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupdivisionto;let i=index">
+                                    <td style="text-align: center;">{{lookupdivisionto.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowDivisionTo(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Division To-->
+
+<!--#region lookup Department To -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDepartmentTo"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupDepartmentTo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupdepartmentto;let i=index">
+                                    <td style="text-align: center;">{{lookupdepartmentto.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowDepartmentTo(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Department To-->
+
+<!--#region lookup SubDepartment To -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalSubDepartmentTo"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupSubDepartmentTo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupsubdepartmentto;let i=index">
+                                    <td style="text-align: center;">{{lookupsubdepartmentto.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowSubDepartmentTo(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup SubDepartment-->
+
+<!--#region lookup Units To -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalUnitsTo"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupUnitsTo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupunitsto;let i=index">
+                                    <td style="text-align: center;">{{lookupunitsto.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowUnitsTo(row.code, row.description, row.division_code, row.division_description, row.department_code, row.department_description, row.sub_department_description, row.sub_department_code)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Units To-->
+
+<!--#region lookup Location To -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLocationTo"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupLocationTo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuplocationto;let i=index">
+                                    <td style="text-align: center;">{{lookuplocationto.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description_location}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowLocationTo(row.code, row.description_location)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Location To-->
+
+<!--#region lookup PIC To-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalPicTo" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupPicTo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuppicto;let i=index">
+                                    <td style="text-align: center;">{{lookuppicto.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowPicTo(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup PIC To-->

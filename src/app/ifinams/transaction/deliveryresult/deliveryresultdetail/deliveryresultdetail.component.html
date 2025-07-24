@@ -1,0 +1,202 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Delivery Result Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #deliveryresultForm="ngForm"
+                        (ngSubmit)="onFormSubmit(deliveryresultForm.value, deliveryresultForm.valid)">
+
+                        <div *ngIf="param != null">
+
+                            <!--#region button submit back-->
+                            <button type="submit" [hidden]="model.register_status !== 'DELIVERY'"
+                                class="btn btn-info btn-round" data-role="R00021960002197C">Save</button>
+                            <button type="button" [hidden]="model.register_status !== 'DELIVERY'"
+                                class="btn btn-success btn-round" data-role="R00021960002197O"
+                                (click)="btnPost(deliveryresultForm.value,deliveryresultForm.valid)">Post</button>
+                            <button type="button" [hidden]="model.register_status !== 'DONE'"
+                                class="btn btn-warning btn-round" data-role="R00021960002197R"
+                                (click)="btnCancel()">Cancel</button>
+                            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                            <!--#endregion button submit back-->
+
+                            <!--#region inquiry status detail row-->
+                            <div class="row">
+                                <!--#region code-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Register No</label>
+                                        <input type="text" class="form-control" [ngModel]="model.register_no"
+                                            maxlength="50" name="p_register_no" [readonly]="isReadOnly">
+                                        <input type="hidden" class="form-control" [ngModel]="model.code" name="p_code"
+                                            [readonly]="isReadOnly">
+                                    </div>
+                                </div>
+                                <!--#endregion code-->
+
+                                <!--#region branch name-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Branch</label>
+                                        <input type="text" class="form-control" [ngModel]="model.branch_name"
+                                            maxlength="250" name="p_branch_name" [readonly]="isReadOnly">
+                                    </div>
+                                </div>
+                                <!--#endregion branch name-->
+
+                                <!--#region Register Status -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <input type="text" class="form-control" readonly maxlength="20"
+                                            [ngModel]="model.register_status" name="p_register_status">
+                                    </div>
+                                </div>
+                                <!--#endregion  Register Status-->
+
+                                <!--#region Register date-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Register Date </label>
+                                        <input class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                                            angular-mydatepicker [ngModel]="model.register_date" name="p_register_date"
+                                            [options]="myDatePickerOptions" #p_register_date="ngModel"
+                                            #register_date="angular-mydatepicker" autocomplete="off" readonly>
+                                    </div>
+                                </div>
+                                <!--#endregion Register date-->
+
+                                <!--#region fa_code -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>FA Code</label>
+                                        <input type="text" class="form-control" [ngModel]="model.fa_code"
+                                            name="p_fa_code" [readonly]="isReadOnly">
+                                    </div>
+                                </div>
+                                <!--#endregion fa_code-->
+
+                                <!--#region item_name-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Item Name</label>
+                                        <input type="text" class="form-control" [ngModel]="model.item_name"
+                                            name="p_item_name" readonly>
+                                    </div>
+                                </div>
+                                <!--#endregion item_name-->
+
+                                <!--#region Register Procces By-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Processed By </label>
+                                        <input type="text" class="form-control" maxlength="50"
+                                            [ngModel]="model.register_process_by" name="p_register_process_by"
+                                            [readonly]="isReadOnly">
+                                    </div>
+                                </div>
+                                <!--#endregion  Register Procces By-->
+
+                                <!--#region Register Remarks-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Remark </label>
+                                        <textarea type="text" class="form-control" [ngModel]="model.register_remarks"
+                                            maxlength="4000" name="p_register_remarks"
+                                            [readonly]="isReadOnly"></textarea>
+                                    </div>
+                                </div>
+                                <!--#endregion  Register Remarks-->
+                            </div>
+                            <!--#endregion inquiry status detail row-->
+
+                            <span layout="row horizontal-divider">
+                                <hr flex />
+                            </span>
+                            <br>
+
+                            <!--#region inquiry status detail row-->
+                            <div class="row">
+                                <!--#region delivery_date-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="delivery_date" class="control-label">Delivery Date *</label>
+                                        <div>
+                                            <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6"
+                                                placeholder="dd/mm/yyyy" angular-mydatepicker
+                                                [ngModel]="model.delivery_date" name="p_delivery_date"
+                                                [options]="myDatePickerOptions" required #p_delivery_date="ngModel"
+                                                [readonly]="isButton" #delivery_date="angular-mydatepicker"
+                                                autocomplete="off" (click)="delivery_date.toggleCalendar()" />
+                                            <small
+                                                *ngIf="(p_delivery_date.errors?.required && p_delivery_date.touched) || (p_delivery_date.errors?.required && deliveryresultForm.submitted)"
+                                                class="text-danger">
+                                                Delivery Date is required
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--#delivery_date-->
+
+                                <!--#region Delivery Receive By-->
+                                <div class="col-md-4">
+                                    <div class="form-group"
+                                        [class.has-error]="delivery_receive_by.invalid && delivery_receive_by.touched">
+                                        <label for="delivery_receive_by" class="control-label">Delivery Received By
+                                            *</label>
+                                        <input type="text" class="form-control" maxlength="250"
+                                            [ngModel]="model.delivery_receive_by" name="p_delivery_receive_by" required
+                                            #delivery_receive_by="ngModel"
+                                            [readonly]="model.register_status !== 'DELIVERY'">
+                                        <small
+                                            *ngIf="(delivery_receive_by.errors?.required && delivery_receive_by.touched) || (delivery_receive_by.errors?.required && deliveryresultForm.submitted)"
+                                            class="text-danger">
+                                            Delivery Received By is required
+                                        </small>
+                                    </div>
+                                </div>
+                                <!--#endregion Delivery Receive By-->
+
+                                <!--#region delivery_remarks-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="delivery_remarks" class="control-label">Delivery Remark *</label>
+                                        <textarea type="text" class="form-control" [ngModel]="model.delivery_remarks"
+                                            maxlength="4000" name="p_delivery_remarks" required
+                                            #delivery_remarks="ngModel"
+                                            [readonly]="model.register_status !== 'DELIVERY'"></textarea>
+                                        <small
+                                            *ngIf="(delivery_remarks.errors?.required && delivery_remarks.touched) || (delivery_remarks.errors?.required && deliveryresultForm.submitted)"
+                                            class="text-danger">
+                                            Delivery Remark is required
+                                        </small>
+                                    </div>
+                                </div>
+                                <!--#endregion delivery_remarks-->
+                            </div>
+                            <!--#endregion inquiry status detail row-->
+                        </div>
+                    </form>
+                    <!--#endregion form-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

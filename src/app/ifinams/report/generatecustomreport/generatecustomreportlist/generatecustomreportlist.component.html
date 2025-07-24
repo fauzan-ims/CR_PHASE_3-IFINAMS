@@ -1,0 +1,92 @@
+<router-outlet></router-outlet>
+
+<div id="hideMainPanel" class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header">
+                    <h5 class="card-title">Generate Custom Report</h5>
+                </div>
+                <div class="card-body">
+
+                    <!--#region button add-->
+                    <div class="toolbar">
+                        <button class="btn btn-info btn-round" (click)="btnPrint()" data-role="R00022250002226P">
+                            Print
+                        </button>
+                    </div>
+                    <!--#endregion button add-->
+
+                    <!--#region row-->
+                    <div class="row">
+                        <!--#region lookup Report-->
+                        <div class="col-md-4">
+                            <label>Report *</label>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <span>
+                                        <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupReport()" data-toggle="modal" data-target="#lookupModalReport"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.table_name}}
+                                    </span>
+                                    <input type="text" [ngModel]="model.custom_report_code" custom_report_code="p_custom_report_code" hidden
+                                        required #custom_report_code="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion lookup Report-->
+                    </div>
+                    <!--#endregion row-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region modal lookup Report-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalReport" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupReport" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Table</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupreport;let i=index ">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupreport.numberIndex+i+1}}</td>
+                                    <td style="width: 100%;">{{ row.table_name }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowReport(row.code, row.table_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion modal lookup Report-->

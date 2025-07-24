@@ -1,0 +1,77 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Cost Center Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #costcenterForm="ngForm" (ngSubmit)="onFormSubmit(costcenterForm.value, costcenterForm.valid)">
+            <!--#region button submit, button back-->
+            <button type="submit" data-role="R00021310032131C" class="btn btn-info btn-round">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit, button back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region company_code-->
+              <input type="hidden" class="form-control" [ngModel]="model.company_code" name="p_company_code"
+                #company_code="ngModel">
+              <!--#endregion company_code-->
+
+              <!--#region general_code-->
+              <input hidden type="text" [ngModel]="this.param" name="p_general_code">
+              <!--#endregion general_code-->
+
+              <!--#region code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="code" class="control-label">Code *</label>
+                  <input type="text" class="form-control" [ngModel]="model.code" name="p_code" [readonly]="isReadOnly"
+                    required #code="ngModel" maxlength="50">
+                  <small
+                    *ngIf="(code.errors?.required && code.touched) || (code.errors?.required && costcenterForm.submitted)"
+                    class="text-danger">
+                    Code is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region description-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="description" class="control-label">Description *</label>
+                  <textarea [disabled]="model.is_editable === '0'" type="text" class="form-control"
+                    [ngModel]="model.description" name="p_description" required #description="ngModel"
+                    maxlength="250"></textarea>
+                  <small
+                    *ngIf="(description.errors?.required && description.touched) || (description.errors?.required && costcenterForm.submitted)"
+                    class="text-danger">
+                    Description is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion description-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

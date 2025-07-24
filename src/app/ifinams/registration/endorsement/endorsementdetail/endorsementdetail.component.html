@@ -1,0 +1,1195 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Endorsement Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #EndorsementForm="ngForm" (ngSubmit)="onFormSubmit(EndorsementForm.value, EndorsementForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="submit" [hidden]="model.endorsement_status !== 'HOLD'" class="btn btn-info btn-round"
+              data-role="R00022000012200C">Save</button>
+
+            <button type="button" [hidden]="model.endorsement_status !== 'HOLD' || param == null"
+              data-role="R00022000002201O" class="btn btn-success btn-round"
+              (click)="btnProceed(model.code)">Proceed</button>
+
+            <button type="button" [hidden]="model.endorsement_status !== 'ON PROCESS'" class="btn btn-success btn-round"
+              (click)="btnApprove(model.code)" data-role="R00022000012200O">Approve</button>
+
+            <button [hidden]="!isCancel" type="button" class="btn btn-warning btn-round" data-role="R00022000002201R"
+              (click)="btnCancel(model.code)">Cancel</button>
+
+            <button [hidden]="!isReject" type="button" class="btn btn-warning btn-round" data-role="R00022000002201R"
+              (click)="btnReject(model.code)">Reject</button>
+
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Code-->
+              <div class="col-md-4">
+                <div [hidden]="model.code != null" class="row" style="margin-bottom: -15px; padding-top: 30px;">
+                  <h1 class="col-md-4" style="font-size: 12px;">Endorsement No</h1>
+                  <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                    Generate-</h1>
+                </div>
+                <div [hidden]="model.code == null" class="form-group">
+                  <label>Endorsement No *</label>
+                  <input type="text" class="form-control" [ngModel]="model.code" maxlength="50" name="p_code"
+                    [readonly]="isReadOnly">
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region lookup Branch Code -->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="labelmodule ">Branch *</label>
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button [disabled]="isReadOnly" class="btn btn-icon btn-outline-default btn-round btn-md"
+                        type="button" (click)="btnLookupBranch()" data-toggle="modal" data-target="#lookupModalBranch"
+                        href="#">
+                        <i class="fa fa-search-plus"></i></button>
+                      {{model.branch_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_code" name="p_branch_code">
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_name" name="p_branch_name"
+                        required #branch_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="branch_name.valid || (branch_name.pristine && !EndorsementForm.submitted)"
+                    class="text-danger">
+                    Branch is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion lookup Branch code -->
+
+              <!--#region endorsement_request_code-->
+              <!-- <div class="col-md-4">
+                <div class="form-group">
+                  <label>Request No</label>
+                  <input type="text" class="form-control" maxlength="50" [ngModel]="model.endorsement_request_code"
+                    name="p_endorsement_request_code" readonly>
+                </div>
+              </div> -->
+              <!--#endregion endorsement_request_code-->
+
+              <!--#region Endorsement Status-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Status </label>
+                  <input type="text" class="form-control" maxlength="10" [ngModel]="model.endorsement_status"
+                    name="p_endorsement_status" readonly>
+                </div>
+              </div>
+              <!--#endregion Endorsement Status-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Endorsement Date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="endorsement_date" class="control-label">Date *</label>
+                  <div>
+                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                      angular-mydatepicker [ngModel]="model.endorsement_date" name="p_endorsement_date"
+                      [options]="myDatePickerOptions" required #p_endorsement_date="ngModel" [readonly]="isButton"
+                      #endorsement_date="angular-mydatepicker" autocomplete="off"
+                      (click)="endorsement_date.toggleCalendar()" />
+                    <small
+                      *ngIf="(p_endorsement_date.errors?.required && p_endorsement_date.touched) || (p_endorsement_date.errors?.required && EndorsementForm.submitted)"
+                      class="text-danger">
+                      Date is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Endorsement Date-->
+
+              <!--#region Policy No-->
+              <div class="col-md-4">
+                <label>Policy No *</label>
+                <div class="form-group">
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button [disabled]="isReadOnly" class="btn btn-icon btn-outline-default btn-round btn-md"
+                        type="button" (click)="btnLookupPolicy()" data-target="#lookupModalPolicy" data-toggle="modal"
+                        href="#">
+                        <i class="fa fa-search-plus"></i></button> {{model.policy_no}}
+                      <input type="hidden" name="p_policy_code" [ngModel]="model.policy_code" required
+                        #policy_code="ngModel" />
+                      <input type="hidden" name="p_policy_no" [ngModel]="model.policy_no" />
+                    </span>
+                  </div>
+                  <small [hidden]="policy_code.valid || (policy_code.pristine && !EndorsementForm.submitted)"
+                    class="text-danger">
+                    Policy No is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Policy No-->
+
+              <!--#region Fixed Asset No-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Fixed Asset No</label>
+                  <input type="text" class="form-control" [ngModel]="model.fa_code" name="p_fa_code" readonly>
+                </div>
+              </div>
+              <!--#endregion Fixed Asset No-->
+
+              <!--#region Fixed Asset Name-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Fixed Asset Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.fa_name" name="p_fa_name" readonly>
+                </div>
+              </div>
+              <!--#endregion Fixed Asset Name-->
+
+              <!--#region Insurance Type-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Insurance Type</label>
+                  <input type="text" class="form-control" [ngModel]="model.insurance_type" name="p_insurance_type"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion Insurance Type-->
+
+              <!--#region Insurance Name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Insurance Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.insurance_name" name="p_insurance_name"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion Insurance Name-->
+
+              <!--#region Insurance QQ Name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Insurance QQ Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.insured_qq_name" name="p_insured_qq_name"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion Insurance QQ Name-->
+
+              <!--#region policy_eff_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Effective Date </label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.policy_eff_date" name="p_policy_eff_date" [options]="myDatePickerOptions" required
+                    #p_policy_eff_date="ngModel" readonly #policy_eff_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion policy_eff_date-->
+
+              <!--#region policy_exp_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Expired Date </label>
+                  <div>
+                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                      [ngModel]="model.policy_exp_date" name="p_policy_exp_date" [options]="myDatePickerOptions"
+                      required #p_policy_exp_date="ngModel" readonly #policy_exp_date="angular-mydatepicker"
+                      autocomplete="off" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion policy_exp_date-->
+
+              <!--#region Endorsement Type-->
+              <div class="col-md-4">
+                <label>Endorsement Type</label>
+                <div class="form-group col-md-12">
+                  <div class="row">
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="p_endorsement_type" value="FN"
+                          [(ngModel)]="model.endorsement_type" [disabled]="isReadOnly">FINANCIAL
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="p_endorsement_type" value="NFN"
+                          [(ngModel)]="model.endorsement_type" [disabled]="model.endorsement_status !== 'HOLD'">NON
+                        FINANCIAL
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Endorsement Type-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Endorsement Payment Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Payment Amount </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="24"
+                    amount="endorsement_payment_amount" [ngModel]="model.endorsement_payment_amount | number : '1.2-2'"
+                    name="p_endorsement_payment_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion Endorsement Payment Amount-->
+
+              <!--#region lookup Reason -->
+              <div class="col-md-4">
+                <label class="labelgsubcode">Reason *</label>
+                <div class="form-group">
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupReason()" data-toggle="modal" data-target="#lookupModalReason" href="#"
+                        [disabled]="model.endorsement_status != 'HOLD'">
+                        <i class="fa fa-search-plus"></i></button>
+                      {{model.endorsement_reason_desc}}
+                      <input type="hidden" class="form-control" [ngModel]="model.endorsement_reason_code"
+                        name="p_endorsement_reason_code" required #endorsement_reason_code="ngModel">
+                    </span>
+                  </div>
+                  <small
+                    [hidden]="endorsement_reason_code.valid || (endorsement_reason_code.pristine && !EndorsementForm.submitted)"
+                    class="text-danger">
+                    Reason is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion lookup Reason -->
+
+              <!--#region Endorsement Remark-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="endorsement_remarks" class="control-label">Remark *</label>
+                  <textarea type="text" class="form-control" maxlength="4000" [ngModel]="model.endorsement_remarks"
+                    [readonly]="model.endorsement_status !== 'HOLD'" name="p_endorsement_remarks" required
+                    #endorsement_remarks="ngModel"></textarea>
+                  <small
+                    *ngIf="(endorsement_remarks.errors?.required && endorsement_remarks.touched) || (endorsement_remarks.errors?.required && EndorsementForm.submitted)"
+                    class="text-danger">
+                    Remark is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Endorsement Remark-->
+
+              <!--#region Endorsement Received Amount-->
+              <!-- <div class="col-md-4">
+                <div class="form-group">
+                  <label>Received Amount </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="24"
+                    amount="endorsement_received_amount"
+                    [ngModel]="model.endorsement_received_amount | number : '1.2-2'"
+                    name="p_endorsement_received_amount" readonly>
+                </div>
+              </div> -->
+              <!--#endregion Endorsement Received Amount-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+
+
+          <div *ngIf="param != null">
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+            <div class="row">
+
+              <div class="col-md-6">
+                <div class="card-header">
+                  <h5 class="card-title">Endorsement Detail Old</h5>
+                </div>
+                <div class="card-body ">
+                  <br><br><br>
+
+                  <!--#region row-->
+                  <div class="row">
+                    <!--#region id-->
+                    <input hidden type="text" [ngModel]="modelOld.id" name="p_id">
+                    <!--#endregion id-->
+
+                    <!--#region Endorsement Code-->
+                    <input type="text" [ngModel]="this.param" name="p_endorsement_code" hidden>
+                    <!--#endregion Endorsement Code-->
+
+                    <!--#region Old Or New-->
+                    <input type="text" [ngModel]="modelOld.old" name="p_old_or_new" hidden>
+                    <!--#endregion Old Or New-->
+
+                    <!--#region Old Or New-->
+                    <input type="text" [ngModel]="modelOld.collateral_type_code_old" name="p_collateral_type_code_old"
+                      hidden>
+                    <!--#endregion Old Or New-->
+
+                    <!--#region Collateral Type-->
+                    <div class="col-md-6" [hidden]="model.insurance_type !== 'NON LIFE'">
+                      <div class="form-group">
+                        <label>Collateral Type</label>
+                        <input type="text" class="form-control" [ngModel]="modelOld.collateral_type_name_old"
+                          name="p_collateral_type_name_old" readonly>
+                      </div>
+                    </div>
+                    <!--#endregion Collateral Type-->
+
+                    <!--#region colllateral category-->
+                    <div class="col-md-6" [hidden]="model.insurance_type !== 'NON LIFE'">
+                      <div class="form-group">
+                        <label>Collateral Category</label>
+                        <div class="col-md-12 buttons btn-lookup-margin">
+                          <span>
+                            <button hidden [disabled]="isReadOnly"
+                              class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                              (click)="btnLookupCollateralCategory()" data-toggle="modal"
+                              data-target="#lookupModalCollateralCategory" href="#"><i
+                                class="fa fa-search-plus"></i></button>
+                            {{modelOld.category_name_old}}
+                            <input type="hidden" class="form-control" [ngModel]="modelOld.collateral_category_code_old"
+                              name="p_collateral_category_code">
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <!--#endregion colllateral category-->
+
+                    <!--#region Occupation Code-->
+                    <div class="col-md-6"
+                      [hidden]="modelOld.collateral_type_code_old === 'VHCL' || model.insurance_type !== 'NON LIFE'">
+                      <label>Occupation Name</label>
+                      <div class="form-group">
+                        <div class="col-md-12 buttons btn-lookup-margin">
+                          <span>
+                            <button hidden [disabled]="isReadOnly"
+                              class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                              (click)="btnLookupOccupation()" data-target="#lookupModalOccupation" data-toggle="modal"
+                              href="#">
+                              <i class="fa fa-search-plus"></i></button> {{modelOld.occupation_name_old}}
+                            <input type="hidden" name="p_occupation_code" [ngModel]="modelOld.occupation_code_old" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <!--#endregion Occupation Code-->
+
+                    <!--#region Region Code-->
+                    <div class="col-md-6"
+                      [hidden]="modelNew.collateral_type_code_old !== 'VHCL' || model.insurance_type !== 'NON LIFE'">
+                      <label>Region Name</label>
+                      <div class="form-group">
+                        <div class="col-md-12 buttons btn-lookup-margin">
+                          <span>
+                            <button hidden [disabled]="isReadOnly"
+                              class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                              (click)="btnLookupRegion()" data-target="#lookupModalRegion" data-toggle="modal" href="#">
+                              <i class="fa fa-search-plus"></i></button> {{modelOld.region_name_old}}
+                            <input type="hidden" name="p_region_code" [ngModel]="modelOld.region_code_old" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <!--#endregion Region Code-->
+
+                    <!--#region Insured Name-->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label> Insured Name </label>
+                        <input type="text" class="form-control" [ngModel]="modelOld.insured_name_old"
+                          name="p_insured_name" readonly>
+                      </div>
+                    </div>
+                    <!--#endregion Insured Name-->
+
+                    <!--#region Insured QQ Name-->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label> Insured QQ Name </label>
+                        <input type="text" class="form-control" [ngModel]="modelOld.insured_qq_name_old"
+                          name="p_insured_qq_name" readonly>
+                      </div>
+                    </div>
+                    <!--#endregion Insured QQ Name-->
+
+                    <!--#region Object Name-->
+                    <div class="col-md-6" [hidden]="model.insurance_type !== 'NON LIFE'">
+                      <div class="form-group">
+                        <label>Object Name</label>
+                        <input type="text" class="form-control" [ngModel]="modelOld.object_name_old"
+                          name="p_object_name" readonly>
+                      </div>
+                    </div>
+                    <!--#endregion Object Name-->
+
+                    <!--#region Eff Date-->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Effective Date</label>
+                        <input [ngStyle]="getStyles(isButton)" class="form-control" placeholder="dd/mm/yyyy"
+                          angular-mydatepicker [ngModel]="modelOld.eff_date" name="p_eff_date"
+                          [options]="myDatePickerOptions" #p_eff_date="ngModel" readonly
+                          #eff_date="angular-mydatepicker" autocomplete="off" readonly id="eff_date" />
+                      </div>
+                    </div>
+                    <!--#endregion Eff Date-->
+
+                    <!--#region Exp Date-->
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label>Expired Date</label>
+                        <input [ngStyle]="getStyles(isButton)" class="form-control" placeholder="dd/mm/yyyy"
+                          angular-mydatepicker [ngModel]="modelOld.exp_date" name="p_exp_date"
+                          [options]="myDatePickerOptions" #p_exp_date="ngModel" readonly
+                          #exp_date="angular-mydatepicker" autocomplete="off" readonly id="exp_date" />
+                      </div>
+                    </div>
+                    <!--#endregion Exp Date-->
+                  </div>
+                  <!--#endregion row-->
+                </div>
+                <div class="card-footer ">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card-header">
+                  <h5 class="card-title">Endorsement Detail New</h5>
+                </div>
+                <div class="card-body ">
+                  <!--#region form-->
+                  <form #EndorsementdetailForm="ngForm"
+                    (ngSubmit)="onFormSubmitEndorsementDetail(EndorsementdetailForm.value, EndorsementdetailForm.valid)">
+
+                    <!--#region button submit dan back-->
+                    <button [hidden]="model.endorsement_status !== 'HOLD'" type="submit" class="btn btn-info btn-round"
+                      data-role="R00022000022200C">Save</button>
+                    <!--#endregion button submit dan back-->
+
+                    <!--#region row-->
+                    <div class="row">
+                      <!--#region id-->
+                      <input hidden type="text" [ngModel]="modelNew.id" name="p_id">
+                      <!--#endregion id-->
+
+                      <!--#region Endorsement Code-->
+                      <input type="text" [ngModel]="this.param" name="p_endorsement_code" hidden>
+                      <!--#endregion Endorsement Code-->
+
+                      <!--#region Old Or New-->
+                      <input type="text" [ngModel]="modelNew.new" name="p_old_or_new" hidden>
+                      <!--#endregion Old Or New-->
+
+                      <!--#region Old Or New-->
+                      <input type="text" [ngModel]="modelOld.collateral_type_code_old" name="p_collateral_type_code_old"
+                        hidden>
+                      <!--#endregion Old Or New-->
+
+                      <!--#region Collateral Type-->
+                      <div class="col-md-6" [hidden]="model.insurance_type !== 'NON LIFE'">
+                        <div class="form-group">
+                          <label>Collateral Type</label>
+                          <input type="text" class="form-control" [(ngModel)]="modelNew.collateral_type_name_new"
+                            name="p_collateral_type_name_new" readonly>
+                        </div>
+                      </div>
+                      <!--#endregion Collateral Type-->
+
+                      <!--#region colllateral category-->
+                      <div class="col-md-6" [hidden]="model.insurance_type !== 'NON LIFE'">
+                        <div class="form-group">
+                          <label>Collateral Category </label>
+                          <div class="col-md-12 buttons btn-lookup-margin">
+                            <span>
+                              <button [disabled]="model.endorsement_type === 'NFN'" hidden
+                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                (click)="btnLookupCollateralCategory()" data-toggle="modal"
+                                data-target="#lookupModalCollateralCategory" href="#"><i
+                                  class="fa fa-search-plus"></i></button>
+                              {{modelNew.category_name_new}}
+                              <input type="hidden" class="form-control"
+                                [ngModel]="modelNew.collateral_category_code_new" name="p_collateral_category_code"
+                                [disabled]="model.insurance_type !== 'NON LIFE'">
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <!--#endregion colllateral category-->
+
+                      <!--#region Occupation Code-->
+                      <div class="col-md-6"
+                        [hidden]="modelNew.collateral_type_code_new === 'VHCL' || model.insurance_type !== 'NON LIFE'">
+                        <label>Occupation Name </label>
+                        <div class="form-group">
+                          <div class="col-md-12 buttons btn-lookup-margin">
+                            <span>
+                              <button hidden
+                                [disabled]="model.endorsement_type === 'NFN' || modelNew.collateral_type_code_new === 'VHCL'"
+                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                (click)="btnLookupOccupation()" data-target="#lookupModalOccupation" data-toggle="modal"
+                                href="#">
+                                <i class="fa fa-search-plus"></i></button> {{modelNew.occupation_name_new}}
+                              <input type="hidden" name="p_occupation_code" [ngModel]="modelNew.occupation_code_new"
+                                [disabled]="model.endorsement_type === 'NFN' || modelNew.collateral_type_code_new === 'VHCL'" />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <!--#endregion Occupation Code-->
+
+                      <!--#region Region Code-->
+                      <div class="col-md-6"
+                        [hidden]="modelNew.collateral_type_code_new !== 'VHCL' || model.insurance_type !== 'NON LIFE'">
+                        <label>Region Name </label>
+                        <div class="form-group">
+                          <div class="col-md-12 buttons btn-lookup-margin">
+                            <span>
+                              <button
+                                [disabled]="model.endorsement_type === 'NFN' || model.insurance_type !== 'NON LIFE' || modelNew.collateral_type_code_new !== 'VHCL'"
+                                hidden class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                (click)="btnLookupRegion()" data-target="#lookupModalRegion" data-toggle="modal"
+                                href="#">
+                                <i class="fa fa-search-plus"></i></button> {{modelNew.region_name_new}}
+                              <input type="hidden" name="p_region_code" [ngModel]="modelNew.region_code_new"
+                                [readonly]="model.insurance_type !== 'NON LIFE' || model.endorsement_type === 'NFN'" />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <!--#endregion Region Code-->
+
+                      <!--#region Insured Name-->
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="insured_name" class="control-label"> Insured Name *</label>
+                          <input type="text" class="form-control" [ngModel]="modelNew.insured_name_new"
+                            name="p_insured_name" required #insured_name="ngModel"
+                            [readonly]="model.endorsement_status !== 'HOLD'">
+                          <small
+                            *ngIf="(insured_name.errors?.required && insured_name.touched) || (insured_name.errors?.required && EndorsementdetailForm.submitted)"
+                            class="text-danger">
+                            Insured Name Code is required
+                          </small>
+                        </div>
+                      </div>
+                      <!--#endregion Insured Name-->
+
+                      <!--#region Insured QQ Name-->
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="insured_qq_name" class="control-label"> Insured QQ Name *</label>
+                          <input type="text" class="form-control" [ngModel]="modelNew.insured_qq_name_new"
+                            name="p_insured_qq_name" required #insured_qq_name="ngModel"
+                            [readonly]="model.endorsement_status !== 'HOLD'">
+                          <small
+                            *ngIf="(insured_qq_name.errors?.required && insured_qq_name.touched) || (insured_qq_name.errors?.required && EndorsementdetailForm.submitted)"
+                            class="text-danger">
+                            Insured QQ Name Code is required
+                          </small>
+                        </div>
+                      </div>
+                      <!--#endregion Insured QQ Name-->
+
+                      <!--#region Object Name-->
+                      <div class="col-md-6" [hidden]="model.insurance_type !== 'NON LIFE'">
+                        <div class="form-group">
+                          <label for="object_name" class="control-label">Object Name *</label>
+                          <input type="text" class="form-control" [ngModel]="modelNew.object_name_new"
+                            name="p_object_name" #object_name="ngModel"
+                            [readonly]="model.endorsement_status !== 'HOLD'">
+                          <small
+                            *ngIf="(object_name.errors?.required && object_name.touched) || (object_name.errors?.required && EndorsementdetailForm.submitted)"
+                            class="text-danger">
+                            Object Name is required
+                          </small>
+                        </div>
+                      </div>
+                      <!--#endregion Object Name-->
+                    </div>
+                    <!--#endregion row-->
+
+                    <!--#region row (disabled)-->
+                    <div class="row">
+                      <!--#region Eff Date-->
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="eff_date" class="control-label">Effective Date</label>
+                          <div>
+                            <input [ngStyle]="getStyles(isButton)" class="form-control" placeholder="dd/mm/yyyy"
+                              angular-mydatepicker [ngModel]="modelNew.eff_date" name="p_eff_date"
+                              [options]="myDatePickerOptions" required #p_eff_date="ngModel" readonly
+                              #eff_date="angular-mydatepicker" autocomplete="off" readonly id="eff_date" />
+                          </div>
+                        </div>
+                      </div>
+                      <!--#endregion Eff Date-->
+
+                      <!--#region Exp Date-->
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label [hidden]="model.endorsement_type === 'NFN'" for="exp_date"
+                            class="control-label">Expired
+                            Date *
+                            <i style="color:orangered">New Policy end
+                              date</i></label>
+                          <label [hidden]="model.endorsement_type === 'FN'" for="exp_date" class="control-label">Expired
+                            Date
+                            <i style="color:orangered">New Policy end
+                              date</i></label>
+                          <div>
+                            <input [ngStyle]="getStyles(isButton||model.endorsement_type === 'NFN')"
+                              class="form-control" placeholder="dd/mm/yyyy" angular-mydatepicker
+                              [ngModel]="modelNew.exp_date" name="p_exp_date" [options]="myDatePickerOptions" required
+                              #p_exp_date="ngModel" [readonly]="isButton" #exp_date="angular-mydatepicker"
+                              [readonly]="model.endorsement_type === 'NFN'" autocomplete="off"
+                              (click)="exp_date.toggleCalendar()" />
+                            <small
+                              *ngIf="(p_exp_date.errors?.required && p_exp_date.touched) || (p_exp_date.errors?.required && EndorsementdetailForm.submitted)"
+                              class="text-danger">
+                              Expired Date is required
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                      <!--#endregion Exp Date-->
+                    </div>
+                    <!--#endregion row-->
+                  </form>
+                  <!--#endregion form-->
+                </div>
+                <div class="card-footer ">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="param != null" [hidden]="model.endorsement_type === 'NFN'">
+            <div class="col-md-6">
+              <div class="card-header">
+                <h4 class="card-title">Endorsement Old Period List</h4>
+              </div>
+              <div class="card-body">
+                <br><br><br>
+                <!--#region list view-->
+                <table id="datatableEndorsementOldPeriod" datatable [dtOptions]="dtOptionsEndorsementOldPeriod"
+                  class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th style="display: none;"></th>
+                      <th class="disabled-sorting">No</th>
+                      <th>Coverage</th>
+                      <th>Year</th>
+                      <th>Buy Amount</th>
+                      <th>Remain Buy</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of listendorsementperiod; let i=index">
+                      <td style="display: none;"></td>
+                      <td style="text-align: center;">{{listendorsementperiod.numberIndex+i+1}}</td>
+                      <td style="width: 50%;">{{row.coverage_name}}</td>
+                      <td style="width: 10%;text-align: center;">{{row.year_period}}</td>
+                      <td style="width: 20%;text-align: right; ">{{row.initial_sell_amount | number : '1.2-2'}}</td>
+                      <td style="width: 20%;text-align: right;">{{row.remain_sell | number : '1.2-2'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--#endregion list view-->
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="card-header">
+                <h4 class="card-title">Endorsement New Period List</h4>
+              </div>
+              <div class="card-body">
+                <!--#executoraddress button add, delete-->
+                <button [hidden]="model.endorsement_status !== 'HOLD'" class="btn btn-info btn-round"
+                  (click)="btnAddPeriod(model.fa_name, model.insurance_type)" data-role="R00022000032200C">
+                  Add
+                </button>
+
+                <button [hidden]="model.endorsement_status !== 'HOLD'" class="btn btn-danger btn-round"
+                  (click)="btnDeleteAllPeriod()" data-role="R00022000012200D">
+                  Delete
+                </button>
+                <!--#endexecutoraddress button add, delete-->
+
+                <!--#region list view-->
+                <table id="datatableEndorsementNewPeriod" datatable [dtOptions]="dtOptionsEndorsementNewPeriod"
+                  class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th class="disabled-sorting">No</th>
+                      <th class="disabled-sorting">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" id="checkall"
+                              [(ngModel)]="selectedAllPeriod" (change)="selectAllTablePeriod();" />
+                            <span class="form-check-sign"></span>
+                          </label>
+                        </div>
+                      </th>
+                      <th>Coverage</th>
+                      <th>Year</th>
+                      <th>Buy Amount </th>
+                      <th>Remain Buy </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of listendorsementnewperiod; let i=index">
+                      <td style="text-align: center;">{{listendorsementnewperiod.numberIndex+i+1}}</td>
+                      <td>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" [(ngModel)]="row.selectedPeriod"
+                              (change)="checkIfAllTableSelectedPeriod($event, row.id);">
+                            <span class="form-check-sign"></span>
+                          </label>
+                        </div>
+                      </td>
+                      <td style="width: 50%;">{{row.coverage_name}}</td>
+                      <td style="width: 10%;text-align: center;">{{row.year_period}}</td>
+                      <td style="width: 20%;text-align: right; ">{{row.initial_sell_amount | number : '1.2-2'}}</td>
+                      <td style="width: 20%;text-align: right;">{{row.remain_sell | number : '1.2-2'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--#endregion list view-->
+              </div>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="param != null" hidden>
+            <div class="col-md-6">
+              <div class="card-header">
+                <h4 class="card-title">Endorsement Old Loading List</h4>
+              </div>
+              <div class="card-body">
+                <br><br><br>
+                <!--#region list view-->
+                <table id="datatableEndorsementOldLoading" datatable [dtOptions]="dtOptionsEndorsementOldLoading"
+                  class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th style="display: none;"></th>
+                      <th class="disabled-sorting">No</th>
+                      <th>Loading</th>
+                      <th>Year</th>
+                      <th>Buy Amount / Sell Amount</th>
+                      <th>Remain Buy / Remain Sell </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of listendorsementloading; let i=index">
+                      <td style="display: none;"></td>
+                      <td style="text-align: center;">{{listendorsementloading.numberIndex+i+1}}</td>
+                      <td style="width: 50%;">{{row.loading_name}}</td>
+                      <td style="width: 10%;text-align: center;">{{row.year_period}}</td>
+                      <td style="width: 20%;text-align: right;">{{row.initial_buy_amount | number : '1.2-2'}} <br>
+                        {{row.initial_sell_amount | number : '1.2-2'}}
+                      </td>
+                      <td style="width: 20%;text-align: right;">{{row.remain_buy | number : '1.2-2'}} <br>
+                        {{row.remain_sell | number : '1.2-2'}} </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--#endregion list view-->
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="card-header">
+                <h5 class="card-title">Endorsement New Loading List</h5>
+              </div>
+              <div class="card-body">
+                <!--#executoraddress button add, delete-->
+                <button [hidden]="model.endorsement_status !== 'HOLD'" class="btn btn-info btn-round"
+                  (click)="btnAddLoading(model.agreement_external_no, model.client_name)" data-role="R00002480000000C">
+                  Add
+                </button>
+                <button [hidden]="model.endorsement_status !== 'HOLD'" class="btn btn-danger btn-round"
+                  (click)="btnDeleteAllLoading()" data-role="R00002480000249D">
+                  Delete
+                </button>
+                <!--#end executoraddress button add, delete-->
+
+                <!--#region list view-->
+                <table id="datatableEndorsementNewLoading" datatable [dtOptions]="dtOptionsEndorsementNewLoading"
+                  class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th class="disabled-sorting">No</th>
+                      <th class="disabled-sorting">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" id="checkall"
+                              [(ngModel)]="selectedAllLoading" (change)="selectAllTableLoading();" />
+                            <span class="form-check-sign"></span>
+                          </label>
+                        </div>
+                      </th>
+                      <th>Loading</th>
+                      <th>Year</th>
+                      <th>Buy Amount / Sell Amount</th>
+                      <th>Remain Buy / Remain Sell </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of listendorsementnewloading; let i=index">
+                      <td style="text-align: center;">{{listendorsementnewloading.numberIndex+i+1}}</td>
+                      <td>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" [(ngModel)]="row.selectedLoading"
+                              (change)="checkIfAllTableSelectedLoading($event, row.id);">
+                            <span class="form-check-sign"></span>
+                          </label>
+                        </div>
+                      </td>
+                      <td style="width: 50%;">{{row.loading_name}}</td>
+                      <td style="width: 10%;text-align: center;">{{row.year_period}}</td>
+                      <td style="width: 20%;text-align: right;">{{row.initial_buy_amount | number : '1.2-2'}} <br>
+                        {{row.initial_sell_amount | number : '1.2-2'}}
+                      </td>
+                      <td style="width: 20%;text-align: right;">{{row.remain_buy | number : '1.2-2'}} <br>
+                        {{row.remain_sell | number : '1.2-2'}} </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!--#endregion list view-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!--#region modal lookup Branch-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranch"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupBranch" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Branch Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupSysBranch;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupSysBranch.numberIndex+i+1}}</td>
+                  <td style="text-align: center; width: 20%;">{{row.code}}</td>
+                  <td style="width: 80%;">{{row.name}}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowBranch(row.code,row.name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion modal lookup Branch-->
+
+<!--#region lookup policy -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalPolicy"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupPolicy" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Policy No</th>
+                  <th>Insurance Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookuppolicy;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookuppolicy.numberIndex+i+1}}</td>
+                  <td style="width: 20%;text-align: center">{{ row.policy_no }}</td>
+                  <td style="width: 80%;text-align: left">{{ row.insurance_name}}</td>
+                  <td style="text-align: center;">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowPolicy(row.code, row.policy_no, row.client_no, row.client_name, row.insurance_name, row.insurance_type, row.policy_eff_date, row.policy_exp_date)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Policy -->
+
+<!--#region lookup Occupation Code -->
+<div class="modal" id="lookupModalOccupation" style="margin-top: -75px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <form>
+          <div class="col-md-12 buttons btn-lookup-margin">
+            <div class="card-body col-md-12" style="width: 100%">
+              <table id="datatableLookupOccupation" class="table table-striped table-bordered hover" cellspacing="0"
+                style="min-width: 100%;">
+                <thead>
+                  <tr>
+                    <th style="display: none;"></th>
+                    <th class="disabled-sorting">No</th>
+                    <th>Description</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of lookupoccupation;  let i=index">
+                    <td style="display: none;"></td>
+                    <td style="text-align: center;">{{lookupoccupation.numberIndex+i+1}}</td>
+                    <td style="text-align: left;width: 100%;">{{ row.occupation_name}}</td>
+                    <td class="text-center">
+                      <button class="btn btn-outline-default btn-round"
+                        (click)="btnSelectRowOccupation(row.code, row.occupation_name)">Select</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Occupation Code -->
+
+<!--#region lookup Region -->
+<div class="modal" id="lookupModalRegion" style="margin-top: -75px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <form>
+          <div class="col-md-12 buttons btn-lookup-margin">
+            <div class="card-body col-md-12" style="width: 100%">
+              <table id="datatableLookupRegion" class="table table-striped table-bordered hover" cellspacing="0"
+                style="min-width: 100%;">
+                <thead>
+                  <tr>
+                    <th style="display: none;"></th>
+                    <th class="disabled-sorting">No</th>
+                    <th>Description</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of lookupregion;  let i=index">
+                    <td style="display: none;"></td>
+                    <td style="text-align: center;">{{lookupregion.numberIndex+i+1}}</td>
+                    <td style="width: 100%;">{{ row.region_name}}</td>
+                    <td class="text-center">
+                      <button class="btn btn-outline-default btn-round"
+                        (click)="btnSelectRowRegion(row.code, row.region_name)">Select</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Region -->
+
+<!--#region collateral type-->
+<div class="modal" id="lookupModalCollateralType" style="margin-top: -75px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <form>
+          <div class="col-md-12 buttons btn-lookup-margin">
+            <div class="card-body col-md-12" style="width: 100%">
+              <table id="datatableLookupCollateralType" class="table table-striped table-bordered hover" cellspacing="0"
+                style="min-width: 100%;">
+                <thead>
+                  <tr>
+                    <th style="display: none;"></th>
+                    <th class="disabled-sorting">No</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of lookupcollateraltype;  let i=index">
+                    <td style="display: none;"></td>
+                    <td style="text-align: center;">{{lookupcollateraltype.numberIndex+i+1}}</td>
+                    <td class="text-center">{{ row.code }}</td>
+                    <td>{{ row.description }}</td>
+                    <td class="text-center">
+                      <button class="btn btn-outline-default btn-round"
+                        (click)="btnSelectRowCollateralType(row.code, row.description)">Select</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion collateral type-->
+
+<!--#region collateral category-->
+<div class="modal" id="lookupModalCollateralCategory" style="margin-top: -75px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <form>
+          <div class="col-md-12 buttons btn-lookup-margin">
+            <div class="card-body col-md-12" style="width: 100%">
+              <table id="datatableLookupCollateralCategory" class="table table-striped table-bordered hover"
+                cellspacing="0" style="min-width: 100%;">
+                <thead>
+                  <tr>
+                    <th style="display: none;"></th>
+                    <th class="disabled-sorting">No</th>
+                    <th>Code</th>
+                    <th>Description</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of lookupcollateralcategory;  let i=index">
+                    <td style="display: none;"></td>
+                    <td style="text-align: center;">{{lookupcollateralcategory.numberIndex+i+1}}</td>
+                    <td class="text-center">{{ row.code }}</td>
+                    <td>{{ row.category_name }}</td>
+                    <td class="text-center">
+                      <button class="btn btn-outline-default btn-round"
+                        (click)="btnSelectRowCollateralCategory(row.code, row.category_name)">Select</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion collateral category-->
+
+<!--#region lookup Reason -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalReason"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupReason" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Description</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupReason;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupReason.numberIndex+i+1}}</td>
+                  <td style="width: 100%;">{{ row.general_subcode_desc}}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowReason(row.code, row.general_subcode_desc)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Reason -->

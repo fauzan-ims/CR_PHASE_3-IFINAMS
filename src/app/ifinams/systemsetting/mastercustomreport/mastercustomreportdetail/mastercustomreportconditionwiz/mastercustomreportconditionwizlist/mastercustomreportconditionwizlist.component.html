@@ -1,0 +1,180 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card"> -->
+            <div class="card-body">
+                <div class="toolbar">
+                    <!--#region button-->
+                    <button class="btn btn-info btn-round" (click)="btnAdd()" data-role="R00021280042128C">
+                        Add
+                    </button>
+                    <button type="submit" class="btn btn-info btn-round" (click)="btnSaveList()"
+                        data-role="R00021280052128C">
+                        Save
+                    </button>
+                    <button class="btn btn-danger btn-round" (click)="btnDeleteAll()" data-role="R00021280022128D">
+                        Delete
+                    </button>
+                    <!--#endregion button-->
+                </div>
+
+                <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                <!--#region list view-->
+                <table id="datatableMasterReportCondition" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th>
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" id="checkall"
+                                            [(ngModel)]="selectedAll" (change)="selectAll();" />
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </th>
+                            <th>Logical Operator</th>
+                            <th>Column Name</th>
+                            <th>Comparison Operator</th>
+                            <th>Start Value</th>
+                            <th>End Value</th>
+                            <th>Order Key</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listmasterreportcondition; let i=index">
+                            <td style="text-align: center;">{{listmasterreportcondition.numberIndex+i+1}}</td>
+                            <td class="disabled-sorting">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                                            (change)="checkIfAllTableSelected($event, row.id_cond);">
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                                <input hidden name="p_id_cond" [ngModel]="row.id_cond">
+                            </td>
+                            <td style="width: 20%;text-align: center;" class="if-no-edit-btn">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <select class='form-control' value="{{row.logical_operator}}"
+                                            name="p_logical_operator">
+                                            <option value='' hidden></option>
+                                            <option value='WHERE'>WHERE</option>
+                                            <option value='AND'>AND</option>
+                                            <option value='OR'>OR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: left; width: 15%">
+                                <div class="form-group">
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupColumnName(row.id_cond)"
+                                                data-toggle="modal" data-target="#lookupModalColumnName" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{row.column_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="row.column_name"
+                                                name="p_column_name" #column_name="ngModel">
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 20%;text-align: center;" class="if-no-edit-btn">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <select class='form-control' value="{{row.comparison_operator}}"
+                                            name="p_comparison_operator">
+                                            <option value='' hidden></option>
+                                            <option value='MORETHAN'>More Than</option>
+                                            <option value='LESSTHAN'>Less Than</option>
+                                            <option value='EQUAL'>Equal</option>
+                                            <option value='LESSOREQUAL'>Less or Equal Than</option>
+                                            <option value='MOREORLESS'>More or Less Than</option>
+                                            <option value='BETWEEN'>Between</option>
+                                            <option value='LIKE'>Like</option>
+                                            <option value='NOTLIKE'>Not Like</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="text-align: right;width: 15%;">
+                                <textarea type="text" class="form-control" value="{{row.start_value}}"
+                                    name="p_start_value" id="start_value{{i}}" maxlength="4000"></textarea>
+                            </td>
+                            <td style="width: 15%;">
+                                <textarea id="end_value{{i}}" class="form-control" type="text" value="{{row.end_value}}"
+                                    name="p_end_value" maxlength="4000">
+                                </textarea>
+                            </td>
+                            <td style="width: 15%;text-align: center;">
+                                <button [hidden]="row.order_key == '1'" class="btn btn-success btn-round btn-icon"
+                                    (click)="btnOrderUp(row.id_cond)"><i class="fa fa-arrow-up"></i></button>
+                                <button class="btn btn-round btn-icon" style="background-color: transparent;" disabled
+                                    [hidden]="row.order_key != listmasterreportcondition.length"></button>
+                                <button class="btn btn-round btn-icon" style="background-color: transparent;" disabled
+                                    [hidden]="row.order_key != '1' "></button>
+                                <button [hidden]="row.order_key == listmasterreportcondition.length"
+                                    class="btn btn-danger btn-round btn-icon" (click)="btnOrderDown(row.id_cond)"><i
+                                        class="fa fa-arrow-down"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+
+<!--#region lookup ColumnName-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalColumnName"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupColumnName" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <!-- <th>Code</th> -->
+                                    <th>Column Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupColumnName;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupColumnName.numberIndex+i+1}}</td>
+                                    <!-- <td style="text-align: center;">{{ row.column_name }}</td> -->
+                                    <td style="width: 100%;">{{ row.column_name }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowColumnName(row.column_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup ColumnName -->

@@ -1,0 +1,516 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Reverse Sell Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #ReverseSaleForm="ngForm"
+                        (ngSubmit)="onFormSubmit(ReverseSaleForm.value, ReverseSaleForm.valid)">
+                        <!--#region button submit, button back-->
+                        <button [hidden]="model.status !== 'NEW'" type="submit" class="btn btn-info btn-round"
+                            data-role="R00021740012174C">Save</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'NEW'" type="button"
+                            class="btn btn-success btn-round" (click)="btnProceed()"
+                            data-role="R00021740012174O">Proceed</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'ON PROGRESS'" type="button"
+                            class="btn btn-success btn-round" (click)="btnPost()"
+                            data-role="R00021740002175O">Post</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'ON PROGRESS'" type="button"
+                            class="btn btn-warning btn-round" (click)="btnReturn()"
+                            data-role="R00021740012174R">Return</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'NEW'" type="button"
+                            data-role="R00021740002175R" class="btn btn-warning btn-round"
+                            (click)="btnCancel()">Cancel</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'ON PROGRESS'" type="button"
+                            data-role="R00021740022174R" class="btn btn-warning btn-round"
+                            (click)="btnReject()">Reject</button>
+
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+
+                        <button hidden id="reloadHeader" type="button" class="btn btn-danger btn-round"
+                            (click)="this.callGetrow()">Back</button>
+                        <!--#endregion button submit, button back-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" [readonly]="isReadOnly">
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region reverse_sale_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="reverse_sale_date" class="control-label">Reversal Sell Date *</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.reverse_sale_date" name="p_reverse_sale_date"
+                                        [readonly]="model.status !== 'NEW'" [options]="myDatePickerOptions"
+                                        (click)="reverse_sale_date.toggleCalendar()" #p_reverse_sale_date="ngModel"
+                                        #reverse_sale_date="angular-mydatepicker" autocomplete="off" />
+                                    <small
+                                        *ngIf="(p_reverse_sale_date.errors?.required && p_reverse_sale_date.touched) || (p_reverse_sale_date.errors?.required && ReverseSaleForm.submitted)"
+                                        class="text-danger">
+                                        Reversal Sale Date is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion reverse_sale_date-->
+
+                            <!--#region status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status</label>
+                                    <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                        readonly #status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+                        </div>
+                        <!--#endregion div-->
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region Lookup sale_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="sale_code" class="control-label" style="cursor: pointer;"
+                                        title="Clear">Sell No *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="this.param != null"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupSaleNo()" data-toggle="modal"
+                                                data-target="#lookupModalSaleNo" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.sale_code}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.sale_code"
+                                                name="p_sale_code" required #sale_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.sale_code"
+                                                name="p_sale_code" #sale_code="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="sale_code.valid || (sale_code.pristine && !ReverseSaleForm.submitted)"
+                                        class="text-danger">
+                                        Sale No is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup sale_code-->
+
+                            <!--#region Lookup reason_reverse_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reason_reverse_code" class="control-label labelgsubcode"
+                                        style="cursor: pointer;" title="Clear">Reason Reverse *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="model.status !== 'NEW'"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupReasonReverse()" data-toggle="modal"
+                                                data-target="#lookupModalReasonReverse" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.description_reason}}
+                                            <input type="hidden" class="form-control"
+                                                [ngModel]="model.reason_reverse_code" name="p_reason_reverse_code"
+                                                required #reason_reverse_code="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="reason_reverse_code.valid || (reason_reverse_code.pristine && !ReverseSaleForm.submitted)"
+                                        class="text-danger">
+                                        Reason Reverse is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup reason_reverse_code-->
+
+                            <!--#region sale_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="sale_date" class="control-label">Value Date</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        [ngModel]="model.sale_date" name="p_sale_date" [options]="myDatePickerOptions"
+                                        (click)="sale_date.toggleCalendar()" #p_sale_date="ngModel"
+                                        #sale_date="angular-mydatepicker" autocomplete="off" readonly
+                                        (dateChanged)="valueDate($event)" />
+                                </div>
+                            </div>
+                            <!--#endregion allocation_value_date -->
+                        </div>
+                        <!--#endregion div-->
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region branch_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="branch_name" class="control-label">Branch</label>
+                                    <input type="text" class="form-control" [ngModel]="model.branch_name"
+                                        name="p_branch_name" #branch_name="ngModel" maxlength="250" readonly />
+                                    <input type="text" class="form-control" [ngModel]="model.branch_code"
+                                        name="p_branch_code" #branch_code="ngModel" maxlength="250" hidden />
+                                </div>
+                            </div>
+                            <!--#endregion branch_name-->
+
+                            <!--#region location_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="location_name" class="control-label">Location</label>
+                                    <input type="text" class="form-control" [ngModel]="model.location_name"
+                                        name="p_location_name" #location_name="ngModel" maxlength="250" readonly />
+                                    <input type="text" class="form-control" [ngModel]="model.location_code"
+                                        name="p_location_code" #location_code="ngModel" maxlength="250" hidden />
+                                </div>
+                            </div>
+                            <!--#endregion location_name-->
+
+                            <!--#region description-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="description" class="control-label">Description</label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.description"
+                                        name="p_description" #description="ngModel" maxlength="250">
+                                </div>
+                            </div>
+                            <!--#endregion description-->
+                        </div>
+                        <!--#endregion div-->
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region buyer-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="buyer" class="control-label">Buyer</label>
+                                    <input type="text" class="form-control" [ngModel]="model.buyer" name="p_buyer"
+                                        #buyer="ngModel" maxlength="250" readonly />
+                                </div>
+                            </div>
+                            <!--#endregion buyer-->
+
+                            <!--#region buyer_phone_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="buyer_phone_no" class="control-label">Buyer Phone No
+                                    </label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.buyer_phone_no"
+                                        name="p_buyer_phone_no" #buyer_phone_no="ngModel" maxlength="50"
+                                        pattern={{NumberOnlyPattern}}>
+                                    <small *ngIf="buyer_phone_no.errors?.pattern && buyer_phone_no.touched"
+                                        class="text-danger">
+                                        Buyer Phone No is required and format should be <i>0-9</i>
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion buyer_phone_no-->
+
+                            <!--#region sale_amount-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="sale_amount" class="control-label">Sale Amount</label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sale_amount_header | number : '1.2-2'" amount="sale_amount"
+                                            name="p_sale_amount_header" #sale_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sale_amount-->
+
+                            <!--#region sale_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="sale_amount" class="control-label">Orig Amount</label>
+                                    <input type="text" class="form-control col-md-6" style="text-align: right;"
+                                        [ngModel]="model.sale_amount | number : '1.2-2'" name="p_sale_amount"
+                                        #sale_amount="ngModel" maxlength="24" amount="sale_amount" readonly>
+                                </div>
+                            </div>
+                            <!--#endregion sale_amount-->
+                        </div>
+                        <!--#endregion div-->
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region Lookup to_bank_code-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="to_bank_code" class="control-label labelmodule" style="cursor: pointer;"
+                                        title="Clear">Bank *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="model.status !== 'NEW'"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupBank()" data-toggle="modal"
+                                                data-target="#lookupModalBank" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_bank_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_bank_code"
+                                                name="p_to_bank_code" #to_bank_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_bank_name"
+                                                name="p_to_bank_name" #to_bank_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="to_bank_code.valid || (to_bank_code.pristine && !ReverseSaleForm.submitted)"
+                                        class="text-danger">
+                                        Bank is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup to_bank_code-->
+
+                            <!--#region to_bank_account_no-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="to_bank_account_no" class="control-label">Bank Account No</label>
+                                    <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.to_bank_account_no" name="p_to_bank_account_no"
+                                        #to_bank_account_no="ngModel" maxlength="50">
+                                </div>
+                            </div>
+                            <!--#endregion to_bank_account_no-->
+
+                            <!--#region to_bank_account_name-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="to_bank_account_name" class="control-label">Bank Account Name</label>
+                                    <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.to_bank_account_name" name="p_to_bank_account_name"
+                                        #to_bank_account_name="ngModel" maxlength="250">
+                                </div>
+                            </div>
+                            <!--#endregion to_bank_account_name-->
+                        </div>
+                        <!--#endregion div-->
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remark="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remark.errors?.required && remark.touched) || (remark.errors?.required && ReverseSaleForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+
+                <!--#region wizard-->
+                <div class="wizard-custom-margin" [hidden]="param == null">
+                    <!--#region wizard container -->
+                    <div class="wizard-container">
+                        <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+                            id="wizardProfile">
+                            <div class="text-center">
+                                <div class="wizard-navigation">
+                                    <ul>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="saledetailwiz()" href="#saledetail"
+                                                data-toggle="tab" role="tab" aria-controls="saledetail"
+                                                aria-selected="true">
+                                                Asset
+                                            </a>
+                                        </li>
+                                        <!-- <li class="nav-item">
+                                            <a class="nav-link" (click)="salebiddingwiz()" href="#salebidding"
+                                                data-toggle="tab" role="tab" aria-controls="salebiding"
+                                                aria-selected="true">
+                                                Bidding
+                                            </a>
+                                        </li> -->
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="saledocumentwiz()" href="#saledocument"
+                                                data-toggle="tab" role="tab" aria-controls="saledocument"
+                                                aria-selected="true">
+                                                Document
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion wizard container-->
+                </div>
+                <!--endregion wizard-->
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Sale No -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalSaleNo"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupSaleNo" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Sale No</th>
+                                    <th>Sale Date</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupsaleno;let i=index">
+                                    <td style="text-align: center;">{{lookupsaleno.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.sale_no}}</td>
+                                    <td style="width: 25%; text-align: center;">{{row.sale_date_lookup}}</td>
+                                    <td style="width: 45%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round" (click)="btnSelectRowSaleNo(row.sale_no, row.sale_date_lookup, row.description, row.branch_code,
+                                                    row.branch_name, row.location_code, row.location_name, row.buyer, 
+                                                    row.buyer_phone_no, row.sale_amount)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Sale No-->
+
+<!--#region lookup Reason Reverse Code -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalReasonReverse"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupReasonReverse" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupreason;let i=index">
+                                    <td style="text-align: center;">{{lookupreason.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.general_subcode_desc}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowReasonReverse(row.code, row.general_subcode_desc)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Reason Reverse Code-->
+
+<!--#region lookup Bank -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBank" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBank" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbank;let i=index">
+                                    <td style="text-align: center;">{{lookupbank.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBank(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Bank-->

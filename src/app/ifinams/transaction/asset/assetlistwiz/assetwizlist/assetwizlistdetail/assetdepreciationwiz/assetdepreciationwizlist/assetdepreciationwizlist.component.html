@@ -1,0 +1,29 @@
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body">
+
+                <!--#region wizard container-->
+                <div class="nav-tabs-navigation">
+                    <ul id="tabs1" class="nav nav-pills nav-justified" role="tablist">
+                        <li class="nav-item" id="Commercial">
+                            <a class="nav-link" (click)="CommercialWiz()" href="#commercialwizlist"
+                                data-toggle="tab" role="tab" aria-controls="commercialwizlist" aria-selected="true">
+                                Commercial
+                            </a>
+                        </li>
+                        <li class="nav-item" id="Fiscal">
+                            <a class="nav-link" (click)="FiscalWiz()" href="#fiscalwizlist" data-toggle="tab"
+                                role="tab" aria-controls="fiscalwizlist" aria-selected="true">
+                                Fiscal
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <router-outlet></router-outlet>
+                <!--#endregion wizard container-->
+            </div>
+        </div>
+    </div>
+</div>

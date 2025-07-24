@@ -1,0 +1,300 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Master Barcode Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #MasterBarcodeForm="ngForm"
+                        (ngSubmit)="onFormSubmit(MasterBarcodeForm.value, MasterBarcodeForm.valid)">
+                        <!--#region button submit, button back-->
+                        <button [hidden]="model.status !== 'HOLD'" type="submit" class="btn btn-info btn-round"
+                            data-role="R00012870001288C">Save</button>
+                        <button [hidden]="this.param == null || model.status !== 'HOLD'" type="button"
+                            class="btn btn-success btn-round" (click)="btnPost()"
+                            data-role="R00012870001288O">Post</button>
+                        <button [hidden]="model.code == null || model.status !== 'HOLD'" type="button"
+                            data-role="R00012870001288R" class="btn btn-warning btn-round"
+                            (click)="btnCancel()">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button submit, button back-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code" #company_code="ngModel">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" [readonly]="isReadOnly">
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region Register Date-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="register_date" class="control-label">Register Date *</label>
+                                    <div>
+                                        <input class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                                            angular-mydatepicker [ngModel]="model.register_date" name="p_register_date"
+                                            [options]="myDatePickerOptions" required #p_register_date="ngModel"
+                                            [readonly]="model.status !== 'HOLD'" #register_date="angular-mydatepicker"
+                                            autocomplete="off" (click)="register_date.toggleCalendar()" />
+                                        <small
+                                            *ngIf="(p_register_date.errors?.required && p_register_date.touched) || (p_register_date.errors?.required && MasterBarcodeForm.submitted)"
+                                            class="text-danger">
+                                            Register Date is required
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion Register Date-->
+
+                            <!--#region status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status </label>
+                                    <input type="text" class="form-control" [ngModel]="model.status" maxlength="10"
+                                        name="p_status" required #status="ngModel" readonly>
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+
+                            <!--#region start_date-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="start_date" class="control-label">Start Date *</label>
+                                    <div>
+                                        <input [readonly]="model.status !== 'HOLD'" class="form-control col-md-6"
+                                            placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.start_date"
+                                            name="p_start_date" [options]="myDatePickerOptions" required
+                                            #p_start_date="ngModel" #start_date="angular-mydatepicker"
+                                            autocomplete="off" (click)="start_date.toggleCalendar()" />
+                                        <small
+                                            *ngIf="(p_start_date.errors?.required && p_start_date.touched) || (p_start_date.errors?.required && MasterBarcodeForm.submitted)"
+                                            class="text-danger">
+                                            Start Date is required
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion start_date-->
+
+                            <!--#region end_date-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="end_date" class="control-label">End Date *</label>
+                                    <div>
+                                        <input class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                                            angular-mydatepicker [ngModel]="model.end_date" name="p_end_date"
+                                            [options]="myDatePickerOptions" required #p_end_date="ngModel"
+                                            [readonly]="model.status !== 'HOLD'" #end_date="angular-mydatepicker"
+                                            autocomplete="off" (click)="end_date.toggleCalendar()" />
+                                        <small
+                                            *ngIf="(p_end_date.errors?.required && p_end_date.touched) || (p_end_date.errors?.required && MasterBarcodeForm.submitted)"
+                                            class="text-danger">
+                                            End Date is required
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion start_date-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+
+                <span layout="row horizontal-divider">
+                    <hr flex />
+                </span>
+                <div *ngIf="param != null" class="row">
+                    <div class="col-md-12">
+                        <div class="card-header">
+                            <h5 class="card-title">Master Barcode Register Detail</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar">
+                                <!--#region button save -->
+                                <button [hidden]="this.param == null || model.status !== 'HOLD'" type="button"
+                                    class="btn btn-info btn-round" type="button" data-toggle="modal" (click)="btnAdd()"
+                                    data-target="#lookupModalGenerate" href="#" data-role="R00012870001288C">
+                                    Add
+                                </button>
+                                <button [hidden]="this.param == null || model.status !== 'HOLD'"
+                                    class="btn btn-danger btn-round" (click)="btnDeleteAll()"
+                                    data-role="R00012870001288D">
+                                    Delete
+                                </button>
+                                <!--#endregion button save-->
+                            </div>
+
+                            <!--#region list view-->
+                            <table id="datatables" datatable [dtOptions]="dtOptions"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="disabled-sorting">No</th>
+                                        <th class="disabled-sorting">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" id="checkall"
+                                                        [(ngModel)]="selectedAll" (change)="selectAll();" />
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                        </th>
+                                        <th>Barcode No</th>
+                                        <th>Asset Code</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of listbarcodedetail;  let i=index">
+                                        <td style="text-align: center;">{{listbarcodedetail.numberIndex+i+1}}</td>
+                                        <td class="disabled-sorting">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        [(ngModel)]="row.selected"
+                                                        (change)="checkIfAllTableSelected($event, row.code, row.role_group_code);">
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td style="width: 30%; text-align: left;" class="if-no-edit-btn">
+                                            {{row.barcode_no}}</td>
+                                        <td style="width: 50%; text-align: left;" class="if-no-edit-btn">
+                                            {{row.asset_code}}</td>
+                                        <td style="width: 20%; text-align: center;" class="if-no-edit-btn">
+                                            {{row.status}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                    </div>
+                </div>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Generate-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalGenerate"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden; padding: 10px;">
+                <div class="col-md-12">
+                    <!--#region button add-->
+                    <button type="button" class="btn btn-success btn-round"
+                        (click)="btnGenerate(MasterBarcodeDetailForm.value, MasterBarcodeDetailForm.valid)"
+                        data-role="R00012870001288C">Generate</button>
+                    <!--#endregion button add--->
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <!--#region form-->
+                        <form #MasterBarcodeDetailForm="ngForm">
+                            <button type="submit" id='Generate' hidden class="btn btn-info btn-round"></button>
+                            <!--#region row-->
+                            <div class="row">
+                                <!--#region code-->
+                                <input type="hidden" class="form-control" [ngModel]="model.id" name="p_id">
+                                <!--#endregion code-->
+
+                                <!--#region No Of Data-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="p_no_of_data" class="control-label">No Of Data *</label>
+                                        <input type="text" class="form-control" [(ngModel)]="model.p_no_of_data"
+                                            name="p_no_of_data" required #p_no_of_data="ngModel" maxlength="50">
+                                        <small
+                                            *ngIf="(p_no_of_data.errors?.required && p_no_of_data.touched) || (p_no_of_data.errors?.required && MasterBarcodeForm.submitted)"
+                                            class="text-danger">
+                                            No Of Data is required
+                                        </small>
+                                    </div>
+                                </div>
+                                <!--#endregion No Of Data-->
+
+                                <!--#region Prefix Code-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="p_prefix_code" class="control-label">Prefix Code</label>
+                                        <input type="text" class="form-control" [(ngModel)]="model.p_prefix_code"
+                                            name="p_prefix_code" #p_prefix_code="ngModel" maxlength="50">
+                                    </div>
+                                </div>
+                                <!--#endregion Prefix Code-->
+
+                                <!--#region Running Code-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="p_running_code" class="control-label">Running Code *</label>
+                                        <input type="text" class="form-control" [(ngModel)]="model.p_running_code"
+                                            name="p_running_code" required #p_running_code="ngModel" maxlength="50">
+                                        <small
+                                            *ngIf="(p_running_code.errors?.required && p_running_code.touched) || (p_running_code.errors?.required && MasterBarcodeForm.submitted)"
+                                            class="text-danger">
+                                            Running Code is required
+                                        </small>
+                                    </div>
+                                </div>
+                                <!--#endregion Running Code-->
+
+                                <!--#region Postfix Code-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="p_postfix_code" class="control-label">Postfix Code</label>
+                                        <input type="text" class="form-control" [(ngModel)]="model.p_postfix_code"
+                                            name="p_postfix_code" #p_postfix_code="ngModel" maxlength="50">
+                                        <small
+                                            *ngIf="(p_postfix_code.errors?.required && p_postfix_code.touched) || (p_postfix_code.errors?.required && MasterBarcodeForm.submitted)"
+                                            class="text-danger">
+                                            Postfix Code is required
+                                        </small>
+                                    </div>
+                                </div>
+                                <!--#endregion Running Code-->
+                            </div>
+                            <!--#endregion row-->
+                        </form>
+                        <!--#endform-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Generate-->

@@ -1,0 +1,110 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Region Info</h5>
+        </div>
+        <div class="card-body" name="header" id="headerId">
+          <!--#region form-->
+          <form #regionForm="ngForm" (ngSubmit)="onFormSubmit(regionForm.value, regionForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="submit" class="btn btn-info btn-round" data-role="R00021300012130C">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Code-->
+              <div class="col-md-4" hidden>
+                <div [hidden]="model.code != null" class="row" style="margin-bottom: -15px; padding-top: 30px;">
+                  <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                  <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                    Generate-</h1>
+                </div>
+                <div [hidden]="model.code == null" class="form-group">
+                  <label>Code *</label>
+                  <input type="text" class="form-control" [ngModel]="model.code" maxlength="50" name="p_code" [readonly]="isReadOnly">
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region name-->
+              <div class="col-md-4">
+                <div class="form-group" >
+                  <label for="region_name" class="control-label">Description *</label>
+                  <textarea type="text" class="form-control" [ngModel]="model.region_name" maxlength="4000" required
+                    #region_name="ngModel" name="p_region_name"></textarea>
+                  <small *ngIf="(region_name.errors?.required && region_name.touched) || (region_name.errors?.required && regionForm.submitted)" class="text-danger">
+                    Description is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion name-->
+
+              <!--#region check box is active-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [ngModel]="model.is_active" name="p_is_active">
+                      Active
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion check box is active-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+
+        <!--#region wizard-->
+        <div class="wizard-custom-margin" [hidden]="param == null">
+          <!--#region wizard container -->
+          <div class="wizard-container">
+            <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+              id="wizardProfile">
+              <div class="text-center">
+                <div class="wizard-navigation">
+                  <ul>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="regioncitywiz()" href="#regioncitylist" data-toggle="tab" role="tab"
+                        aria-controls="regioncitylist" aria-selected="true">
+                        City
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="regionplatwiz()" href="#regionplatlist" data-toggle="tab" role="tab"
+                        aria-controls="regionplatlist" aria-selected="true">
+                        Plat
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--#endregion wizard container-->
+        </div>
+        <!--endregion wizard-->
+        <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

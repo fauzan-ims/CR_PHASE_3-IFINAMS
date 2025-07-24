@@ -1,0 +1,295 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Receive Result Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #deliveryresultForm="ngForm"
+                        (ngSubmit)="onFormSubmit(deliveryresultForm.value, deliveryresultForm.valid)">
+
+                        <div *ngIf="param != null">
+
+                            <!--#region button submit back-->
+                            <button type="submit" [hidden]="model.register_status !== 'PENDING'"
+                                class="btn btn-info btn-round" data-role="R00022350002236C">Save</button>
+                            <button type="button" [hidden]="model.register_status !== 'PENDING'"
+                                class="btn btn-success btn-round" data-role="R00022350002236O"
+                                (click)="btnPost(deliveryresultForm.value, deliveryresultForm.valid)">Post</button>
+                            <!-- <button type="button" [hidden]="model.register_status !== 'DONE'"
+                                class="btn btn-warning btn-round" data-role="R00022350002236R"
+                                (click)="btnCancel()">Cancel</button> -->
+                            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+
+                            <!--#endregion button submit back-->
+
+                            <!--#region inquiry status detail row-->
+                            <div class="row">
+                                <!--#region code-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Register No</label>
+                                        <input type="text" class="form-control" [ngModel]="model.register_no"
+                                            maxlength="50" name="p_register_no" [readonly]="isReadOnly">
+                                        <input type="hidden" class="form-control" [ngModel]="model.code" name="p_code"
+                                            [readonly]="isReadOnly">
+                                    </div>
+                                </div>
+                                <!--#endregion code-->
+
+                                <!--#region branch name-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Branch</label>
+                                        <input type="text" class="form-control" [ngModel]="model.branch_name"
+                                            maxlength="250" name="p_branch_name" [readonly]="isReadOnly">
+                                    </div>
+                                </div>
+                                <!--#endregion branch name-->
+
+                                <!--#region Register Status -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <input type="text" class="form-control" readonly maxlength="20"
+                                            [ngModel]="model.register_status" name="p_register_status">
+                                    </div>
+                                </div>
+                                <!--#endregion  Register Status-->
+
+                                <!--#region Register date-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Register Date </label>
+                                        <input class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                                            angular-mydatepicker [ngModel]="model.register_date" name="p_register_date"
+                                            [options]="myDatePickerOptions" #p_register_date="ngModel"
+                                            #register_date="angular-mydatepicker" autocomplete="off" readonly>
+                                    </div>
+                                </div>
+                                <!--#endregion Register date-->
+
+                                <!--#region fa_code -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>FA Code</label>
+                                        <input type="text" class="form-control" [ngModel]="model.fa_code"
+                                            name="p_fa_code" [readonly]="isReadOnly">
+                                    </div>
+                                </div>
+                                <!--#endregion fa_code-->
+
+                                <!--#region item_name-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Item Name</label>
+                                        <input type="text" class="form-control" [ngModel]="model.item_name"
+                                            name="p_item_name" readonly>
+                                    </div>
+                                </div>
+                                <!--#endregion item_name-->
+
+                                <!--#region Register Procces By-->
+                                <!-- <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Processed By </label>
+                                        <input type="text" class="form-control" maxlength="50"
+                                            [ngModel]="model.register_process_by" name="p_register_process_by"
+                                            [readonly]="isReadOnly">
+                                    </div>
+                                </div> -->
+                                <!--#endregion  Register Procces By-->
+
+                                <!--#region Register Remarks-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Remark </label>
+                                        <textarea type="text" class="form-control" [ngModel]="model.register_remarks"
+                                            maxlength="4000" name="p_register_remarks"
+                                            [readonly]="isReadOnly"></textarea>
+                                    </div>
+                                </div>
+                                <!--#endregion  Register Remarks-->
+                            </div>
+                            <!--#endregion inquiry status detail row-->
+
+                            <span layout="row horizontal-divider">
+                                <hr flex />
+                            </span>
+                            <br>
+
+                            <!--#region inquiry status detail row-->
+                            <div class="row">
+                                <!--#region receive_date-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="receive_date" class="control-label">Received Date *</label>
+                                        <div>
+                                            <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6"
+                                                placeholder="dd/mm/yyyy" angular-mydatepicker
+                                                [ngModel]="model.receive_date" name="p_receive_date"
+                                                [options]="myDatePickerOptions" required #p_receive_date="ngModel"
+                                                [readonly]="isButton" #receive_date="angular-mydatepicker"
+                                                autocomplete="off" (click)="receive_date.toggleCalendar()" />
+                                            <small
+                                                *ngIf="(p_receive_date.errors?.required && p_receive_date.touched) || (p_receive_date.errors?.required && deliveryresultForm.submitted)"
+                                                class="text-danger">
+                                                Received Date is required
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--#endregion receive_date-->
+
+                                <!--#region Delivery Receive By-->
+                                <div class="col-md-4">
+                                    <div class="form-group"
+                                        [class.has-error]="receive_by.invalid && receive_by.touched">
+                                        <label for="receive_by" class="control-label">Received By *</label>
+                                        <input type="text" class="form-control" maxlength="250"
+                                            [ngModel]="model.receive_by" name="p_receive_by" required
+                                            #receive_by="ngModel" [readonly]="model.register_status !== 'PENDING'">
+                                        <small
+                                            *ngIf="(receive_by.errors?.required && receive_by.touched) || (receive_by.errors?.required && deliveryresultForm.submitted)"
+                                            class="text-danger">
+                                            Received By is required
+                                        </small>
+                                    </div>
+                                </div>
+                                <!--#endregion Delivery Receive By-->
+
+                                <!--#region receive_remarks-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="receive_remarks" class="control-label">Received Remark *</label>
+                                        <textarea type="text" class="form-control" [ngModel]="model.receive_remarks"
+                                            maxlength="4000" name="p_receive_remarks" required
+                                            #receive_remarks="ngModel"
+                                            [readonly]="model.register_status !== 'PENDING'"></textarea>
+                                        <small
+                                            *ngIf="(receive_remarks.errors?.required && receive_remarks.touched) || (receive_remarks.errors?.required && deliveryresultForm.submitted)"
+                                            class="text-danger">
+                                            Received Remark is required
+                                        </small>
+                                    </div>
+                                </div>
+                                <!--#endregion receive_remarks-->
+                            </div>
+                            <!--#endregion inquiry status detail row-->
+
+                            <!-- #region row stnk -->
+                            <div class="row">
+                                <!--#region Delivery STNK No-->
+                                <div class="col-md-4">
+                                    <div class="form-group" [class.has-error]="stnk_no.invalid && stnk_no.touched">
+                                        <label for="stnk_no" class="control-label">STNK No</label>
+                                        <input type="text" class="form-control" maxlength="250"
+                                            [ngModel]="model.stnk_no" name="p_stnk_no" #stnk_no="ngModel"
+                                            [readonly]="model.register_status !== 'PENDING'">
+                                    </div>
+                                </div>
+                                <!--#endregion Delivery STNK No-->
+
+                                <!--#region stnk_tax_date-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="stnk_tax_date" class="control-label">STNK Tax Date</label>
+                                        <div>
+                                            <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6"
+                                                placeholder="dd/mm/yyyy" angular-mydatepicker
+                                                [ngModel]="model.stnk_tax_date" name="p_stnk_tax_date"
+                                                [options]="myDatePickerOptions" #p_stnk_tax_date="ngModel"
+                                                [readonly]="isButton" #stnk_tax_date="angular-mydatepicker"
+                                                autocomplete="off" (click)="stnk_tax_date.toggleCalendar()" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--#endregion stnk_tax_date-->
+
+                                <!--#region stnk_expired_date-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="stnk_expired_date" class="control-label">STNK Expired Date</label>
+                                        <div>
+                                            <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6"
+                                                placeholder="dd/mm/yyyy" angular-mydatepicker
+                                                [ngModel]="model.stnk_expired_date" name="p_stnk_expired_date"
+                                                [options]="myDatePickerOptions" #p_stnk_expired_date="ngModel"
+                                                [readonly]="isButton" #stnk_expired_date="angular-mydatepicker"
+                                                autocomplete="off" (click)="stnk_expired_date.toggleCalendar()" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--#endregion stnk_expired_date-->
+                            </div>
+                            <!-- #endregion row stnk -->
+
+                            <!-- #region row keur -->
+                            <div class="row">
+                                <!--#region Delivery keur No-->
+                                <div class="col-md-4">
+                                    <div class="form-group" [class.has-error]="keur_no.invalid && keur_no.touched">
+                                        <label for="keur_no" class="control-label">KEUR No</label>
+                                        <input type="text" class="form-control" maxlength="250"
+                                            [ngModel]="model.keur_no" name="p_keur_no" #keur_no="ngModel"
+                                            [readonly]="model.register_status !== 'PENDING'">
+                                    </div>
+                                </div>
+                                <!--#endregion Delivery keur No-->
+
+                                <!--#region keur_tax_date-->
+                                <div class="col-md-4" hidden>
+                                    <div class="form-group">
+                                        <label for="keur_tax_date" class="control-label">KEUR Tax Date</label>
+                                        <div>
+                                            <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6"
+                                                placeholder="dd/mm/yyyy" angular-mydatepicker
+                                                [ngModel]="model.keur_tax_date" name="p_keur_tax_date"
+                                                [options]="myDatePickerOptions" #p_keur_tax_date="ngModel"
+                                                [readonly]="isButton" #keur_tax_date="angular-mydatepicker"
+                                                autocomplete="off" (click)="keur_tax_date.toggleCalendar()" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--#endregion keur_tax_date-->
+
+                                <!--#region keur_expired_date-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="keur_expired_date" class="control-label">KEUR Expired Date</label>
+                                        <div>
+                                            <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6"
+                                                placeholder="dd/mm/yyyy" angular-mydatepicker
+                                                [ngModel]="model.keur_expired_date" name="p_keur_expired_date"
+                                                [options]="myDatePickerOptions" #p_keur_expired_date="ngModel"
+                                                [readonly]="isButton" #keur_expired_date="angular-mydatepicker"
+                                                autocomplete="off" (click)="keur_expired_date.toggleCalendar()" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--#endregion keur_expired_date-->
+                            </div>
+                            <!-- #endregion row keur -->
+                        </div>
+                    </form>
+                    <!--#endregion form-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

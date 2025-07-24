@@ -1,0 +1,501 @@
+<div class="main-content" style="overflow-y:scroll; overflow-x:hidden; height:100%;">
+    <div class="row">
+        <div class="col-md-12">
+
+            <!--#region watermark-->
+            <div class="watermark" [hidden]="this.isWatermark === '0'">
+                <h6>{{this.companyName}}</h6>
+                <h6>{{this.userName}}</h6>
+                <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+            </div>
+            <!--#endregion watermark-->
+            <div class="card-header">
+                <h5 class="card-title">Realization Info</h5>
+            </div>
+            <div class="card-body">
+                <!--#region form-->
+                <!-- <form #realizationForm="ngForm"
+                        (ngSubmit)="onFormSubmit(realizationForm.value, realizationForm.valid)"> -->
+
+                <!--#region button submit back-->
+                <!-- <button type="submit" [hidden]="model.register_status !== 'REALIZATION'"
+                            class="btn btn-info btn-round" data-role="R00021950002196C">Save</button>
+                        <button type="button" [hidden]="model.register_status !== 'REALIZATION'"
+                            class="btn btn-success btn-round" (click)="btnProceed()"
+                            data-role="R00021950002196O">Proceed</button>
+                        <button type="button" [hidden]="isCancle" class="btn btn-warning btn-round"
+                            data-role="R00021950002196R" (click)="btnCancel()">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button> -->
+                <!--#endregion button submit back-->
+
+                <!--#region inquiry status detail row-->
+                <div class="row">
+                    <!--#region code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Register No</label>
+                            <input type="text" class="form-control" [ngModel]="model.register_no" maxlength="50"
+                                name="p_register_no" readonly>
+                            <input type="hidden" class="form-control" [ngModel]="model.code" name="p_code" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion code-->
+
+                    <!--#region branch name-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Branch</label>
+                            <input type="text" class="form-control" [ngModel]="model.branch_name" maxlength="250"
+                                name="p_branch_name" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion branch name-->
+
+                    <!--#region Register Status -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Register Status / Payment Status</label>
+                            <input type="text" class="form-control" readonly maxlength="30"
+                                [ngModel]="model.payment_status" name="p_payment_status">
+                            <input type="hidden" class="form-control" readonly maxlength="30"
+                                [ngModel]="model.register_status" name="p_register_status">
+                        </div>
+                    </div>
+                    <!--#endregion  Register Status-->
+
+                    <!--#region Register date-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Register Date </label>
+                            <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                [ngModel]="model.realization_date" name="p_realization_date"
+                                [options]="myDatePickerOptions" #p_realization_date="ngModel"
+                                #realization_date="angular-mydatepicker" autocomplete="off" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion Register date-->
+
+                    <!--#region fa_code -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>FA Code</label>
+                            <input type="text" class="form-control" [ngModel]="model.fa_code" name="p_fa_code" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion Agrement-->
+
+                    <!--#region item_name-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Item Name</label>
+                            <input type="text" class="form-control" [ngModel]="model.item_name" name="p_item_name"
+                                readonly>
+                        </div>
+                    </div>
+                    <!--#endregion item_name-->
+
+                    <!--#region Register Procces By-->
+                    <div class="col-md-4" hidden>
+                        <div class="form-group">
+                            <label>Processed By </label>
+                            <input type="text" class="form-control" maxlength="50" [ngModel]="model.register_process_by"
+                                name="p_register_process_by" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion  Register Procces By-->
+
+                    <!--#region is_reimburse-->
+                    <div class="col-md-4">
+                        <div class="form-check mt-3" style="margin-left: -35px;">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input disabled class="form-check-input" type="checkbox"
+                                        [ngModel]="model.is_reimburse" name="p_is_reimburse">
+                                    Disburse To Customer
+                                    <span class="form-check-sign"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion is_reimburse-->
+
+                    <!--#region Register Remarks-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Remark </label>
+                            <textarea type="text" class="form-control" [ngModel]="model.register_remarks"
+                                maxlength="4000" name="p_register_remarks" readonly></textarea>
+                        </div>
+                    </div>
+                    <!--#endregion  Register Remarks-->
+
+                    <!--#region file name-->
+                    <div class="col-md-4">
+                        <div class="form-group row" style="margin-left: 30px;">
+                            <label>Invoice File</label>
+                            <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                                <div [hidden]="model.payment_status_2 !== 'HOLD' || this.model.file_name !== ''">
+                                    <!-- <div [hidden]="this.tampHidden == true"> -->
+                                    <span class="btn btn-info btn-round btn-file">
+                                        <input type="file" (change)="onUpload($event, this.param)" id="fileControl" />
+                                        <span><i class="fa fa-check"></i></span>
+                                    </span>
+                                    {{tempFile}}
+                                </div>
+                                <!-- <div [hidden]="this.tampHidden == true"> -->
+                                <div [hidden]="model.file_name === ''">
+                                    <span>
+                                        <a class="btn btn-danger btn-round btn-file " type="button"
+                                            (click)="deleteImage(model.file_name, model.paths)"
+                                            [hidden]="model.payment_status_2!=='HOLD'">
+                                            <span><i class="fa fa-trash"></i></span></a>
+                                        <a class="btn btn-primary btn-round btn-file " type="button"
+                                            (click)="previewFile(model.file_name, model.paths)">
+                                            <span><i class="fa fa-eye"></i></span></a>
+                                    </span>
+                                    <div>{{model.file_name}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion file name-->
+
+                </div>
+                <!--#endregion inquiry status detail row-->
+
+                <!--#region inquiry status detail row-->
+                <div class="row">
+                    <!--#region DP Date-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="dp_to_public_service_date" class="control-label">DP Date</label>
+                            <div>
+                                <input [ngStyle]="getStyles(isReadOnly)" class="form-control col-md-6"
+                                    placeholder="dd/mm/yyyy" angular-mydatepicker
+                                    [ngModel]="model.dp_to_public_service_date" name="p_dp_to_public_service_date"
+                                    [options]="myDatePickerOptions" required #p_dp_to_public_service_date="ngModel"
+                                    readonly #dp_to_public_service_date="angular-mydatepicker" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion DP Date-->
+
+                    <!--#region DP Amount-->
+                    <div class="col-md-4">
+                        <div class="form-group"
+                            [class.has-error]="dp_to_public_service_amount.invalid && dp_to_public_service_amount.touched">
+                            <label for="dp_to_public_service_amount" class="control-label">DP Amount
+                            </label>
+                            <input type="text" class="form-control text-right col-md-6"
+                                [ngModel]="model.dp_to_public_service_amount | number : '1.2-2'"
+                                name="p_dp_to_public_service_amount" required #dp_to_public_service_amount="ngModel"
+                                maxlength="24" amount="dp_to_public_service_amount" readonly>
+                            <!-- <small
+                                       ngIf="(dp_to_public_service_amount.errors?.required && dp_to_public_service_amount.touched) || (dp_to_public_service_amount.errors?.required && realizationForm.submitted)"
+                                        class="text-danger">
+                                        DP Amount is required
+                                    </small> -->
+                        </div>
+                    </div>
+                    <!--#endregion DP Amount-->
+
+                    <!--#region Voucher -->
+                    <div class="col-md-4">
+                        <div class="form-group"
+                            [class.has-error]="dp_to_public_service_voucher.invalid && dp_to_public_service_voucher.touched">
+                            <label for="dp_to_public_service_voucher" class="control-label">Voucher
+                            </label>
+                            <input type="text" class="form-control" maxlength="50"
+                                [ngModel]="model.dp_to_public_service_voucher" name="p_dp_to_public_service_voucher"
+                                #dp_to_public_service_voucher="ngModel" readonly>
+
+                        </div>
+                    </div>
+                    <!--#endregion Voucher  -->
+                </div>
+                <!--#endregion inquiry status detail row-->
+
+                <!--#region inquiry status detail row-->
+                <div class="row">
+
+                    <!--#region Realization Date-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="realization_date" class="control-label">Realization Date</label>
+                            <div>
+                                <input [ngStyle]="getStyles(isReadOnly)" class="form-control col-md-6"
+                                    placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.realization_date"
+                                    name="p_realization_date" [options]="myDatePickerOptions" required
+                                    #p_realization_date="ngModel" readonly #realization_date="angular-mydatepicker"
+                                    autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion Realization Date-->
+
+                    <!--#region Realization Invoice no  -->
+                    <div class="col-md-4">
+                        <div class="form-group"
+                            [class.has-error]="realization_invoice_no.invalid && realization_invoice_no.touched">
+                            <label for="realization_invoice_no" class="control-label">Realization Invoice No
+                            </label>
+                            <input type="text" class="form-control" maxlength="50"
+                                [ngModel]="model.realization_invoice_no" name="p_realization_invoice_no" required
+                                #realization_invoice_no="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion Realization Invoice no  -->
+
+                    <!--#region faktur_no-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="invoice_no" class="control-label">Faktur No</label>
+                            <input readonly type="text" class="form-control" [ngModel]="model.faktur_no"
+                                name="p_faktur_no">
+                        </div>
+                    </div>
+                    <!--#endregion faktur_no-->
+
+                    <!--#region realization_actual_fee -->
+                    <div class="col-md-4">
+                        <div class="form-group"
+                            [class.has-error]="realization_actual_fee.invalid && realization_actual_fee.touched">
+                            <label for="realization_actual_fee" class="control-label">Realization Actual Fee
+                            </label>
+                            <input type="text" class="form-control text-right col-md-6"
+                                [ngModel]="model.realization_actual_fee | number : '1.2-2'"
+                                name="p_realization_actual_fee" required #realization_actual_fee="ngModel"
+                                maxlength="24" amount="realization_actual_fee" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion realization_actual_fee -->
+
+                    <!--#region realization_service_fee -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="realization_service_fee" class="control-label">Service Fee DPP Amount
+                            </label>
+                            <input type="text" class="form-control text-right col-md-6"
+                                [ngModel]="model.realization_service_fee | number : '1.2-2'"
+                                name="p_realization_service_fee" required #realization_service_fee="ngModel"
+                                maxlength="24" amount="realization_service_fee" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion realization_service_fee -->
+
+                    <!--#region realization_service_tax_code-->
+                    <div class="col-md-4">
+                        <label class="labelmodule">Tax</label>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <span>
+                                    <button class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin"
+                                        type="button" data-target="#lookupModalTax" data-toggle="modal" href="#"
+                                        disabled>
+                                        <i class="fa fa-search-plus"></i></button>
+                                    {{model.realization_service_tax_name}}
+                                    <input type="hidden" name="p_realization_service_tax_code"
+                                        [ngModel]="model.realization_service_tax_code" required
+                                        #realization_service_tax_code="ngModel" />
+                                    <input type="hidden" name="p_realization_service_tax_name"
+                                        [ngModel]="model.realization_service_tax_name"
+                                        #realization_service_tax_name="ngModel" />
+                                    <input type="hidden" name="p_realization_service_tax_ppn_pct"
+                                        [ngModel]="model.realization_service_tax_ppn_pct"
+                                        #realization_service_tax_ppn_pct="ngModel" />
+                                    <input type="hidden" name="p_realization_service_tax_pph_pct"
+                                        [ngModel]="model.realization_service_tax_pph_pct"
+                                        #realization_service_tax_pph_pct="ngModel" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion realization_service_tax_code-->
+
+                    <!--#region realization_internal_income -->
+                    <div class="col-md-4" hidden>
+                        <div class="form-group"
+                            [class.has-error]="realization_internal_income.invalid && realization_internal_income.touched">
+                            <label for="realization_internal_income" class="control-label">Realization Internal
+                                Income</label>
+                            <input type="text" class="form-control text-right col-md-6"
+                                [ngModel]="model.realization_internal_income | number : '1.2-2'"
+                                name="p_realization_internal_income" #realization_internal_income="ngModel"
+                                maxlength="24" amount="realization_internal_income" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion realization_internal_income -->
+                </div>
+                <div class="row">
+                    <!--#region Public Service Settlement Amount-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="public_service_settlement_amount " class="control-label">Settlement
+                                Public Service Amount
+                            </label>
+                            <input type="text" class="form-control col-md-6" style="text-align: right;"
+                                [ngModel]="model.public_service_settlement_amount | number : '1.2-2'"
+                                name="p_public_service_settlement_amount" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion Public Service Settlement Amount-->
+
+                    <!--#region tax_ppn-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="tax_ppn " class="control-label">Service PPN
+                            </label>
+                            <input type="text" class="form-control col-md-6" style="text-align: right;"
+                                [ngModel]="model.tax_ppn | number : '1.2-2'" name="p_tax_ppn" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion tax_ppn-->
+
+                    <!--#region tax_pph-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="tax_pph " class="control-label">Service PPH
+                            </label>
+                            <input type="text" class="form-control col-md-6" style="text-align: right;"
+                                [ngModel]="model.tax_pph | number : '1.2-2'" name="p_tax_pph" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion tax_pph-->
+                </div>
+
+                <!--#region inquiry status detail row-->
+                <div class="row" [hidden]="model.is_reimburse == '0'">
+                    <!--#region Lookup Bank-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="bank" class="control-label">To
+                                Bank</label>
+                            <div class="col-md-12 buttons btn-lookup-margin">
+                                <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button" disabled
+                                    data-target="#lookupModalBank" data-toggle="modal" href="#">
+                                    <i class="fa fa-search-plus"></i></button>{{model.bank_name}}
+                                <input type="hidden" name="p_payment_bank_name" [ngModel]="model.bank_name"
+                                    #bank="ngModel" required />
+                                <input type="hidden" name="p_payment_bank_code" [ngModel]="model.bank_code" />
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion Bank-->
+
+                    <!--#region Bank Account No-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="payment_bank_account_no" class="control-label">To Bank Account No</label>
+                            <input type="text" class="form-control" [ngModel]="model.payment_bank_account_no"
+                                maxlength="50" name="p_payment_bank_account_no" #payment_bank_account_no="ngModel"
+                                readonly>
+                        </div>
+                    </div>
+                    <!--#endregion Bank Account No-->
+
+                    <!--#region Bank Account Name-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="payment_bank_account_name" class="control-label">To Bank Account Name
+                            </label>
+                            <input type="text" class="form-control" [ngModel]="model.payment_bank_account_name"
+                                maxlength="250" name="p_payment_bank_account_name" #payment_bank_account_name="ngModel"
+                                readonly>
+                        </div>
+                    </div>
+                    <!--#endregion Bank Account Name-->
+                </div>
+                <!--#endregion inquiry status detail row-->
+                <!-- </form> -->
+                <!--#endregion form-->
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--#region lookup bank-->
+<!-- <div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBank" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 buttons btn-lookup-margin">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupBank" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbank;  let i=index">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupbank.numberIndex+i+1}}</td>
+                                    <td style="text-align: center; width: 30%;">{{ row.code }}</td>
+                                    <td style="text-align: left; width: 70%;">{{ row.description }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBank(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+<!--#endregion lookup bank-->
+
+<!--#region lookup Tax-->
+<!-- <div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTax" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupTax" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Description</th>
+                                    <th>PPN (%)</th>
+                                    <th>PPH (%)</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupTax;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupTax.numberIndex+i+1}}</td>
+                                    <td style="width: 70%;">{{ row.name }}</td>
+                                    <td style="width: 15%;">{{ row.ppn_pct | number : '1.6-6'}}</td>
+                                    <td style="width: 15%;">{{ row.pph_pct | number : '1.6-6'}}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowTax(row.code, row.name, row.ppn_pct, row.pph_pct)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+<!--#endregion lookup Tax -->

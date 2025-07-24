@@ -1,0 +1,156 @@
+<div class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body">
+                <input type="text" [ngModel]="model.status" name="p_status" hidden>
+                <!--#region list view-->
+                <table id="datatableAssetChecklist" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th style="display: none;"></th>
+                            <th>Cheklist</th>
+                            <th>Status</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listassetchecklist;  let i=index">
+                            <td style="text-align: center;">{{listassetchecklist.numberIndex+i+1}}</td>
+                            <td style="display: none;"></td>
+                            <td style="width: 20%;text-align: left;">{{row.checklist_code}} </td>
+                            <td style="text-align: left;width: 15%;">
+                                <div class="form-group">
+                                    <select [disabled]="model.status !== 'HOLD'" class='form-control'
+                                        value="{{row.checklist_status}}" name="p_checklist_status">
+                                        <option value='' hidden></option>
+                                        <option value='SOLD'>SOLD</option>
+                                        <option value='DISPOSED'>DISPOSED</option>
+                                        <option value='LOST'>LOST</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td style="width: 65%;">
+                                <textarea [readonly]="model.status !== 'HOLD' || modeldetail.status !== 'NEW'" id="checklist_remark{{i}}"
+                                    class="form-control" type="text" value="{{row.checklist_remark}}"
+                                    name="p_checklist_remark">
+                                </textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Group Role-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDisposalDetail"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" (click)="btnLookupClose()" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <!--#region button add //data-role="R0000041U"-->
+                        <button class="btn btn-info btn-round" (click)="btnSelectAllLookup()"
+                            data-role="R00013180001319C">
+                            add
+                        </button>
+                        <!--#endregion button add--->
+
+                        <table id="datatableDisposalAsset" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th class="disabled-sorting">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" id="checkallLookup"
+                                                    [(ngModel)]="selectedAllLookup" (change)="selectAllLookup();" />
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>Code</th>
+                                    <th>Barcode</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupDisposalAsset;  let i=index">
+                                    <td style="text-align: center;">{{lookupDisposalAsset.numberIndex+i+1}}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [(ngModel)]="row.selectedLookup"
+                                                    (change)="checkIfAllLookupSelected($event, row.code);">
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;width: 35%;" class="if-no-edit-btn">{{ row.code }}
+                                    </td>
+                                    <td style="text-align: center;width: 35%;" class="if-no-edit-btn">{{ row.barcode }}
+                                    </td>
+                                    <td style="text-align: left;width: 30%;">{{ row.item_name }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Group Role-->
+
+<!--#region lookup cost center-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCostCenter"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupCostCenter" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupCostCenter;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupCostCenter.numberIndex+i+1}}</td>
+                                    <td style="width: 30%; text-align: center;">{{ row.code }}</td>
+                                    <td style="width: 70%;">{{ row.description }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowCostCenter(row.code,row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup cost center-->

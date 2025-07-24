@@ -1,0 +1,160 @@
+<div class="main-content" class="main-content margin-wizard-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body ">
+                <!-- <form #MasterreportcolumnForm="ngForm" (ngSubmit)="onFormSubmit(MasterreportcolumnForm.value, MasterreportcolumnForm.valid)"> -->
+                <!--#region row-->
+                <div class="row">
+                    <div class="col-md-6">
+                        <!--#region button add-->
+                        <!-- <button type="submit" class="btn btn-info btn-round"
+                                data-role="R00015210001522C">ADD</button> -->
+                        <button type="button" class="btn btn-info btn-round" (click)="btnSelectAllLookup()"
+                            data-role="R00021280022128C">Add</button>
+                        <!--#region button add-->
+                        <div class="card-header">
+                            <h4 class="card-title">Unselected Field</h4>
+                        </div>
+                        <div class="card-body">
+
+                            <!--#region list view-->
+                            <table id="datatableMappingValue" datatable [dtOptions]="dtOptions"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="disabled-sorting">No</th>
+                                        <th class="disabled-sorting">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" id="checkall"
+                                                        [(ngModel)]="selectedAllMapping"
+                                                        (change)="selectAllTableMapping();" />
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                        </th>
+                                        <th>Field Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of listmappingvalue;let i=index">
+                                        <td style="text-align: center;">{{listmappingvalue.numberIndex+i+1}}</td>
+                                        <td class="disabled-sorting">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        [(ngModel)]="row.selectedLookup"
+                                                        (change)="checkIfAllTableSelectedMapping($event, row.id, row.column_name, row.field_name);">
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td class="if-no-edit-btn" style="text-align: left;width: 100%;">
+                                            {{row.field_name}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <!--#region button add-->
+                        <button type="submit" class="btn btn-info btn-round" (click)="btnSaveList()"
+                            data-role="R00021280032128C">
+                            Save
+                        </button>
+                        <!-- <button type="submit" class="btn btn-info btn-round" data-role="R00015210001522C">Save</button> -->
+                        <button class="btn btn-danger btn-round" (click)="btnDeleteAll()" data-role="R00021280012128D">
+                            Delete
+                        </button>
+                        <!--#region button add-->
+                        <div class="card-header">
+                            <h4 class="card-title">Selected Field</h4>
+                        </div>
+                        <div class="card-body">
+
+                            <!--#region list view-->
+                            <table id="datatableMasterCustColumn" datatable [dtOptions]="dtOptionsBranch"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="disabled-sorting">No</th>
+                                        <th class="disabled-sorting">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox" id="checkallColumn"
+                                                        [(ngModel)]="selectedAll" (change)="selectAll();" />
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                        </th>
+                                        <th>Field Name</th>
+                                        <th>Order Key</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of listmastercustomcolumn;let i=index">
+                                        <td class="disabled-sorting" style="text-align: center;">
+                                            {{listmastercustomcolumn.numberIndex+i+1}}
+                                        </td>
+                                        <td class="disabled-sorting">
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        [(ngModel)]="row.selected"
+                                                        (change)="checkIfAllTableSelected($event, row.id_column);">
+                                                    <span class="form-check-sign"></span>
+                                                </label>
+                                            </div>
+                                            <input hidden name="p_id_col" [ngModel]="row.id_column">
+                                        </td>
+                                        <td class="if-no-edit-btn" style="text-align: left;width: 85%;">
+                                            <input id="header_name{{i}}" class="form-control" type="text"
+                                                value="{{row.header_name}}" name="p_header_name" />
+                                        </td>
+                                        <!-- <td style="width: 15%;">
+                                            <input id="order_key{{i}}" class="form-control" type="text"
+                                                value="{{row.order_key}}" name="p_order_key"/>
+                                        </td> -->
+                                        <td style="width: 15%;text-align: center;">
+                                            <button [hidden]="row.order_key == '1'"
+                                                class="btn btn-success btn-round btn-icon"
+                                                (click)="btnOrderUp(row.id_column)"><i
+                                                    class="fa fa-arrow-up"></i></button>
+                                            <button class="btn btn-round btn-icon"
+                                                style="background-color: transparent;" disabled
+                                                [hidden]="row.order_key != listmastercustomcolumn.length"></button>
+                                            <button class="btn btn-round btn-icon"
+                                                style="background-color: transparent;" disabled
+                                                [hidden]="row.order_key != '1' "></button>
+                                            <button [hidden]="row.order_key == listmastercustomcolumn.length"
+                                                class="btn btn-danger btn-round btn-icon"
+                                                (click)="btnOrderDown(row.id_column)"><i
+                                                    class="fa fa-arrow-down"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                    </div>
+                </div>
+                <!--#endregion row-->
+
+                <!-- </form> -->
+            </div>
+            <div class="card-footer ">
+            </div>
+        </div>
+    </div>
+</div>

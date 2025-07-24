@@ -1,0 +1,618 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Policy Info</h5>
+        </div>
+        <div class="card-body" name="header" id="headerId">
+          <!--#region form-->
+          <form #policyForm="ngForm" (ngSubmit)="onFormSubmit(policyForm.value, policyForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button [hidden]="model.policy_payment_status !== 'HOLD'" type="submit" class="btn btn-info btn-round"
+              data-role="R00022090002210C">Save</button>
+
+            <button [hidden]="model.policy_payment_status !== 'HOLD'" type="button" class="btn btn-success btn-round"
+              data-role="R00022090002210O" (click)="btnPost(model.code)">Post</button>
+
+            <button [hidden]="model.policy_payment_status !== 'ON PROCESS'" type="button"
+              class="btn btn-warning btn-round custom-button-width" data-role="R00022090002210R"
+              (click)="btnCancel(model.code)">Cancel
+              Payment</button>
+
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!-- <button type="button" [hidden]="model.policy_payment_status ==='CANCEL'" style='float: right;'
+              class="btn btn-info btn-print-round btn-round custom-button-width" (click)="btnPrintPajak()"
+              data-role="R00022090022214P">Print Pajak </button> -->
+
+            <!--#region button utk reload data ditab wizzard -->
+            <button type="button" id="reloadpolicydetail" class="btn btn-info btn-round" (click)="this.callGetrow()"
+              hidden>
+              Reload
+            </button>
+            <!--#endregion button utk reload data ditab wizzard -->
+
+            <!--#region row-->
+            <div class="row" hidden>
+              <!--#region code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="code" class="control-label">Police Code </label>
+                  <input type="text" class="form-control" [ngModel]="model.code" maxlength="50" name="p_code"
+                    #code="ngModel">
+                </div>
+              </div>
+              <!--#endregion code-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region policy_no-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="policy_no" class="control-label">Policy No *</label>
+                  <input class="form-control" [ngModel]="model.policy_no" name="p_policy_no" #policy_no="ngModel"
+                    readonly>
+                  <!-- <small
+                    *ngIf="policy_no.errors?.required && policy_no.touched || (policy_no.errors?.required && policyForm.submitted)"
+                    class="text-danger">
+                    Policy No is required
+                  </small> -->
+                </div>
+              </div>
+              <!--#endregion policy_no-->
+
+              <!--#region policy_status-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Status</label>
+                  <input type="text" class="form-control" [ngModel]="model.policy_status" maxlength="10"
+                    name="p_policy_status" readonly>
+                </div>
+              </div>
+              <!--#endregion policy_status-->
+
+              <!--#region policy_payment_status-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Payment Status</label>
+                  <input type="text" class="form-control" maxlength="10" [ngModel]="model.policy_payment_status"
+                    name="p_policy_payment_status" readonly>
+                </div>
+              </div>
+              <!--#endregion policy_payment_status-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region lookup Branch-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="labelmodule">Branch</label>
+                  <input type="text" class="form-control" [ngModel]="model.branch_name" maxlength="250"
+                    name="p_branch_name" readonly>
+                </div>
+              </div>
+              <!--#endregion lookup Branch-->
+
+              <!--#region currency_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="labelmodule">Currency</label>
+                  <input class="form-control col-md-4" [ngModel]="model.currency_code" name="p_currency_code" readonly>
+                </div>
+              </div>
+              <!--#endregion currency_code-->
+
+              <!--#region insurance type-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Insurance Type</label>
+                  <input type="text" class="form-control" [ngModel]="model.insurance_type" name="p_insurance_type"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion insurance type-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region policy_payment_type-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Payment Type</label>
+                  <input type="text" class="form-control" [ngModel]="model.policy_payment_type"
+                    name="p_policy_payment_type" readonly>
+                </div>
+              </div>
+              <!--#endregion policy_payment_type-->
+
+              <!--#region insurance_name-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Insurance Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.insurance_name" name="p_insurance_name"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion insurance_name-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" hidden>
+              <!--#region fa_code -->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Fixed Asset No</label>
+                  <input type="text" class="form-control" [ngModel]="model.fa_code" name="p_fa_code" readonly>
+                </div>
+              </div>
+              <!--#endregion fa_code -->
+
+              <!--#region fa_name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Fixed Asset Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.fa_name" name="p_fa_name" readonly>
+                </div>
+              </div>
+              <!--#endregion fa_name-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region source_type-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Source Type</label>
+                  <input type="text" class="form-control" [ngModel]="model.source_type" name="p_source_type" readonly>
+                </div>
+              </div>
+              <!--#endregion source_type-->
+
+              <!--#region insured_name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Insurance Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.insured_name" maxlength="250"
+                    name="p_insured_name" readonly>
+                </div>
+              </div>
+              <!--#endregion insured_name-->
+
+              <!--#region insured_qq_name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Insured Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.insured_qq_name" maxlength="250"
+                    name="p_insured_qq_name" readonly>
+                </div>
+              </div>
+              <!--#endregion insured_qq_name-->
+
+              <!--#region object_name-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Insured Object Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.object_name" maxlength="4000"
+                    name="p_object_name" readonly>
+                </div>
+              </div>
+              <!--#endregion object_name-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region sum_insured-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Sum Insured</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6"
+                    [ngModel]="model.sum_insured | number : '1.2-2'" name="p_sum_insured" maxlength="24"
+                    amount="sum_insured" readonly>
+                </div>
+              </div>
+              <!--#endregion sum_insured-->
+
+              <!--#region from_year-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>From Year</label>
+                  <input type="text" class="form-control col-md-4" [ngModel]="model.from_year" name="p_from_year"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion from_year-->
+
+              <!--#region to_year-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>To Year</label>
+                  <input type="text" class="form-control col-md-4" [ngModel]="model.to_year" name="p_to_year" readonly>
+                </div>
+              </div>
+              <!--#endregion to_year-->
+
+              <!--#region faktur_no-->
+              <!-- <label for="invoice_no" class="control-label">Faktur No</label> -->
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="faktur_no" class="control-label" [hidden]="model.ppn_amount == 0">Faktur No *</label>
+                  <label for="faktur_no" class="control-label" [hidden]="model.ppn_amount != 0">Faktur No</label>
+                  <input type="text" class="form-control" [ngModel]="model.faktur_no" maxlength="16" name="p_faktur_no"
+                    #faktur_no="ngModel" [disabled]="model.policy_payment_status !== 'HOLD'"
+                    [required]="model.ppn_amount > 0" pattern={{NumberOnlyPattern}}>
+                  <small
+                    *ngIf="faktur_no.errors?.required && faktur_no.touched || (faktur_no.errors?.required && policyForm.submitted)"
+                    class="text-danger">
+                    Faktur No is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion faktur_no-->
+
+              <!--#region faktur_date-->
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="faktur_date" class="control-label">Faktur Date</label>
+                  <div>
+                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                      angular-mydatepicker [ngModel]="model.faktur_date" name="p_faktur_date"
+                      [options]="myDatePickerOptions" #p_faktur_date="ngModel" [readonly]="isButton"
+                      [required]="model.ppn_amount > 0" #faktur_date="angular-mydatepicker" autocomplete="off"
+                      (click)="faktur_date.toggleCalendar()" />
+                    <small
+                      *ngIf="(p_faktur_date.errors?.required && p_faktur_date.touched) || (p_faktur_date.errors?.required && policyForm.submitted)"
+                      class="text-danger">
+                      faktur Date is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion faktur_date-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region policy_eff_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Effective Date </label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.policy_eff_date" name="p_policy_eff_date" [options]="myDatePickerOptions"
+                    #p_policy_eff_date="ngModel" readonly #policy_eff_date="angular-mydatepicker" autocomplete="off"
+                    [ngStyle]="getStyles(true)" (click)="policy_eff_date.toggleCalendar()" />
+                </div>
+              </div>
+              <!--#endregion policy_eff_date-->
+
+              <!--#region policy_exp_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Expired Date </label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.policy_exp_date" name="p_policy_exp_date" [options]="myDatePickerOptions"
+                    #p_policy_exp_date="ngModel" readonly #policy_exp_date="angular-mydatepicker" autocomplete="off"
+                    [ngStyle]="getStyles(true)" (click)="policy_exp_date.toggleCalendar()" />
+                </div>
+              </div>
+              <!--#endregion policy_exp_date-->
+
+              <!--#region endorsement_count-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Endorsement Count</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-4"
+                    pattern="{{NumberOnlyPattern}}" [ngModel]="model.endorsement_count" name="p_endorsement_count"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion endorsement_count-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region cover_note_no-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="cover_note_no" class="control-label">Cover Note No</label>
+                  <input type="text" class="form-control" [ngModel]="model.cover_note_no" maxlength="50"
+                    name="p_cover_note_no" #cover_note_no="ngModel" [disabled]="model.policy_payment_status !== 'HOLD'">
+                </div>
+              </div>
+              <!--#endregion cover_note_no-->
+
+              <!--#region cover_note_date-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="cover_note_date" class="control-label">Cover Note Date </label>
+                  <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                    angular-mydatepicker [ngModel]="model.cover_note_date" name="p_cover_note_date"
+                    [options]="myDatePickerOptions" #p_cover_note_date="ngModel" [readonly]="isButton"
+                    #cover_note_date="angular-mydatepicker" autocomplete="off"
+                    (click)="cover_note_date.toggleCalendar()" />
+                </div>
+              </div>
+              <!--#endregion cover_note_date-->
+
+              <!--#region is_policy_existing-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input disabled class="form-check-input" type="checkbox" [ngModel]="model.is_policy_existing"
+                        name="p_is_policy_existing">
+                      Existing Policy
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_policy_existing-->
+
+              <!--#region invoice_no-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="invoice_no" class="control-label">Invoice No *</label>
+                  <input type="text" class="form-control" [ngModel]="model.invoice_no" maxlength="50"
+                    name="p_invoice_no" #invoice_no="ngModel" [disabled]="model.policy_payment_status !== 'HOLD'"
+                    required>
+                  <small
+                    *ngIf="invoice_no.errors?.required && invoice_no.touched || (invoice_no.errors?.required && policyForm.submitted)"
+                    class="text-danger">
+                    Invoice No is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion invoice_no-->
+
+              <!--#region invoice_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="invoice_date" class="control-label">Invoice Date *</label>
+                  <div>
+                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                      angular-mydatepicker [ngModel]="model.invoice_date" name="p_invoice_date"
+                      [options]="myDatePickerOptions" #p_invoice_date="ngModel" [readonly]="isButton" required
+                      #invoice_date="angular-mydatepicker" autocomplete="off" (click)="invoice_date.toggleCalendar()" />
+                    <small
+                      *ngIf="(p_invoice_date.errors?.required && p_invoice_date.touched) || (p_invoice_date.errors?.required && policyForm.submitted)"
+                      class="text-danger">
+                      Invoice Date is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion invoice_date-->
+
+              <!--#region paths-->
+              <div class="col-md-4" [hidden]="model.policy_payment_status !== 'HOLD' && model.file_name == null">
+                <div class="form-group">
+                  <label>Policy File</label>
+                  <div class="row" style="margin-left: 30px;">
+                    <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                      <div [hidden]="this.tampHidden !== true">
+                        <span class="btn btn-info btn-round btn-file ">
+                          <input type="file" (change)="onUpload($event, this.param)" id="fileControl" />
+                          <span><i class="fa fa-check"></i></span>
+                        </span>
+                        {{tempFile}}
+                      </div>
+                      <div [hidden]="this.tampHidden !== false">
+                        <span>
+                          <a class="btn btn-danger btn-round btn-file " type="button"
+                            (click)="deleteImage(model.file_name, this.param, model.paths)"
+                            [hidden]="model.policy_payment_status !== 'HOLD'">
+                            <span><i class="fa fa-trash"></i></span></a>
+                          <br>
+                          <a class="btn btn-primary btn-round btn-file " type="button"
+                            (click)="priviewFile(model.file_name, model.paths)">
+                            <span><i class="fa fa-eye"></i></span></a>
+                        </span>
+                        <div> {{model.file_name}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion paths-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region total_premi_sell_amount-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Premium Sell Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" maxlength="24"
+                    amount="total_premi_sell_amount" [ngModel]="model.total_premi_sell_amount | number : '1.2-2'"
+                    name="p_total_premi_sell_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion total_premi_sell_amount-->
+
+              <!--#region total_premi_buy_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="total_premi_buy_amount" class="control-label">Total Initial Buy Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" maxlength="24"
+                    amount="total_premi_buy_amount" [ngModel]="model.total_premi_buy_amount | number : '1.2-2'"
+                    name="p_total_premi_buy_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion total_premi_buy_amount-->
+
+              <!--#region total_discount_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Total Discount Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" maxlength="24"
+                    amount="total_discount_amount" [ngModel]="model.total_discount_amount | number : '1.2-2'"
+                    name="p_total_discount_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion total_discount_amount-->
+
+              <!--#region total_adjusment_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Adjustment Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" maxlength="24"
+                    amount="total_adjusment_amount" [ngModel]="model.total_adjusment_amount | number : '1.2-2'"
+                    name="p_total_adjusment_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion total_adjusment_amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region stamp_fee_amount-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Stamp Duty Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" maxlength="24"
+                    amount="stamp_fee_amount" [ngModel]="model.stamp_fee_amount | number : '1.2-2'"
+                    name="p_stamp_fee_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion stamp_fee_amount-->
+
+              <!--#region admin_fee_amount-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Admin Fee Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" maxlength="24"
+                    amount="admin_fee_amount" [ngModel]="model.admin_fee_amount | number : '1.2-2'"
+                    name="p_admin_fee_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion admin_fee_amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region ppn_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>PPN Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" amount="ppn_amount"
+                    [ngModel]="model.ppn_amount | number : '1.2-2'" name="p_ppn_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion ppn_amount-->
+
+              <!--#region pph_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>PPH Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" amount="pph_amount"
+                    [ngModel]="model.pph_amount | number : '1.2-2'" name="p_pph_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion pph_amount-->
+
+              <!--#region total_net_premi_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Payment Amount</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" maxlength="24"
+                    amount="total_net_premi_amount" [ngModel]="model.total_net_premi_amount | number : '1.2-2'"
+                    name="p_total_net_premi_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion total_net_premi_amount-->
+
+              <!--#region stamp_fee_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Stamp Fee</label>
+                  <input type="text" style="text-align: right;" class="form-control col-md-6" amount="stamp_fee_amount"
+                    [ngModel]="model.stamp_fee_amount | number : '1.2-2'" name="p_stamp_fee_amount"
+                    [disabled]="model.policy_payment_status !== 'HOLD'">
+                </div>
+              </div>
+              <!--#endregion stamp_fee_amount-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+
+        <!--#region Wizard-->
+        <div class="wizard-custom-margin" [hidden]="param == null">
+          <!--#region wizard container -->
+          <div class="wizard-container">
+            <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+              id="wizardProfile">
+              <div class="text-center">
+                <div class="wizard-navigation">
+                  <ul>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="policymainasset()" href="#policymainassetlist" data-toggle="tab"
+                        role="tab" aria-controls="policymainassetlist" aria-selected="true">
+                        Asset
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="policymainperiodwiz()" href="#policymainperiodlist" data-toggle="tab"
+                        role="tab" aria-controls="policymainperiodlist" aria-selected="true">
+                        Coverage
+                      </a>
+                    </li>
+                    <!-- <li class="nav-item">
+                      <a class="nav-link" (click)="policymainloadingwiz()" href="#policymainloadinglist"
+                        data-toggle="tab" role="tab" aria-controls="policymainloadinglist" aria-selected="true">
+                        Loading
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="policymainperiodadjusmentwiz()" href="#policymainperiodadjusmentlist"
+                        data-toggle="tab" role="tab" aria-controls="policymainperiodadjusmentlist" aria-selected="true">
+                        Adjustment
+                      </a>
+                    </li> -->
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="policymainhistorywiz()" href="#policymainhistorylist"
+                        data-toggle="tab" role="tab" aria-controls="policymainhistorylist" aria-selected="true">
+                        History
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--endregion wizard-->
+        <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

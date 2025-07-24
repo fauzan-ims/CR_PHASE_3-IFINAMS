@@ -1,0 +1,53 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <!--#region List view-->
+            <table id="datatablespolicyasset" datatable [dtOptions]="dtOptions"
+                class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th style="display: none;"></th>
+                        <th class="disabled-sorting">No</th>
+                        <th>Fixed Asset</th>
+                        <th>Depreciation</th>
+                        <th>Occupation</th>
+                        <th>Region</th>
+                        <th>Sum Insured Amount</th>
+                        <th>Total Premi Amount</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let row of listpolicymainasset; let i = index">
+                        <td style="display: none;"></td>
+                        <td style="text-align: center;">{{listpolicymainasset.numberIndex+i+1}}</td>
+                        <td style="width: 15%;">{{row.fa_code}} <br> {{row.item_name}}/ {{row.plat_no}} {{row.colour}}
+                        </td>
+                        <td style="width: 15%;text-align: left;">{{row.depreciation_name}}</td>
+                        <td style="width: 15%;text-align: left;">{{row.occupation_name}}</td>
+                        <td style="width: 15%;text-align: left;">{{row.region_name}}</td>
+                        <td style="width: 15%;text-align: right;">{{row.sum_insured_amount | number : '1.2-2'}}
+                        </td>
+                        <td style="width: 15%;text-align: right;">{{row.total_coverage_premi_amount | number : '1.2-2'}}
+                        </td>
+                        <td style="width: 10%;text-align: left;">{{row.status_asset}}</td>
+                        <td style="text-align: center;">
+                            <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit"
+                                (click)="btnEdit(row.code)"><i class="fa fa-edit"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--#endregion List view-->
+        </div>
+    </div>
+</div>

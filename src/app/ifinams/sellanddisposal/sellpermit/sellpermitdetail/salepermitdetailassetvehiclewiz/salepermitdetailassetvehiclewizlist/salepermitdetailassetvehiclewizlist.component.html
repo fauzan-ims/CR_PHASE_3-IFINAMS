@@ -1,0 +1,393 @@
+<div class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card "> -->
+            <div class="card-body ">
+                <!--#region form-->
+                <form #AssetVehicleForm="ngForm"
+                    (ngSubmit)="onFormSubmit(AssetVehicleForm.value, AssetVehicleForm.valid)">
+                    <!--#region button-->
+                    <button hidden id="assetdetailvhclwiz" type="button" (click)="callGetrowHeader()"></button>
+                    <!--#endregion button-->
+
+                    <!--#region class="row"-->
+                    <div class="row">
+                        <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                        <!--#region asset_code-->
+                        <input type="text" class="form-control" [ngModel]="this.param" maxlength="50"
+                            name="p_asset_code" hidden>
+                        <!--#endregion asset_code-->
+
+                        <!--#region Lookup merk_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="merk_code" class="control-label labelmodule">Merk
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="model.status !== 'NEW'"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupMerk()" data-toggle="modal" data-target="#lookupModalMerk"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.merk_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.merk_code"
+                                            name="p_merk_code" #merk_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.merk_name"
+                                            name="p_merk_name" #merk_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup merk_code-->
+
+                        <!--#region Lookup model_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="model_code" class="control-label labelmodule">Model
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="model.status !== 'NEW'"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupModel()" data-toggle="modal"
+                                            data-target="#lookupModalModel" href="#"><i
+                                                class="fa fa-search-plus"></i></button>
+                                        {{model.model_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.model_code"
+                                            name="p_model_code" #model_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.model_name"
+                                            name="p_model_name" #model_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup model_code-->
+
+                        <!--#region Lookup type_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="type_code" class="control-label labelmodule">Type
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="model.status !== 'NEW'"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupType()" data-toggle="modal" data-target="#lookupModalType"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.type_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.type_code"
+                                            name="p_type_code" #type_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.type_name"
+                                            name="p_type_name" #type_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup type_code-->
+
+                        <!--#region plat_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="plat_no" class="control-label">Plat No</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.plat_no" name="p_plat_no" #plat_no="ngModel" maxlength="20" />
+                            </div>
+                        </div>
+                        <!--#endregion plat_no-->
+
+                        <!--#region chassis_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="chassis_no" class="control-label">Chasis No</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.chassis_no" name="p_chassis_no" #chassis_no="ngModel"
+                                    maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion chassis_no-->
+
+                        <!--#region engine_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="engine_no" class="control-label">Engine No</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.engine_no" name="p_engine_no" #engine_no="ngModel"
+                                    maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion chassis_no-->
+
+                        <!--#region bpkb_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="bpkb_no" class="control-label">BPKB No</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.bpkb_no" name="p_bpkb_no" #bpkb_no="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion bpkb_no-->
+
+                        <!--#region colour-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="colour" class="control-label">Colour</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.colour" name="p_colour" #colour="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion colour-->
+
+                        <!--#region cylinder-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="cylinder" class="control-label">Cylinder</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.cylinder" name="p_cylinder" #cylinder="ngModel" maxlength="20" />
+                            </div>
+                        </div>
+                        <!--#endregion cylinder-->
+
+                        <!--#region stnk_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="stnk_no" class="control-label">STNK No</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.stnk_no" name="p_stnk_no" #stnk_no="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion stnk_no-->
+
+                        <!--#region stnk_expired_date-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="stnk_expired_date" class="control-label">STNK Expired Date</label>
+                                <input [readonly]="model.status !== 'NEW'" class="form-control col-md-6"
+                                    placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.stnk_expired_date"
+                                    name="p_stnk_expired_date" [options]="myDatePickerOptions"
+                                    (click)="stnk_expired_date.toggleCalendar()" #p_stnk_expired_date="ngModel"
+                                    #stnk_expired_date="angular-mydatepicker" autocomplete="off" />
+                            </div>
+                        </div>
+                        <!--#endregion warranty_end_date-->
+
+                        <!--#region stnk_tax_date-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="stnk_tax_date" class="control-label">STNK Tax Date</label>
+                                <input [readonly]="model.status !== 'NEW'" class="form-control col-md-6"
+                                    placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.stnk_tax_date"
+                                    name="p_stnk_tax_date" [options]="myDatePickerOptions"
+                                    (click)="stnk_tax_date.toggleCalendar()" #p_stnk_tax_date="ngModel"
+                                    #stnk_tax_date="angular-mydatepicker" autocomplete="off" />
+                            </div>
+                        </div>
+                        <!--#endregion warranty_end_date-->
+
+                        <!--#region stnk_renew-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="stnk_renewal" class="control-label">STNK Renew</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.stnk_renewal" name="p_stnk_renewal" #stnk_renewal="ngModel"
+                                    maxlength="15" />
+                            </div>
+                        </div>
+                        <!--#endregion stnk_renew-->
+
+                        <!--#region built_year-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="built_year">Built Year</label>
+                                <div class="col-md-4" style="margin-left: -15px;">
+                                    <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                        [ngModel]="model.built_year" name="p_built_year" #built_year="ngModel"
+                                        maxlength="4" />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion built_year-->
+
+                        <!--#region last_miles-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="last_miles" class="control-label">Last Miles</label>
+                                <input [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.last_miles" name="p_last_miles" #last_miles="ngModel"
+                                    maxlength="15" />
+                            </div>
+                        </div>
+                        <!--#endregion last_miles-->
+
+                        <!--#region last_maintenance_date-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="last_maintenance_date" class="control-label">Last Maintenance Date</label>
+                                <input [readonly]="model.status !== 'NEW'" class="form-control col-md-6"
+                                    placeholder="dd/mm/yyyy" angular-mydatepicker
+                                    [ngModel]="model.last_maintenance_date" name="p_last_maintenance_date"
+                                    [options]="myDatePickerOptions" (click)="last_maintenance_date.toggleCalendar()"
+                                    #p_last_maintenance_date="ngModel" #last_maintenance_date="angular-mydatepicker"
+                                    autocomplete="off" />
+                            </div>
+                        </div>
+                        <!--#endregion last_maintenance_date-->
+
+                        <!--#region purchase-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Purchased By</label>
+                                <select class='form-control col-md-8' [(ngModel)]="model.purchase" name="p_purchase"
+                                    (change)="Purchase($event)" [disabled]="model.status !== 'NEW'">
+                                    <option value='CASH'>CASH</option>
+                                    <option value='CREDIT'>CREDIT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!--#endregion purchase-->
+
+                        <!--#region remark-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="remark" class="control-label">Remark</label>
+                                <textarea [readonly]="model.status !== 'NEW'" type="text" class="form-control"
+                                    [ngModel]="model.remark" name="p_remark" #remark="ngModel"
+                                    maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion remark-->
+                    </div>
+                    <!--#endregion class="row"-->
+                </form>
+                <!--#endregion form-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Merk -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalMerk" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupMerk" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupmerk;let i=index">
+                                    <td style="text-align: center;">{{lookupmerk.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowMerk(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Merk-->
+
+<!--#region lookup Type -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalType" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupType" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuptype;let i=index">
+                                    <td style="text-align: center;">{{lookuptype.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowType(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Type-->
+
+<!--#region lookup Model -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalModel" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupModel" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupmodel;let i=index">
+                                    <td style="text-align: center;">{{lookupmodel.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowModel(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Model-->

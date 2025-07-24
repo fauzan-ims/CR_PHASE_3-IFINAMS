@@ -1,0 +1,589 @@
+<div class="main-content" style="overflow-y:scroll; overflow-x:hidden; height:100%;">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <!--#region watermark-->
+            <div class="watermark" [hidden]="this.isWatermark === '0'">
+                <h6>{{this.companyName}}</h6>
+                <h6>{{this.userName}}</h6>
+                <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+            </div>
+            <!--#endregion watermark-->
+            <div class="card-header">
+                <h5 class="card-title">Work Order Info</h5>
+            </div>
+            <div class="card-body">
+                <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                <!--#region form-->
+                <!-- <form #WorkOrderForm="ngForm" (ngSubmit)="onFormSubmit(WorkOrderForm.value, WorkOrderForm.valid)"> -->
+                <!--#region div-->
+                <div class="row">
+
+                    <!--#region company_code-->
+                    <input type="hidden" class="form-control" [ngModel]="model.company_code" name="p_company_code">
+                    <!--#endregion company_code-->
+
+                    <!--#region id-->
+                    <!-- <input type="hidden" class="form-control" [ngModel]="model.id" name="p_id"> -->
+                    <!--#endregion id-->
+
+                    <!--#region Code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="code" class="control-label">Code</label>
+                            <input type="text" class="form-control" [ngModel]="model.code" name="p_code" readonly
+                                #code="ngModel" />
+                        </div>
+                    </div>
+                    <!--#endregion Code-->
+
+                    <!--#region branch_name-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="branch_name" class="control-label">Branch</label>
+                            <input type="text" class="form-control" [ngModel]="model.branch_name" name="p_branch_name"
+                                readonly>
+                        </div>
+                    </div>
+                    <!--#endregion branch_name-->
+
+                    <!--#region status-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="status" class="control-label">Status</label>
+                            <input type="text" class="form-control" [ngModel]="model.status" name="p_status" readonly
+                                #status="ngModel" />
+                        </div>
+                    </div>
+                    <!--#endregion status-->
+
+                    <!--#region Lookup asset_code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="asset_code" class="control-label" style="cursor: pointer;"
+                                title="Clear">Asset</label>
+                            <div class="col-md-12 buttons">
+                                <span>
+                                    <button disabled class="btn btn-icon btn-outline-default btn-round btn-md"
+                                        type="button" data-toggle="modal" data-target="#lookupModalAsset" href="#"><i
+                                            class="fa fa-search-plus"></i></button>
+                                    {{model.item_name}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.asset_code"
+                                        name="p_asset_code" #asset_code="ngModel">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion Lookup asset_code-->
+
+                    <!--#region service_type-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="p_service_type" class="control-label">Service Type</label>
+                            <select disabled class="form-control col-md-6" [ngModel]="model.service_type"
+                                name="p_service_type" #p_service_type="ngModel">
+                                <option value='ROUTINE'>ROUTINE</option>
+                                <option value='NON ROUTINE'>NON ROUTINE</option>
+                                <option value='CLAIM'>CLAIM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!--#endregion service_type-->
+
+                    <!--#region radio button maintenance_by-->
+                    <div class="col-md-4">
+                        <label>Maintenance By</label>
+                        <div class="form-group col-md-12">
+                            <div class="row">
+                                <div class="form-check-radio form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="p_maintenance_by" value="INT"
+                                            [(ngModel)]="model.maintenance_by" disabled>Internal
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                                <div class="form-check-radio form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="p_maintenance_by" value="EXT"
+                                            [(ngModel)]="model.maintenance_by" disabled>External
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                                <div class="form-check-radio form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="p_maintenance_by" value="CST"
+                                            [(ngModel)]="model.maintenance_by" disabled>Customer
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion radio button maintenance_by-->
+
+                    <!--#region actual_km-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="control-label">KM</label>
+                            <input type="text" style="text-align:right" class="form-control col-md-4"
+                                [ngModel]="model.actual_km" name="p_actual_km" maxlength="4" readonly
+                                #actual_km="ngModel" pattern={{NumberOnlyPattern}}>
+                        </div>
+                    </div>
+                    <!--#endregion actual_km-->
+
+                    <!--#region work_date-->
+                    <div class="col-md-4">
+                        <div class="form-group col-md-8" style="margin-left: -15px;">
+                            <label for="work_date" class="control-label">Work Date</label>
+                            <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                [ngModel]="model.work_date" name="p_work_date" readonly [ngStyle]="getStyles(true)"
+                                [options]="myDatePickerOptions" (click)="work_date.toggleCalendar()"
+                                #p_work_date="ngModel" #work_date="angular-mydatepicker" autocomplete="off" />
+                        </div>
+                    </div>
+                    <!--#endregion transaction_date-->
+
+                    <!--#region maintenance_code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="maintenance_code" class="control-label">Maintenance</label>
+                            <input type="text" class="form-control" [ngModel]="model.maintenance_code"
+                                name="p_maintenance_code" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion maintenance_code-->
+
+                    <!--#region Lookup maintenance_code-->
+                    <div class="col-md-4" hidden>
+                        <div class="form-group">
+                            <label for="maintenance_code" class="control-label" style="cursor: pointer;"
+                                title="Clear">Maintenance
+                            </label>
+                            <div class="col-md-12 buttons">
+                                <span>
+                                    <button disabled class="btn btn-icon btn-outline-default btn-round btn-md"
+                                        type="button" data-toggle="modal" data-target="#lookupModalMaintenance"
+                                        href="#"><i class="fa fa-search-plus"></i></button>
+                                    {{model.maintenance_code}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.maintenance_code"
+                                        name="p_maintenance_code" #maintenance_code="ngModel">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion Lookup maintenance_code-->
+
+                    <!--#region unit_code-->
+                    <div class="col-md-4" hidden>
+                        <div class="form-group">
+                            <label for="unit_code" class="control-label">Unit</label>
+                            <input type="text" class="form-control" [ngModel]="model.unit_code" name="p_unit_code"
+                                hidden>
+                            <input type="text" class="form-control" [ngModel]="model.unit_name" name="p_unit_name"
+                                readonly>
+                        </div>
+                    </div>
+                    <!--#endregion unit_code-->
+
+                    <!--#region Lookup vendor_code-->
+                    <div class="col-md-4" [hidden]="model.maintenance_by === 'INT'">
+                        <div class="form-group">
+                            <label for="vendor_code" class="control-label labelmodule">Vendor</label>
+                            <div class="col-md-12 buttons">
+                                <span>
+                                    <button disabled class="btn btn-icon btn-outline-default btn-round btn-md"
+                                        type="button" data-toggle="modal" data-target="#lookupModalVendor" href="#"><i
+                                            class="fa fa-search-plus"></i></button>
+                                    {{model.vendor_name}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.vendor_code"
+                                        name="p_vendor_code" #vendor_code="ngModel">
+                                    <input type="hidden" class="form-control" [ngModel]="model.vendor_name"
+                                        name="p_vendor_name" #vendor_name="ngModel">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion Lookup vendor_code-->
+
+                    <!--#region remark-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="remark" class="control-label">Remark</label>
+                            <textarea readonly type="text" class="form-control" [ngModel]="model.remark" name="p_remark"
+                                #remark="ngModel" maxlength="4000"></textarea>
+                        </div>
+                    </div>
+                    <!--#endregion remark-->
+
+                    <!--#region is_reimburse-->
+                    <div class="col-md-4">
+                        <div class="form-check mt-4" [hidden]="model.maintenance_by === 'CST'"
+                            style="margin-left: -35px;">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input disabled class="form-check-input" type="checkbox"
+                                        [(ngModel)]="model.is_reimburse" name="p_is_reimburse">
+                                    Reimburse to Customer
+                                    <span class="form-check-sign"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion is_reimburse-->
+
+                    <!--#region maintenance_by-->
+                    <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="maintenance_by" class="control-label">Maintenance By *</label>
+                                    <input [readonly]="model.status === 'CANCEL' || model.status === 'REJECT'"
+                                        type="text" class="form-control" [ngModel]="model.maintenance_by"
+                                        name="p_maintenance_by" #maintenance_by="ngModel" maxlength="50" required />
+                                    <small
+                                        *ngIf="(maintenance_by.errors?.required && maintenance_by.touched) || (maintenance_by.errors?.required && WorkOrderForm.submitted)"
+                                        class="text-danger">
+                                        Maintenance By is required
+                                    </small>
+                                </div>
+                            </div> -->
+                    <!--#endregion maintenance_by-->
+
+                    <!--#region paths-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label [hidden]="model.status !== 'ON PROCESS' && !this.tampHidden">Invoice</label>
+                            <div class="row" style="margin-left: 30px;">
+                                <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                                    <div [hidden]="this.tampHidden === true || model.status !== 'ON PROCESS'">
+                                        <span class="btn btn-info btn-round btn-file ">
+                                            <input type="file" (change)="onUpload($event, model.code)"
+                                                id="fileControl" />
+                                            <span><i class="fa fa-check"></i></span>
+                                        </span>
+                                        {{tempFile}}
+                                    </div>
+                                    <div>
+                                        <span>
+                                            <!-- <a class="btn btn-danger btn-round btn-file "
+                                                [hidden]="this.tampHidden !== true || this.tampHiddenforView"
+                                                type="button" (click)="deleteImage(model.file_name,model.file_path)">
+                                                <span><i class="fa fa-trash"></i></span></a>
+                                            <br> -->
+                                            <a class="btn btn-primary btn-round btn-file "
+                                                [hidden]="(!this.tampHiddenforView && !this.tampHidden) || (this.tampHiddenforView && !this.tampHidden)"
+                                                type="button" (click)="previewFile(model.file_name, model.file_path)">
+                                                <span><i class="fa fa-eye"></i></span></a>
+                                        </span>
+                                        <div> {{model.file_name}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion paths-->
+
+                    <!--#region paths-->
+                    <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label [hidden]="model.status !== 'ON PROCESS' && !this.tampHidden">Invoice</label>
+                                    <div class="row" style="margin-left: 30px;">
+                                        <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                                            <div>
+                                                <span>
+                                                    <a class="btn btn-primary btn-round btn-file "
+                                                        [hidden]="(!this.tampHiddenforView && !this.tampHidden) || (this.tampHiddenforView && !this.tampHidden)"
+                                                        type="button"
+                                                        (click)="previewFile(model.file_name, model.file_path)">
+                                                        <span><i class="fa fa-eye"></i></span></a>
+                                                </span>
+                                                <div> {{model.file_name}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                    <!--#endregion paths-->
+
+                    <!--#region invoice_no-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="invoice_no" class="control-label">Invoice No</label>
+                            <input type="text" class="form-control" [ngModel]="model.invoice_no" name="p_invoice_no"
+                                readonly>
+                        </div>
+                    </div>
+                    <!--#endregion invoice_no-->
+
+                    <!--#region total_amount-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="total_amount" class="control-label">Total Amount</label>
+                            <div class="col-md-6" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.total_amount | number : '1.2-2'" amount="total_amount"
+                                    name="p_total_amount" #total_amount="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion total_amount-->
+
+                    <!--#region total_ppn_amount-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="total_ppn_amount" class="control-label">Total PPN Amount</label>
+                            <div class="col-md-6" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.total_ppn_amount | number : '1.2-2'" amount="total_ppn_amount"
+                                    name="p_total_ppn_amount" #total_ppn_amount="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion total_ppn_amount-->
+
+                    <!--#region total_pph_amount-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="total_pph_amount" class="control-label">Total PPH Amount</label>
+                            <div class="col-md-6" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.total_pph_amount | number : '1.2-2'" amount="total_pph_amount"
+                                    name="p_total_pph_amount" #total_pph_amount="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion total_pph_amount-->
+
+                    <!--#region payment_amount-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="payment_amount" class="control-label">Payment Amount</label>
+                            <div class="col-md-6" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.payment_amount | number : '1.2-2'" amount="payment_amount"
+                                    name="p_payment_amount" #payment_amount="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion payment_amount-->
+                </div>
+                <!--#endregion div-->
+                <div class="row">
+                    <!--#region look up to bank name-->
+                    <!-- <div class="col-md-4">
+                                <div class="form-group" hidden>
+                                    <label class="control-label labelmodule">Bank Name *</label>
+                                    <div class="col-md-12 buttons btn-lookup-margin">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button"
+                                                data-toggle="modal" data-target="#lookupModalBank" href="#"><i
+                                                    class="fa fa-search-plus"(click)="btnLookupBank()"></i></button>
+                                            {{model.bank_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.bank_code"
+                                                name="p_bank_code" [required]="model.maintenance_by === 'CST'"
+                                                #bank_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.bank_name"
+                                                name="p_bank_name" #bank_name="ngModel" [required]="model.maintenance_by === 'CST'">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div> -->
+                    <!--#end#region look up to bank name-->
+
+                    <!--#region Bank Account No-->
+                    <div class="col-md-4">
+                        <div class="form-group" [hidden]="model.maintenance_by !== 'CST'">
+                            <label for="bank_account_no" class="control-label">Bank Account No *</label>
+                            <input type="text" class="form-control" [ngModel]="model.bank_account_no" maxlength="50"
+                                name="p_bank_account_no" readonly #bank_account_no="ngModel">
+                        </div>
+                    </div>
+                    <!--#endregion Bank Account No-->
+
+                    <!--#region Bank Account Name-->
+                    <div class="col-md-4">
+                        <div class="form-group" [hidden]="model.maintenance_by !== 'CST'">
+                            <label for="bank_account_name" class="control-label">Bank Account Name *</label>
+                            <input type="text" class="form-control" [ngModel]="model.bank_account_name" maxlength="250"
+                                name="p_bank_account_name" readonly #bank_account_name="ngModel">
+                        </div>
+
+                    </div>
+                    <!--#endregion Bank Account Name-->
+
+
+                </div>
+                <!--#endregion div-->
+                <!-- </form> -->
+                <!--#endregion form-->
+            </div>
+            <div *ngIf="param != null">
+                <!--#region list view-->
+                <span layout="row horizontal-divider">
+                    <hr flex />
+                </span>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card-header">
+                            <h5>Work Order Detail List</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar">
+                                <!--#region button add-->
+                                <!-- <button
+                                        [hidden]="this.param == null || model.status === 'POST' || model.status == 'HOLD'"
+                                        class="btn btn-info btn-round" (click)="btnAdd()" data-role="R00021840032185C">
+                                        Add
+                                    </button>
+                                    <button
+                                        [hidden]="this.param == null || model.status === 'POST' || model.status == 'HOLD'"
+                                        type="submit" class="btn btn-info btn-round" (click)="btnSaveList()"
+                                        data-role="R00021840032186C">
+                                        Save
+                                    </button>
+                                    <button
+                                        [hidden]="this.param == null || model.status === 'POST' || model.status == 'HOLD'"
+                                        class="btn btn-danger btn-round" (click)="btnDeleteAll()"
+                                        data-role="R00021840032187D">
+                                        Delete
+                                    </button> -->
+                                <!--#endregion button add-->
+                            </div>
+
+                            <!--#region list view-->
+                            <table id="datatableDocument" datatable [dtOptions]="dtOptions"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="disabled-sorting">No</th>
+                                        <th style="display: none;"></th>
+                                        <th>Item Service</th>
+                                        <th>Part Number</th>
+                                        <th>Service Amount</th>
+                                        <th>Quantity</th>
+                                        <th>Total Amount</th>
+                                        <th>Tax</th>
+                                        <th>PPN/PPH</th>
+                                        <th>Payment Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of listmutationdocument; let i=index">
+                                        <td style="text-align: center;">{{listmutationdocument.numberIndex+i+1}}
+                                        </td>
+                                        <td style="display: none;"></td>
+                                        <td style="width: 10%;">
+                                            <!--#region Lookup asset_code-->
+                                            <!-- <div class="col-md-6"> -->
+                                            <div class="form-group">
+                                                <div class="col-md-12 buttons">
+                                                    <span>
+                                                        <button disabled
+                                                            class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                            type="button"
+                                                            (click)="btnLookupAssetDetail(row.id, row.type_code)"
+                                                            data-toggle="modal" data-target="#lookupModalAssetDetail"
+                                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                                        {{row.service_name}}
+                                                        <input type="hidden" class="form-control"
+                                                            [ngModel]="row.service_code" name="p_service_code" required
+                                                            #service_code="ngModel">
+                                                        <input type="hidden" class="form-control"
+                                                            [ngModel]="row.service_name" name="p_service_name"
+                                                            #service_name="ngModel">
+                                                        <input type="hidden" class="form-control"
+                                                            [ngModel]="row.service_type" name="p_service_type"
+                                                            #service_type="ngModel">
+                                                    </span>
+                                                </div>
+                                                <!-- </div> -->
+                                            </div>
+                                            <!--#endregion Lookup location_code-->
+                                        </td>
+                                        <td style="width: 15%;">
+                                            <input id="part_number{{i}}" class="form-control" type="text"
+                                                value="{{row.part_number}}" name="p_part_number" readonly>
+                                        </td>
+                                        <td style="width: 15%;text-align: right;" class="if-no-edit-btn">
+                                            <div class="form-group">
+                                                <input id="service_fee{{i}}" (blur)="onBlur($event,i,'service_fee')"
+                                                    (focus)="onFocus($event,i,'service_fee')"
+                                                    class="form-control text-right" type="text"
+                                                    value="{{row.service_fee | number : '1.2-2'}}" amount="service_fee"
+                                                    name="p_service_fee" disabled>
+                                            </div>
+                                        </td>
+                                        <td style="width: 10%; text-align: right">
+                                            <div class="form-group">
+                                                <input type="int" class="form-control" readonly id="quantity{{i}}"
+                                                    type="text" value="{{row.quantity}}" style="text-align: right"
+                                                    name="p_quantity">
+                                            </div>
+                                        </td>
+                                        <td style="width: 10%;text-align: right;" class="if-no-edit-btn">
+                                            {{row.total_amount |
+                                            number : '1.2-2'}}
+                                        </td>
+
+                                        <td style="text-align: left; width: 15%;">
+                                            <div class="form-group">
+                                                <div class="col-md-12 buttons">
+                                                    <span>
+                                                        <button
+                                                            class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                            type="button" (click)="btnLookupTaxCode(row.id)"
+                                                            data-target="#lookupModalTax" data-toggle="modal" href="#"
+                                                            disabled>
+                                                            <i class="fa fa-search-plus"></i>
+                                                        </button> {{row.tax_name}}
+                                                        <input hidden name="p_tax_code" value="{{row.tax_code}}" />
+                                                        <input hidden name="p_tax_name" value="{{row.tax_name}}" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="width: 10%;text-align: right;" class="if-no-edit-btn">
+                                            {{row.ppn_amount | number : '1.2-2'}} <br> {{row.pph_amount | number
+                                            :'1.2-2'}} </td>
+                                        <td style="width: 15%;text-align: right;" class="if-no-edit-btn">
+                                            {{row.payment_amount |
+                                            number : '1.2-2'}}
+                                        </td>
+                                        <!-- <td style="width: 30%;">
+                                                <input
+                                                    [hidden]="row.file_name != '' && row.file_name != null || model.status != 'HOLD'"
+                                                    type="file" (change)="onUpload($event, row.id)" />
+                                                <a
+                                                    [hidden]="row.file_name === '' && row.file_name == null">{{row.file_name}}</a>
+                                                <input hidden name="p_file_path" [ngModel]="row.path">
+                                            </td>
+                                            <td style="text-align: center;" class="if-no-edit-btn">
+                                                <span>
+                                                    <a [hidden]="row.file_name == '' || row.file_name == null"
+                                                        (click)="previewFile(row.file_name, row.path)"
+                                                        style="cursor: pointer;">
+                                                        Preview</a> <br> <br>
+                                                    <a [hidden]="row.file_name == '' || row.file_name == null || model.status != 'HOLD'"
+                                                        (click)="deleteImage(row.id, row.file_name, row.path)"
+                                                        style="cursor: pointer;">
+                                                        Remove</a>
+                                                </span>
+                                            </td> -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                    </div>
+                </div>
+                <!--#endregion list view-->
+            </div>
+            <!--#endregion list view-->
+        </div>
+    </div>
+</div>

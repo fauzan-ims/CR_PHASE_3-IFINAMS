@@ -1,0 +1,319 @@
+<div class="main-content" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card "> -->
+            <div class="card-body ">
+                <!--#region form-->
+                <form #AssetElectronicForm="ngForm"
+                    (ngSubmit)="onFormSubmit(AssetElectronicForm.value, AssetElectronicForm.valid)">
+                    <!--#region button submit-->
+                    <button hidden type="submit"
+                        class="btn btn-info btn-round">Save</button>
+                    <button hidden id="assetdetailelctwiz" type="button" (click)="callGetrowHeader()"></button>
+                    <!--#endregion button submit-->
+
+                    <!--#region class="row"-->
+                    <div class="row">
+                        <input type="text" [ngModel]="modeldetail.status" name="p_status" hidden>
+
+                        <!--#region asset_code-->
+                        <input type="text" class="form-control" [ngModel]="this.param" maxlength="50"
+                            name="p_asset_code" hidden>
+                        <!--#endregion asset_code-->
+
+                        <!--#region Lookup merk_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="merk_code" class="control-label labelmodule">Merk
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="this.param != null"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupMerk()" data-toggle="modal" data-target="#lookupModalMerk"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.merk_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.merk_code"
+                                            name="p_merk_code" required #merk_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.merk_name"
+                                            name="p_merk_name" #merk_name="ngModel">
+                                    </span>
+                                </div>
+                                <small
+                                    [hidden]="merk_code.valid || (merk_code.pristine && !AssetElectronicForm.submitted)"
+                                    class="text-danger">
+                                    Merk is required
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup merk_code-->
+
+                        <!--#region Lookup model_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="model_code" class="control-label labelmodule">Model
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="this.param != null"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupModel()" data-toggle="modal"
+                                            data-target="#lookupModalModel" href="#"><i
+                                                class="fa fa-search-plus"></i></button>
+                                        {{model.model_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.model_code"
+                                            name="p_model_code" required #model_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.model_name"
+                                            name="p_model_name" #model_name="ngModel">
+                                    </span>
+                                </div>
+                                <small
+                                    [hidden]="model_code.valid || (model_code.pristine && !AssetElectronicForm.submitted)"
+                                    class="text-danger">
+                                    Model is required
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup model_code-->
+
+                        <!--#region Lookup type_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="type_code" class="control-label labelmodule">Type
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="this.param != null"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupType()" data-toggle="modal" data-target="#lookupModalType"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.type_item_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.type_item_code"
+                                            name="p_type_item_code" #type_item_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.type_item_name"
+                                            required name="p_type_item_name" #type_item_name="ngModel">
+                                    </span>
+                                </div>
+                                <small
+                                    [hidden]="type_item_name.valid || (type_item_name.pristine && !AssetElectronicForm.submitted)"
+                                    class="text-danger">
+                                    Type is required
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup type_code-->
+
+                        <!--#region serial_no-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="serial_no" class="control-label">Serial No *</label>
+                                <input [readonly]="modeldetail.status !== 'HOLD'" type="text" class="form-control"
+                                    [ngModel]="model.serial_no" required name="p_serial_no" #serial_no="ngModel"
+                                    maxlength="50" />
+                                <small
+                                    *ngIf="serial_no.errors?.required && serial_no.touched || (serial_no.errors?.required && AssetElectronicForm.submitted)"
+                                    class="text-danger">
+                                    Serial No is required
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion serial_no-->
+
+                        <!--#region domain-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="domain" class="control-label">Domain</label>
+                                <input [readonly]="modeldetail.status !== 'HOLD'" type="text" class="form-control"
+                                    [ngModel]="model.domain" name="p_domain" #domain="ngModel" maxlength="100" />
+                            </div>
+                        </div>
+                        <!--#endregion domain-->
+
+                        <!--#region imei-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="imei" class="control-label">IMEI</label>
+                                <input [readonly]="modeldetail.status !== 'HOLD'" type="text" class="form-control"
+                                    [ngModel]="model.imei" name="p_imei" #imei="ngModel" maxlength="100" />
+                            </div>
+                        </div>
+                        <!--#endregion imei-->
+
+                        <!--#region dimension-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="dimension" class="control-label">Dimension</label>
+                                <input [readonly]="modeldetail.status !== 'HOLD' && modeldetail.is_lock == '1'"
+                                    type="text" class="form-control" [ngModel]="model.dimension" name="p_dimension"
+                                    #dimension="ngModel" maxlength="50" />
+                            </div>
+                        </div>
+                        <!--#endregion dimension-->
+
+                        <!--#region hdd-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="hdd" class="control-label">HDD</label>
+                                <input [readonly]="modeldetail.status !== 'HOLD' && modeldetail.is_lock == '1'"
+                                    type="text" class="form-control" [ngModel]="model.hdd" name="p_hdd" #hdd="ngModel"
+                                    maxlength="10" />
+                            </div>
+                        </div>
+                        <!--#endregion hdd-->
+
+                        <!--#region processor-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="processor" class="control-label">Processor</label>
+                                <input [readonly]="modeldetail.status !== 'HOLD' && modeldetail.is_lock == '1'"
+                                    type="text" class="form-control" [ngModel]="model.processor" name="p_processor"
+                                    #processor="ngModel" maxlength="10" />
+                            </div>
+                        </div>
+                        <!--#endregion processor-->
+
+                        <!--#region ram_size-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="ram_size" class="control-label">RAM</label>
+                                <input [readonly]="modeldetail.status !== 'HOLD' && modeldetail.is_lock == '1'"
+                                    type="text" class="form-control" [ngModel]="model.ram_size" name="p_ram_size"
+                                    #ram_size="ngModel" maxlength="8" />
+                            </div>
+                        </div>
+                        <!--#endregion ram_size-->
+                    </div>
+                    <!--#endregion class="row"-->
+                </form>
+                <!--#endregion form-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Merk -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalMerk" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupMerk" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupmerk;let i=index">
+                                    <td style="text-align: center;">{{lookupmerk.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowMerk(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Merk-->
+
+<!--#region lookup Type -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalType" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupType" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuptype;let i=index">
+                                    <td style="text-align: center;">{{lookuptype.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowType(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Type-->
+
+<!--#region lookup Model -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalModel" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupModel" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupmodel;let i=index">
+                                    <td style="text-align: center;">{{lookupmodel.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowModel(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Model-->

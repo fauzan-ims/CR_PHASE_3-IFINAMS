@@ -1,0 +1,101 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Occupation Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #occupationForm="ngForm" (ngSubmit)="onFormSubmit(occupationForm.value, occupationForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="submit" ng-disabled="occupationForm.$invalid" class="btn btn-info btn-round"
+              data-role="R00021290012129C">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Code-->
+              <div class="col-md-4" hidden>
+                <div [hidden]="model.code != null" class="row" style="margin-bottom: -15px; padding-top: 30px;">
+                  <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                  <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                    Generate-</h1>
+                </div>
+                <div [hidden]="model.code == null" class="form-group">
+                  <label>Code *</label>
+                  <input type="text" class="form-control" [ngModel]="model.code" maxlength="10" name="p_code"
+                    [readonly]="isReadOnly">
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region occupation_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="occupation_code" class="control-label">Code *</label>
+                  <input id="occupation_code" type="text" class="form-control" [ngModel]="model.occupation_code"
+                    name="p_occupation_code" required #occupation_code="ngModel" title="occupation_code" maxlength="10"
+                    [disabled]="isReadOnly">
+                  <small
+                    *ngIf="(occupation_code.errors?.required && occupation_code.touched) || (occupation_code.errors?.required && occupationForm.submitted)"
+                    class="text-danger">
+                    Code is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion occupation_code-->
+
+              <!--#region occupation name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="occupation_name" class="control-label">Description *</label>
+                  <textarea type="text" class="form-control" [ngModel]="model.occupation_name" maxlength="4000" required
+                    #occupation_name="ngModel" name="p_occupation_name"></textarea>
+                  <small
+                    *ngIf="(occupation_name.errors?.required && occupation_name.touched) || (occupation_name.errors?.required && occupationForm.submitted)"
+                    class="text-danger">
+                    Description is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion occupation name-->
+
+              <!--#region check box is active-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [ngModel]="model.is_active" name="p_is_active">
+                      Active
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion check box is active-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

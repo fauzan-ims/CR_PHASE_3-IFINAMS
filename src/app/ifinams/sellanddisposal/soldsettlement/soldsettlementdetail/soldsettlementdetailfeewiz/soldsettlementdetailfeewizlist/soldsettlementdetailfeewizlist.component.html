@@ -1,0 +1,207 @@
+<router-outlet></router-outlet>
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="toolbar">
+                <!--#region button add--->
+                <button [hidden]="model.sale_detail_status != 'HOLD'" class="btn btn-info btn-round" type="button"
+                    (click)="btnLookupAuctionFee()" data-target="#lookupModalAuctionFee" data-toggle="modal"
+                    data-role="R00022590000004C" href="#">
+                    Add </button>
+                <button [hidden]="model.sale_detail_status != 'HOLD'" class="btn btn-info btn-round"
+                    (click)="btnSaveList()" data-role="R00022590000005C">
+                    Save
+                </button>
+                <button [hidden]="model.sale_detail_status != 'HOLD'" class="btn btn-danger btn-round"
+                    (click)="btnDeleteAll()" data-role="R00022590000006D">
+                    Delete
+                </button>
+                <button hidden id="tabdetailwiz" type="button" (click)="callGetrowHeader()"></button>
+                <!--#endregion button add--->
+            </div>
+
+            <input type="text" [ngModel]="model.sale_detail_status" name="p_sale_detail_status" hidden>
+
+            <div class="card-body">
+                <input type="text" [ngModel]="model.sale_detail_status" name="p_sale_detail_status" hidden>
+                <!--#region list view-->
+                <table id="datatableSoldSettlementFee" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th class="disabled-sorting">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" id="checkall"
+                                            [(ngModel)]="selectedAll" (change)="selectAllTable();" />
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </th>
+                            <th>Transaction</th>
+                            <th>Fee Amount</th>
+                            <th>Tax</th>
+                            <th>PPH Amount</th>
+                            <th>PPN Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listsoldsettlementfee;  let i=index">
+                            <td style="text-align: center;">{{listsoldsettlementfee.numberIndex+i+1}}</td>
+                            <td class="disabled-sorting">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                                            (change)="checkIfAllTableSelected($event, row.id);">
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                                <input type="hidden" value="{{row.id}}" name="p_id_detail">
+                            </td>
+                            <td style="width: 30%;text-align: left;">{{row.fee_code}} <br> {{row.fee_name}}</td>
+                            <td style="width: 20%;text-align: right;" class="if-no-edit-btn">
+                                <div class="form-group">
+                                    <input id="fee_amount{{i}}" (blur)="onBlur($event,i,'fee_amount')"
+                                        (focus)="onFocus($event,i,'fee_amount')" class="form-control text-right"
+                                        type="text" value="{{row.fee_amount | number : '1.2-2'}}" amount="fee_amount"
+                                        name="p_fee_amount" [disabled]="model.sale_detail_status != 'HOLD'">
+                                </div>
+                            </td>
+                            <td style="text-align: left; width: 10%;">
+                                <div class="form-group">
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupTaxCode(row.id)"
+                                                data-target="#lookupModalTax" data-toggle="modal" href="#"
+                                                [disabled]="model.sale_detail_status != 'HOLD'">
+                                                <i class="fa fa-search-plus"></i>
+                                            </button> {{row.master_tax_description}}
+                                            <input hidden name="p_tax_code" value="{{row.master_tax_code}}" />
+                                            <input hidden name="p_tax_name" value="{{row.master_tax_description}}" />
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 20%;text-align: right;" class="if-no-edit-btn">{{row.pph_amount | number : '1.2-2'}}</td>
+                            <td style="width: 20%;text-align: right;" class="if-no-edit-btn">
+                                <input id="ppn_amount{{i}}" (blur)="onBlur($event,i,'ppn_amount')"
+                                    (focus)="onFocus($event,i,'ppn_amount')" class="form-control text-right" type="text"
+                                    value="{{row.ppn_amount | number : '1.2-2'}}" amount="ppn_amount"
+                                    name="p_ppn_amount"
+                                    [disabled]="model.sale_detail_status != 'HOLD'">
+                            </td>
+                            <!-- <td style="width: 20%;text-align: right;" class="if-no-edit-btn">{{row.ppn_amount | number : '1.2-2'}}</td> -->
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Asset-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalAuctionFee"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" (click)="btnLookupClose()" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <!--#region button add //data-role="R0000041U"-->
+                        <button class="btn btn-info btn-round" (click)="btnSelectAllLookup()">
+                            ADD
+                        </button>
+                        <!--#endregion button add--->
+                        <table id="datatablelookupauctionfee" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th class="disabled-sorting">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" id="checkallLookup"
+                                                    [(ngModel)]="selectedAllLookup" (change)="selectAllLookup();" />
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupauctionfee;  let i=index">
+                                    <td style="text-align: center;">{{lookupauctionfee.numberIndex+i+1}}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [(ngModel)]="row.selectedLookup"
+                                                    (change)="checkIfAllLookupSelected($event, row.code);">
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;width: 25%;" class="if-no-edit-btn">{{ row.code }}
+                                    </td>
+                                    <td style="text-align: left;width: 75%;">{{ row.auction_fee_name }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Asset-->
+
+<!--#region lookup Tax-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTax" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupTax" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupTax;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupTax.numberIndex+i+1}}</td>
+                                    <td style="width: 20%;text-align: center;">{{ row.code }}</td>
+                                    <td style="width: 80%;">{{ row.name }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowTax(row.code, row.name, row.ppn_pct, row.pph_pct)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion lookup Tax -->

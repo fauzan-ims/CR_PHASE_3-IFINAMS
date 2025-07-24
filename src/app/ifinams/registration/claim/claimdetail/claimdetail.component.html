@@ -1,0 +1,697 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Claim Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #claimForm="ngForm" (ngSubmit)="onFormSubmit(claimForm.value, claimForm.valid)">
+
+            <!--#region button save, Proceed, Approve, cancel dan back-->
+            <button type="submit" [hidden]="model.claim_status !== 'HOLD'" class="btn btn-info btn-round"
+              data-role="R00021970002198C">Save
+            </button>
+
+            <button [hidden]="model.claim_status !== 'HOLD' || param == null" type="button" data-role="R00021970002198O"
+              class="btn btn-success btn-round" (click)="btnProceed(model.code)">Proceed</button>
+
+            <button [hidden]="model.claim_status !== 'ON PROCESS'" type="button" class="btn btn-success btn-round"
+              data-role="R00021970012197O" (click)="btnApprove(claimForm.value, claimForm.valid)">Approve</button>
+
+            <button [hidden]="!isCancel" type="button" class="btn btn-warning btn-round" data-role="R00021970002198R"
+              (click)="btnCancel(model.code)">Cancel</button>
+
+            <button [hidden]="!isReject" type="button" class="btn btn-warning btn-round" data-role="R00021970012197R"
+              (click)="btnReject(model.code)">Reject</button>
+
+
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button save, Proceed, Approve, cancel dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Code-->
+              <div class="col-md-4">
+                <div [hidden]="model.code != null" class="row" style="margin-bottom: -15px; padding-top: 30px;">
+                  <h1 class="col-md-4" style="font-size: 12px;">Claim No</h1>
+                  <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                    Generate-</h1>
+                </div>
+                <div [hidden]="model.code == null" class="form-group">
+                  <label>Claim No</label>
+                  <input type="text" class="form-control" [ngModel]="model.code" maxlength="50" name="p_code" readonly>
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region Claim Request-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Request No</label>
+                  <input type="text" class="form-control" maxlength="50" [ngModel]="model.claim_request_code"
+                    name="p_claim_request_code" readonly>
+                </div>
+              </div>
+              <!--#endregion Claim Request-->
+
+              <!--#region claim_status-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Status </label>
+                  <input type="text" class="form-control" [ngModel]="model.claim_status" maxlength="10"
+                    name="p_claim_status" readonly>
+                </div>
+              </div>
+              <!--#endregion claim_status-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region lookup Branch Code -->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="labelmodule">Branch *</label>
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button [disabled]="isReadOnly" class="btn btn-icon btn-outline-default btn-round btn-md"
+                        type="button" (click)="btnLookupBranch()" data-toggle="modal" data-target="#lookupModalBranch"
+                        href="#">
+                        <i class="fa fa-search-plus"></i></button>
+                      {{model.branch_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_code" name="p_branch_code">
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_name" name="p_branch_name"
+                        required #branch_name="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="branch_name.valid || (branch_name.pristine && !claimForm.submitted)"
+                    class="text-danger">
+                    Branch is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion lookup Branch code -->
+
+              <!--#region Policy No-->
+              <div class="col-md-4">
+                <label>Policy No *</label>
+                <div class="form-group">
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button [disabled]="isReadOnly" class="btn btn-icon btn-outline-default btn-round btn-md"
+                        type="button" (click)="btnLookupPolicy()" data-target="#lookupModalPolicy" data-toggle="modal"
+                        href="#">
+                        <i class="fa fa-search-plus"></i></button> {{model.policy_no}}
+                      <input type="hidden" name="p_policy_code" [ngModel]="model.policy_code" required
+                        #policy_code="ngModel" />
+                      <input type="hidden" name="p_policy_no" [ngModel]="model.policy_no" />
+                    </span>
+                  </div>
+                  <small [hidden]="policy_code.valid || (policy_code.pristine && !claimForm.submitted)"
+                    class="text-danger">
+                    Policy No is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Policy No-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Insurance Type-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Insurance Type</label>
+                  <input type="text" class="form-control" [ngModel]="model.insurance_type" name="p_insurance_type"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion Insurance Type-->
+
+              <!--#region Insurance Name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Insurance Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.insurance_name" name="p_insurance_name"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion Insurance Name-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region lookup Claim Loss Type -->
+              <div class="col-md-4">
+                <label class="labelgsubcode">Claim Loss Type *</label>
+                <div class="form-group">
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupLossType()" data-toggle="modal" data-target="#lookupModalLossType" href="#"
+                        [disabled]="model.claim_status != 'HOLD'">
+                        <i class="fa fa-search-plus"></i></button>
+                      {{model.claim_loss_type_desc}}
+                      <input type="hidden" class="form-control" [ngModel]="model.claim_loss_type"
+                        name="p_claim_loss_type" required #claim_loss_type="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="claim_loss_type.valid || (claim_loss_type.pristine && !claimForm.submitted)"
+                    class="text-danger">
+                    Claim Loss Type is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion lookup Claim Loss Type -->
+
+              <!--#region policy_eff_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Effective Date </label>
+                  <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                    [ngModel]="model.policy_eff_date" name="p_policy_eff_date" [options]="myDatePickerOptions" required
+                    #p_policy_eff_date="ngModel" readonly #policy_eff_date="angular-mydatepicker" autocomplete="off" />
+                </div>
+              </div>
+              <!--#endregion policy_eff_date-->
+
+              <!--#region policy_exp_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Expired Date </label>
+                  <div>
+                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                      [ngModel]="model.policy_exp_date" name="p_policy_exp_date" [options]="myDatePickerOptions"
+                      required #p_policy_exp_date="ngModel" readonly #policy_exp_date="angular-mydatepicker"
+                      autocomplete="off" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion policy_exp_date-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Loss Date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="loss_date" class="control-label">Loss Date *</label>
+                  <div>
+                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                      angular-mydatepicker [ngModel]="model.loss_date" name="p_loss_date"
+                      [options]="myDatePickerOptions" required #p_loss_date="ngModel" [readonly]="isButton"
+                      #loss_date="angular-mydatepicker" autocomplete="off" (click)="loss_date.toggleCalendar()" />
+                    <small
+                      *ngIf="(p_loss_date.errors?.required && p_loss_date.touched) || (p_loss_date.errors?.required && claimForm.submitted)"
+                      class="text-danger">
+                      Loss Date is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Loss Date-->
+
+              <!--#region Customer Report Date-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="p_customer_report_date.invalid && p_customer_report_date.touched">
+                  <label for="customer_report_date" class="control-label">Client Report Date *</label>
+                  <div>
+                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                      angular-mydatepicker [ngModel]="model.customer_report_date" name="p_customer_report_date"
+                      [options]="myDatePickerOptions" required #p_customer_report_date="ngModel" [readonly]="isButton"
+                      #customer_report_date="angular-mydatepicker" autocomplete="off"
+                      (click)="customer_report_date.toggleCalendar()" />
+                    <small
+                      *ngIf="(p_customer_report_date.errors?.required && p_customer_report_date.touched) || (p_customer_report_date.errors?.required && claimForm.submitted)"
+                      class="text-danger">
+                      Client Report Date is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Customer Report-->
+
+              <!--#region Report Insurance Date-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="p_finance_report_date.invalid && p_finance_report_date.touched">
+                  <label for="finance_report_date" class="control-label">Report To Insurance Date *</label>
+                  <div>
+                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                      angular-mydatepicker [(ngModel)]="model.finance_report_date" name="p_finance_report_date"
+                      [options]="myDatePickerOptions" required #p_finance_report_date="ngModel" [readonly]="isButton"
+                      #finance_report_date="angular-mydatepicker" autocomplete="off"
+                      (click)="finance_report_date.toggleCalendar()" />
+                    <small
+                      *ngIf="(p_finance_report_date.errors?.required && p_finance_report_date.touched) || (p_finance_report_date.errors?.required && claimForm.submitted)"
+                      class="text-danger">
+                      Report To Insurance Date is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Finance Report Date-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Claim Reff External No-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="claim_reff_external_no.invalid && claim_reff_external_no.touched">
+                  <label for="claim_reff_external_no" class="control-label">Claim Reff External No * </label>
+                  <input type="text" class="form-control" maxlength="50" [ngModel]="model.claim_reff_external_no"
+                    name="p_claim_reff_external_no" #claim_reff_external_no="ngModel" required
+                    [readonly]="model.claim_status !== 'HOLD'">
+                  <small
+                    *ngIf="(claim_reff_external_no.errors?.required && claim_reff_external_no.touched) || (claim_reff_external_no.errors?.required && claimForm.submitted)"
+                    class="text-danger">
+                    Claim Reff External No is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Claim Reff External No-->
+
+              <!--#region Result Report Date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label [hidden]="model.claim_status !== 'HOLD'">Result
+                    Report To Insurance Date</label>
+                  <label [hidden]="model.claim_status === 'HOLD'">Result
+                    Report To Insurance Date *</label>
+                  <input [ngStyle]="getStyles(isProcess)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                    angular-mydatepicker [(ngModel)]="model.result_report_date" name="p_result_report_date"
+                    [options]="myDatePickerOptions" required #p_result_report_date="ngModel" [readonly]="isProcess"
+                    [required]="model.claim_status === 'ON PROCESS'" #result_report_date="angular-mydatepicker"
+                    autocomplete="off" (click)="result_report_date.toggleCalendar()" />
+                  <small
+                    *ngIf="(p_result_report_date.errors?.required && p_result_report_date.touched) || (p_result_report_date.errors?.required && claimForm.submitted)"
+                    class="text-danger">
+                    Result Report To Insurance Date is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Result Report Date-->
+
+              <!--#region Claim amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="claim_amount" [hidden]="model.claim_status !== 'HOLD'" class="control-label">Claim
+                    Amount</label>
+                  <label for="claim_amount" [hidden]="model.claim_status === 'HOLD'" class="control-label">Claim Amount
+                    *</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.claim_amount | number : '1.2-2'" maxlength="24" amount="claim_amount"
+                    name="p_claim_amount" #claim_amount="ngModel" maxlength="24" amount="claim_amount"
+                    [required]="model.claim_status === 'ON PROCESS'" [disabled]="model.claim_status !== 'ON PROCESS'">
+                  <small
+                    *ngIf="(claim_amount.errors?.required && claim_amount.touched) || (claim_amount.errors?.required && claimForm.submitted)"
+                    class="text-danger">
+                    Claim Amount is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Claim amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region lookup Reason -->
+              <div class="col-md-4">
+                <label class="labelgsubcode">Reason *</label>
+                <div class="form-group">
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupReason()" data-toggle="modal" data-target="#lookupModalReason" href="#"
+                        [disabled]="model.claim_status != 'HOLD'">
+                        <i class="fa fa-search-plus"></i></button>
+                      {{model.claim_reason_desc}}
+                      <input type="hidden" class="form-control" [ngModel]="model.claim_reason_code"
+                        name="p_claim_reason_code" required #claim_reason_code="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="claim_reason_code.valid || (claim_reason_code.pristine && !claimForm.submitted)"
+                    class="text-danger">
+                    Reason is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion lookup Reason -->
+
+              <!--#region is_ex_gratia-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input [disabled]="model.claim_status !== 'HOLD'" class="form-check-input" type="checkbox"
+                        [ngModel]="model.is_ex_gratia" name="p_is_ex_gratia">
+                      Ex Gratia
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_ex_gratia-->
+
+              <!--#region is_policy_terminate-->
+              <div class="col-md-4">
+                <div class="form-check mt-4" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input [disabled]="model.claim_status !== 'HOLD'" class="form-check-input" type="checkbox"
+                        [ngModel]="model.is_policy_terminate" name="p_is_policy_terminate">
+                      Policy Terminated
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_policy_terminate-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region paths-->
+              <div class="col-md-4" [hidden]="this.param == null">
+                <div class="form-group">
+                  <label>Attachment </label>
+                  <div class="row" style="margin-left: 30px;">
+                    <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                      <div [hidden]="this.param == null || this.tampHidden === true || model.claim_status !== 'HOLD'">
+                        <span class="btn btn-info btn-round btn-file ">
+                          <input type="file" (change)="onUpload($event, model.code)" id="fileControl" />
+                          <span><i class="fa fa-check"></i></span>
+                        </span>
+                        {{tempFile}}
+                      </div>
+                      <div>
+                        <span>
+                          <a class="btn btn-danger btn-round btn-file "
+                            [hidden]="this.tampHidden !== true || this.tampHiddenforView" type="button"
+                            (click)="deleteImage(model.file_name,model.file_path)">
+                            <span><i class="fa fa-trash"></i></span></a>
+                          <br>
+                          <a class="btn btn-primary btn-round btn-file "
+                            [hidden]="(!this.tampHiddenforView && !this.tampHidden) || (this.tampHiddenforView && !this.tampHidden)"
+                            type="button" (click)="previewFile(model.file_name, model.file_path)">
+                            <span><i class="fa fa-eye"></i></span></a>
+                        </span>
+                        <div> {{model.file_name}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion paths-->
+
+              <!--#region Claim Remark-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="claim_remarks" class="control-label">Claim Remark *</label>
+                  <textarea type="text" class="form-control" [ngModel]="model.claim_remarks" maxlength="4000"
+                    name="p_claim_remarks" required #claim_remarks="ngModel"
+                    [disabled]="model.claim_status !== 'HOLD'"></textarea>
+                  <small
+                    *ngIf="(claim_remarks.errors?.required && claim_remarks.touched) || (claim_remarks.errors?.required && claimForm.submitted)"
+                    class="text-danger">
+                    Claim Remark is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Claim Remark-->
+            </div>
+            <!--#endregion row-->
+
+            <!-- <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+            <br> -->
+
+            <!--#region row-->
+            <div class="row" hidden>
+              <!--#region claim_progress_status-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Claim Progress Status </label>
+                  <input type="text" class="form-control" maxlength="10" [ngModel]="model.claim_progress_status"
+                    name="p_claim_progress_status" [readonly]="model.claim_status !== 'HOLD'">
+                </div>
+              </div>
+              <!--#endregion claim_progress_status-->
+
+              <!--#region Received Request No-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Received Request No</label>
+                  <input type="text" class="form-control" maxlength="50" [ngModel]="model.received_voucher_no"
+                    name="p_received_voucher_no" [readonly]="model.claim_status !== 'HOLD'">
+                </div>
+              </div>
+              <!--#endregion Received Request No-->
+
+              <!--#region Received Voucher Date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Received Voucher Date</label>
+                  <input type="date" class="form-control datepicker col-md-6"
+                    [ngModel]="model.received_voucher_date | date:'y-MM-dd'" name="p_received_voucher_date"
+                    [disabled]="model.claim_status !== 'HOLD'">
+                </div>
+              </div>
+              <!--#endregion Received Voucher Date-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+
+        <!--#region wizard-->
+        <div class="wizard-custom-margin" [hidden]="param == null">
+          <!--#region wizard container -->
+          <div class="wizard-container">
+            <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+              id="wizardProfile">
+              <div class="text-center">
+                <div class="wizard-navigation">
+                  <ul>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="claimassetwiz()" href="#claimassetlist" data-toggle="tab" role="tab"
+                        aria-controls="claimasset" aria-selected="true">
+                        Asset
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="claimprogresswiz()" href="#claimprogresslist" data-toggle="tab"
+                        role="tab" aria-controls="claimprogress" aria-selected="true">
+                        Progress
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="claimdocwiz()" href="#claimdoclist" data-toggle="tab" role="tab"
+                        aria-controls="claimdoc" aria-selected="true">
+                        Document
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--#endregion wizard container-->
+        </div>
+        <!--endregion wizard-->
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region modal lookup Branch-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranch"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupBranch" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Branch Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupbranch;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupbranch.numberIndex+i+1}}</td>
+                  <td style="text-align: center; width: 20%;">{{row.code}}</td>
+                  <td style="width: 80%;">{{row.name}}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowBranch(row.code,row.name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion modal lookup Branch-->
+
+<!--#region lookup policy -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalPolicy"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupPolicy" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Policy No</th>
+                  <th>Insurance Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookuppolicy;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookuppolicy.numberIndex+i+1}}</td>
+                  <td style="width: 20%;text-align: center">{{ row.policy_no }}</td>
+                  <td style="width: 80%;text-align: left">{{ row.insurance_name}}</td>
+                  <td style="text-align: center;">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowPolicy(row.code, row.policy_no, row.client_no, row.client_name, row.insurance_name, row.insurance_type, row.policy_eff_date, row.policy_exp_date)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Policy -->
+
+<!--#region lookup Loss Type -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLossType"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupLossType" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Description</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookuplosstype;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookuplosstype.numberIndex+i+1}}</td>
+                  <td style="width: 100%;">{{ row.general_subcode_desc}}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLossType(row.code, row.general_subcode_desc)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Loss Type -->
+
+<!--#region lookup Reason -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalReason"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupReason" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Description</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupReason;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupReason.numberIndex+i+1}}</td>
+                  <td style="width: 100%;">{{ row.general_subcode_desc}}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowReason(row.code, row.general_subcode_desc)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Reason -->

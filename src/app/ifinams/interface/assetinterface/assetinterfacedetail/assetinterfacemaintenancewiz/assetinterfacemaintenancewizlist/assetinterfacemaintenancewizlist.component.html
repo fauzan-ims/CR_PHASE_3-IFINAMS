@@ -1,0 +1,40 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="toolbar">
+                <!--#region button add-->
+                <button type="button" class="btn btn-success btn-round" (click)="btnGenerate()">Generate</button>
+                <!--#endregion button add--->
+            </div>
+            <div class="card-body">
+                <input type="text" [ngModel]="model.status" name="p_status" hidden>
+                <!--#region list view-->
+                <table id="datatableMaintenance" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th>Maintenance No</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Reff No</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listassetmaintenance;  let i=index">
+                            <td style="text-align: center;">{{listassetmaintenance.numberIndex+i+1}}</td>
+                            <td style="width: 25%;text-align: left;">{{row.maintenance_no}}</td>
+                            <td style="width: 25%;text-align: center;">{{row.maintenance_date}}</td>
+                            <td style="width: 25%;text-align: center;">{{row.maintenance_status}}</td>
+                            <td style="width: 25%;text-align: left;">{{row.reff_trx_no}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>

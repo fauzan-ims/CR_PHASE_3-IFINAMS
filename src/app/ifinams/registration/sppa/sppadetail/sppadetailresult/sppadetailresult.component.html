@@ -1,0 +1,248 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12 buttons btn-lookup-margin">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">SPPA Detail Result Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #resultForm="ngForm" (ngSubmit)="onFormSubmit(resultForm.value, resultForm.valid)">
+
+                        <!--#region button submit dan back-->
+                        <button type="submit" class="btn btn-info btn-round" data-role="R00022080012208C"
+                            hidden>Save</button>
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button submit dan back-->
+
+                        <!--#region row-->
+                        <div class="row">
+                            <!--#region id-->
+                            <input hidden type="text" [ngModel]="this.params" name="p_id">
+                            <!--#endregion id-->
+
+                            <!--#region sppa code-->
+                            <input hidden type="text" [ngModel]="this.param" name="p_sppa_code">
+                            <!--#endregion sppa code-->
+
+                            <!--#region status-->
+                            <div class="col-md-4" hidden>
+                                <label>Status</label>
+                                <div class="form-group col-md-12">
+                                    <div class="row">
+                                        <div class="form-check-radio form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="radio" name="p_result_status"
+                                                    value="APPROVE" [(ngModel)]="model.result_status">Approve
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                        <div class="form-check-radio form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="radio" name="p_result_status"
+                                                    value="REJECT" [(ngModel)]="model.result_status">Reject
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+
+                            <!--#region result_date-->
+                            <!-- <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="result_date" class="control-label">Date *</label>
+                                    <input [disabled]="model.sppa_status === 'POST'" type="date"
+                                        class="form-control datepicker col-md-6"
+                                        [ngModel]="model.result_date | date:'y-MM-dd'" name="p_result_date" required
+                                        #result_date="ngModel">
+                                    <small
+                                        *ngIf="(result_date.errors?.required && result_date.touched) || (result_date.errors?.required && resultForm.submitted)"
+                                        class="text-danger">
+                                        Date is required
+                                    </small>
+                                </div>
+                            </div> -->
+                            <!--#endregion result_date-->
+
+                            <!--#region Result amount-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group"
+                                    [class.has-error]="result_total_buy_amount.invalid && result_total_buy_amount.touched">
+                                    <label for="result_total_buy_amount" class="control-label">Amount * </label>
+                                    <input [disabled]="model.sppa_status === 'POST'" type="text"
+                                        style="text-align:right" class="form-control col-md-6"
+                                        [ngModel]="model.result_total_buy_amount | number : '1.2-2'"
+                                        name="p_result_total_buy_amount" #result_total_buy_amount="ngModel"
+                                        maxlength="24" amount="result_total_buy_amount" required>
+                                    <small
+                                        *ngIf="(result_total_buy_amount.errors?.required && result_total_buy_amount.touched) || (result_total_buy_amount.errors?.required && resultForm.submitted)"
+                                        class="text-danger">
+                                        Amount is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Claim amount-->
+
+                            <!--#region fa_code-->
+                            <div class="col-md-4">
+                                <div class="form-group" [class.has-error]="fa_code.invalid && fa_code.touched">
+                                    <label for="fa_code" class="control-label">Fixed Asset</label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.fa_code"
+                                        name="p_fa_code" #fa_code="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion fa_code-->
+
+                            <!--#region item_name-->
+                            <div class="col-md-4">
+                                <div class="form-group" [class.has-error]="item_name.invalid && item_name.touched">
+                                    <label for="item_name" class="control-label">Fixed Asset Name</label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.item_name"
+                                        name="p_item_name" #item_name="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion item_name-->
+
+                            <!--#region result_status-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="result_status.invalid && result_status.touched">
+                                    <label for="result_status" class="control-label">Result Status</label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.result_status"
+                                        name="p_result_status" #result_status="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion result_status-->
+
+                            <!--#region result_date-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="result_date" class="control-label">Date</label>
+                                    <div>
+                                        <input [ngStyle]="getStyles(true)" class="form-control col-md-6"
+                                            placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.result_date"
+                                            name="p_result_date" [options]="myDatePickerOptions"
+                                            #p_result_date="ngModel" #result_date="angular-mydatepicker"
+                                            autocomplete="off" (click)="result_date.toggleCalendar()" readonly />
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion result_date-->
+
+                            <!--#region sum_insured_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="sum_insured_amount.invalid && sum_insured_amount.touched">
+                                    <label for="sum_insured_amount" class="control-label">Sum Insured
+                                        Amount</label>
+                                    <input readonly type="text" style="text-align:right" class="form-control col-md-6"
+                                        [ngModel]="model.sum_insured_amount | number : '1.2-2'"
+                                        name="p_sum_insured_amount" #sum_insured_amount="ngModel" maxlength="24"
+                                        amount="sum_insured_amount">
+                                </div>
+                            </div>
+                            <!--#endregion sum_insured_amount-->
+
+                            <!--#region result_total_buy_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="result_total_buy_amount.invalid && result_total_buy_amount.touched">
+                                    <label for="result_total_buy_amount" class="control-label">Premi Amount</label>
+                                    <input readonly type="text" style="text-align:right" class="form-control col-md-6"
+                                        [ngModel]="model.result_total_buy_amount | number : '1.2-2'"
+                                        name="p_result_total_buy_amount" #result_total_buy_amount="ngModel"
+                                        maxlength="24" amount="result_total_buy_amount">
+                                </div>
+                            </div>
+                            <!--#endregion result_total_buy_amount-->
+
+                            <!--#region result_policy_no-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="result_policy_no.invalid && result_policy_no.touched">
+                                    <label for="result_policy_no" class="control-label">Policy No</label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.result_policy_no"
+                                        name="p_result_policy_no" #result_policy_no="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion result_policy_no-->
+                        </div>
+                        <!--#endregion row -->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+                <span layout="row horizontal-divider">
+                    <hr flex />
+                </span>
+                <div *ngIf="params != null" class="row">
+                    <div class="col-md-12">
+                        <div class="card-header">
+                            <h5 class="card-title">SPPA Coverage List</h5>
+                        </div>
+                        <div class="card-body">
+                            <!--#region list view-->
+                            <table id="datatablessppacoverage" datatable [dtOptions]="dtOptions"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th style="display: none;"></th>
+                                        <th class="disabled-sorting">No</th>
+                                        <th>Period(Year)</th>
+                                        <th>Coverage</th>
+                                        <th>Rate</th>
+                                        <th>Discount Amount</th>
+                                        <th>Admin Fee</th>
+                                        <th>Stamp Fee</th>
+                                        <th>Coverage Premi Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of listsppadetailcoverage;  let i=index">
+                                        <td style="text-align: center;">{{listsppadetailcoverage.numberIndex+i+1}}</td>
+                                        <td style="display: none;"></td>
+                                        <td class="if-no-edit-btn" style="width: 10%;text-align: center;">
+                                            {{row.year_periode}}</td>
+                                        <td style="width: 15%;text-align: left;">{{row.coverage_name}}</td>
+                                        <td style="width: 10%;text-align: right;">{{row.initial_buy_rate | number :
+                                            '1.6-6'}}</td>
+                                        <td style="width: 15%;text-align: right;">{{row.initial_discount_amount |
+                                            number : '1.2-2'}}
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">{{row.initial_admin_fee_amount |
+                                            number : '1.2-2'}}
+                                        </td>
+                                        <td style="width: 15%;text-align: right;">{{row.initial_stamp_fee_amount |
+                                            number : '1.2-2'}}
+                                        </td>
+                                        <td style="width: 20%;text-align: right;">{{row.buy_amount |
+                                            number : '1.2-2'}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                    </div>
+                </div>
+                <!--#endregion list view-->
+                <div class="card-footer ">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

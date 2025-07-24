@@ -1,0 +1,324 @@
+<div class="main-content margin-wizard-content" style="margin-top: 20px;">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <!--#region form-->
+      <form #auctionaddressdetailForm="ngForm"
+        (ngSubmit)="onFormSubmit(auctionaddressdetailForm.value, auctionaddressdetailForm.valid)">
+
+        <!--#region button submit dan back-->
+        <button type="submit" ng-disabled="auctionaddressdetailForm.$invalid" class="btn btn-info btn-round"
+          data-role="R00023800000002C">Save</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+        <!--#endregion button submit dan back-->
+
+        <!--#region row-->
+        <div class="row">
+          <!--#region id-->
+          <input hidden type="text" [ngModel]="this.params" name="p_id">
+          <!--#endregion id-->
+
+          <!--#region Notary Code-->
+          <input type="text" [ngModel]="this.param" maxlength="50" name="p_auction_code" hidden>
+          <!--#endregion Notary Code-->
+
+          <!--#region lookup Province Code-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label labelmodule">Province *</label>
+              <div class="col-md-12 buttons">
+                <span>
+                  <button class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin" type="button"
+                    (click)="btnLookupProvince()" data-toggle="modal" data-target="#lookupModalProvince" href="#"><i
+                      class="fa fa-search-plus"></i></button>
+                  {{model.province_name}}
+                  <input type="hidden" class="form-control" [ngModel]="model.province_code" name="p_province_code"
+                    required #province_code="ngModel">
+                  <input type="hidden" class="form-control" [ngModel]="model.province_name" name="p_province_name"
+                    required #province_name="ngModel">
+                </span>
+                <small
+                  *ngIf="(province_name.errors?.required && province_name.touched) || (province_name.errors?.required && auctionaddressdetailForm.submitted)"
+                  class="text-danger">
+                  Province is required
+                </small>
+              </div>
+            </div>
+          </div>
+          <!--#endregion lookup Province Code-->
+
+          <!--#region lookup City code-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label labelmodule">City *</label>
+              <div class="col-md-12 buttons">
+                <span>
+                  <button class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin" type="button"
+                    (click)="btnLookupCity()" data-toggle="modal" data-target="#lookupModalCity" href="#"><i
+                      class="fa fa-search-plus"></i></button>
+                  {{model.city_name}}
+                  <input type="hidden" class="form-control" [ngModel]="model.city_code" name="p_city_code" required
+                    #city_code="ngModel">
+                  <input type="hidden" class="form-control" [ngModel]="model.city_name" name="p_city_name" required
+                    #city_name="ngModel">
+                </span>
+                <small
+                  *ngIf="(city_name.errors?.required && city_name.touched) || (city_name.errors?.required && auctionaddressdetailForm.submitted)"
+                  class="text-danger">
+                  City is required
+                </small>
+              </div>
+            </div>
+          </div>
+          <!--#endregion lookup City Code-->
+
+          <!--#region lookup zip code-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label labelmodule">Zip Code *</label>
+              <div class="col-md-12 buttons">
+                <span>
+                  <button class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin" type="button"
+                    (click)="btnLookupZipCode()" data-toggle="modal" data-target="#lookupModalZipCode" href="#"><i
+                      class="fa fa-search-plus"></i></button>
+                  {{model.zip_code}}
+                  <input type="hidden" class="form-control" [ngModel]="model.zip_code" name="p_zip_code" required
+                    #zip_code="ngModel">
+                </span>
+                <small
+                  *ngIf="(zip_code.errors?.required && zip_code.touched) || (zip_code.errors?.required && auctionaddressdetailForm.submitted)"
+                  class="text-danger">
+                  Zip Code is required
+                </small>
+              </div>
+            </div>
+          </div>
+          <!--#endregion lookup zip code-->
+        </div>
+        <!--#endregion row-->
+
+        <!--#region row-->
+        <div class="row">
+          <!--#region sub district-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>Sub District</label>
+              <input type="text" class="form-control" [ngModel]="model.sub_district" maxlength="250"
+                name="p_sub_district" readonly>
+            </div>
+          </div>
+          <!--#endregion sub district-->
+
+          <!--#region village-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label>Village</label>
+              <input type="text" class="form-control" [ngModel]="model.village" maxlength="250" name="p_village"
+                readonly>
+            </div>
+          </div>
+          <!--#endregion village-->
+
+          <!--#region detail Rt/rw-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="rt && rw" class="control-label">RT/RW. *</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <input type="text" class="form-control area-code input-mini aid-primary-phone1-lbl"
+                    [ngModel]="model.rt" name="p_rt" required #rt="ngModel" maxlength="4" min="0"
+                    pattern={{NumberOnlyPattern}}>
+                </div>
+                -
+                <div class="col-md-4">
+                  <input type="text" class="form-control" [ngModel]="model.rw" name="p_rw" maxlength="15" min="0"
+                    required #rw="ngModel" pattern={{NumberOnlyPattern}}>
+                </div>
+              </div>
+            </div>
+
+            <small
+              *ngIf="(rt.errors?.required && rt.touched ) || (rt.errors?.required && auctionaddressdetailForm.submitted)"
+              class="text-danger">
+              RT/RW is required
+            </small>
+            <small *ngIf="rw.errors?.pattern && rw.touched" class="text-danger">
+              RT/RW is required and format should be <i>0-9</i>.
+            </small>
+          </div>
+          <!--#endregion detail Rt/rw-->
+        </div>
+        <!--#endregion row-->
+
+        <!--#region row-->
+        <div class="row">
+          <!--#region address-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="address" class="control-label">Address *</label>
+              <textarea type="text" class="form-control" [ngModel]="model.address" maxlength="4000" name="p_address"
+                required #address="ngModel"></textarea>
+              <small
+                *ngIf="(address.errors?.required && address.touched) || (address.errors?.required && auctionaddressdetailForm.submitted)"
+                class="text-danger">
+                Address is required
+              </small>
+            </div>
+          </div>
+          <!--#endregion address-->
+
+          <!--#region check box is latest-->
+          <div class="col-md-4">
+            <div class="form-check mt-3" style="margin-left: -35px;">
+              <label></label>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" [ngModel]="model.is_latest" name="p_is_latest">
+                  Latest
+                  <span class="form-check-sign"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <!--#endregion check box is active-->
+        </div>
+        <!--#endregion row-->
+      </form>
+      <!--#endregion form-->
+    </div>
+  </div>
+</div>
+
+<!--#region lookup province-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalProvince"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupProvince" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupProvince;let i=index ">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupProvince.numberIndex+i+1}}</td>
+                  <td style="text-align: center; width: 25%;">{{ row.code }}</td>
+                  <td style="text-align: left; width: 75%;">{{ row.description }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLookupProvince(row.code, row.description)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup province-->
+
+<!--#region lookup city-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCity" style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupCity" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupcity;let i=index ">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupcity.numberIndex+i+1}}</td>
+                  <td style="text-align: center; width: 25%;">{{ row.code }}</td>
+                  <td style="text-align: left; width: 75%;">{{ row.description }}</td>
+                  <td class="text-right">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLookupCity(row.code, row.description)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup city-->
+
+<!--#region lookup zip-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalZipCode"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupZipCode" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Sub District</th>
+                  <th>Village</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupzipcode;let i=index ">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupzipcode.numberIndex+i+1}}</td>
+                  <td style="text-align: center; width: 30%;">{{ row.postal_code }}</td>
+                  <td style="text-align: left; width: 35%;">{{ row.sub_district }}</td>
+                  <td style="text-align: left; width: 35%;">{{ row.village }}</td>
+                  <td class="text-right">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLookupZipCode(row.postal_code,row.sub_district,row.village)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup zip-->

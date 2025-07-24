@@ -1,0 +1,46 @@
+<div class="main-content margin-wizard-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <!--#region form-->
+      <form #regionplatdetailForm="ngForm"
+        (ngSubmit)="onFormSubmit(regionplatdetailForm.value, regionplatdetailForm.valid)">
+
+        <!--#region button submit dan back-->
+        <button type="submit" class="btn btn-info btn-round" data-role="R00021300042130C">Save</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+        <!--#endregion button submit dan back-->
+
+        <!--#region row-->
+        <div class="row">
+          <!--#region p_region_code-->
+          <input hidden type="text" [ngModel]="this.params" name="p_id">
+          <!--#endregion p_region_code-->
+
+          <!--#region p_region_code-->
+          <input hidden type="text" [ngModel]="this.param" name="p_region_code">
+          <!--#endregion p_region_code-->
+
+          <!--#region plate_code-->
+          <div class="col-md-4">
+            <div class="form-group" >
+              <label for="plate_code" class="control-label">Code *</label>
+              <input type="text" class="form-control" [ngModel]="model.plate_code" maxlength="50" name="p_plate_code" required
+                #plate_code="ngModel">
+              <small *ngIf="(plate_code.errors?.required && plate_code.touched) || (plate_code.errors?.required && regionplatdetailForm.submitted)" class="text-danger">
+                Code is required
+              </small>
+            </div>
+          </div>
+          <!--#endregion plate_code-->
+        </div>
+        <!--#endregion row-->
+      </form>
+      <!--#endregion form-->
+    </div>
+  </div>
+</div>

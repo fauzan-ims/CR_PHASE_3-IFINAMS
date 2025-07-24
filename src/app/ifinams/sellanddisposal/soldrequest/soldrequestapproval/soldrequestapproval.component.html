@@ -1,0 +1,449 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Sell Request Info Approval</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region div-->
+                    <div class="row">
+                        <!--#region company_code-->
+                        <input type="hidden" class="form-control" [ngModel]="model.company_code" name="p_company_code">
+                        <!--#endregion company_code-->
+
+                        <!--#region code-->
+                        <div class="col-md-4">
+                            <div [hidden]="model.code != null" class="row"
+                                style="margin-bottom: -15px; padding-top: 30px;">
+                                <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                    Generate-</h1>
+                            </div>
+                            <div [hidden]="model.code == null" class="form-group">
+                                <label>Code </label>
+                                <input type="text" class="form-control" placeholder="Enter Code" [ngModel]="model.code"
+                                    name="p_code" readonly>
+                            </div>
+                        </div>
+                        <!--#endregion code-->
+
+                        <!--#region description-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="description" class="control-label">Description *</label>
+                                <input required readonly type="text" class="form-control" [ngModel]="model.description"
+                                    name="p_description" #description="ngModel" maxlength="4000" />
+                            </div>
+                        </div>
+                        <!--#endregion description-->
+
+                        <!--#region status-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="status" class="control-label">Status</label>
+                                <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                    readonly #status="ngModel" />
+                            </div>
+                        </div>
+                        <!--#endregion status-->
+                    </div>
+                    <!--#endregion div-->
+
+                    <!--#region div-->
+                    <div class="row">
+                        <!--#region sale_date-->
+                        <div class="col-md-4">
+                            <div class="form-group col-md-8" style="margin-left: -15px;">
+                                <label for="sale_date" class="control-label">Sell Date *</label>
+                                <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                    required [ngModel]="model.sale_date" name="p_sale_date" readonly
+                                    [options]="myDatePickerOptions" (click)="sale_date.toggleCalendar()"
+                                    #p_sale_date="ngModel" [ngStyle]="getStyles(this.isReadOnly)"
+                                    #sale_date="angular-mydatepicker" autocomplete="off" [ngStyle]="getStyles(true)" />
+                            </div>
+                        </div>
+                        <!--#endregion sale_date-->
+
+                        <!--#region Lookup branch_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="branch_code" class="control-label labelmodule" style="cursor: pointer;"
+                                    title="Clear">Branch
+                                    *</label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button disabled class="btn btn-icon btn-outline-default btn-round btn-md"
+                                            type="button" (click)="btnLookupBranch()" data-toggle="modal"
+                                            data-target="#lookupModalBranch" href="#"><i
+                                                class="fa fa-search-plus"></i></button>
+                                        {{model.branch_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.branch_code"
+                                            name="p_branch_code" required #branch_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.branch_name"
+                                            name="p_branch_name" #branch_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup branch_code-->
+
+                        <!--#region sell_type-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Sell Type</label>
+                                <select disabled class='form-control col-md-8' [(ngModel)]="model.sell_type"
+                                    name="p_sell_type" (change)="sellType($event)">
+                                    <option value='AUCTION'>AUCTION</option>
+                                    <option value='MOCIL'>MOCIL</option>
+                                    <option value='COP'>PURCHASE REQUIREMENT AFTER LEASE</option>
+                                    <option value='CLAIM' [hidden]="model.sell_type !== 'CLAIM'">CLAIM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!--#endregion sell_type-->
+                    </div>
+                    <!--#endregion div-->
+
+                    <!-- #region row -->
+                    <div class="row">
+                        <!--#region Lookup auction_code-->
+                        <div class="col-md-4" [hidden]="this.isAuction">
+                            <div class="form-group">
+                                <label for="auction_code" class="control-label" style="cursor: pointer;">Auction
+                                    *</label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button disabled class="btn btn-icon btn-outline-default btn-round btn-md"
+                                            type="button" (click)="btnLookupAution()" data-toggle="modal"
+                                            data-target="#lookupAuction" href="#"><i
+                                                class="fa fa-search-plus"></i></button>
+                                        {{model.auction_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.auction_code"
+                                            name="p_auction_code" [required]="!isAuction" #auction_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.auction_name"
+                                            name="p_auction_name" #auction_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup auction_code-->
+
+                        <!--#region buyer_name-->
+                        <div class="col-md-4" [hidden]="!this.isAuction">
+                            <div class="form-group">
+                                <label for="buyer_name" class="control-label">Buyer Name *</label>
+                                <input readonly type="text" class="form-control" [ngModel]="model.buyer_name"
+                                    name="p_buyer_name" #buyer_name="ngModel" maxlength="250" [required]="isAuction">
+                            </div>
+                        </div>
+                        <!--#endregion buyer_name-->
+
+                        <!--#region remark-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="remark" class="control-label">Remark *</label>
+                                <textarea readonly type="text" class="form-control" [ngModel]="model.remark"
+                                    name="p_remark" #remarks="ngModel" required maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion remark-->
+                    </div>
+                    <!-- #region row -->
+
+                    <!--#region div-->
+                    <div class="row">
+                        <!--#region buyer-->
+                        <div class="col-md-4" hidden>
+                            <div class="form-group">
+                                <label for="buyer" class="control-label">Sell To</label>
+                                <input type="text" class="form-control" [ngModel]="model.buyer" name="p_buyer"
+                                    #buyer="ngModel" maxlength="250" readonly />
+                            </div>
+                        </div>
+                        <!--#endregion buyer-->
+
+                        <!--#region buyer_phone_no-->
+                        <div class="col-md-4" hidden>
+                            <div class="form-group">
+                                <label for="buyer_phone_no" class="control-label">Buyer Phone No
+                                </label>
+                                <input readonly type="text" class="form-control" [ngModel]="model.buyer_phone_no"
+                                    name="p_buyer_phone_no" #buyer_phone_no="ngModel" maxlength="50"
+                                    pattern={{NumberOnlyPattern}}>
+                            </div>
+                        </div>
+                        <!--#endregion buyer_phone_no-->
+                    </div>
+                    <!--#endregion div-->
+
+                    <!--#region div-->
+                    <div class="row" hidden>
+                        <!--#region sale_amount-->
+                        <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="sale_amount" class="control-label">Sale Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sale_amount_header | number : '1.2-2'" amount="sale_amount"
+                                            name="p_sale_amount_header" #sale_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                        <!--#endregion sale_amount-->
+
+                        <!--#region Total Sell Net Book-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="total_sell_net_book_value" class="control-label">Total Sell Net Book
+                                    Value
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input readonly type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.total_sell_net_book_value | number : '1.2-2'"
+                                        amount="total_sell_net_book_value" name="p_total_sell_net_book_value"
+                                        #total_sell_net_book_value="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Total Sell Net Book-->
+
+                        <!--#region Total Sell Amount-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="total_sell_amount" class="control-label">Total Sell Amount
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input readonly type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.total_sell_amount | number : '1.2-2'"
+                                        amount="total_sell_amount" name="p_total_sell_amount"
+                                        #total_sell_amount="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Total Sell Amount-->
+
+                        <!--#region Gain Loss-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="total_gain_loss" class="control-label">Gain / (Loss)
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input readonly type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.total_gain_loss | number : '1.2-2'" amount="total_gain_loss"
+                                        name="p_total_gain_loss" #total_gain_loss="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Gain Loss-->
+                    </div>
+                    <!--#endregion div-->
+                </div>
+                <span layout="row horizontal-divider">
+                    <hr flex />
+                </span>
+                <div class="card-body">
+                    <div class="card-header ">
+                        <h4 class="card-title">Asset Info</h4>
+                    </div>
+
+                    <!--#region list view-->
+                    <table id="datatableSoldRequestAsset" datatable [dtOptions]="dtOptions"
+                        class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="disabled-sorting">No</th>
+                                <th>Fixed Asset / Agreement</th>
+                                <th>Engine/Chassis/Plat No</th>
+                                <th>Description</th>
+                                <th>Purchase Price / Net Book Value / Residual value</th>
+                                <th>Income / Expense</th>
+                                <th>Sell Request Amount</th>
+                                <th>Gain-Loss Sale / Gain-Loss Profit</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of listsaledetail;  let i=index">
+                                <td style="text-align: center;">{{listsaledetail.numberIndex+i+1}}</td>
+                                <td style="display: none;"></td>
+                                <td style="width: 10%;text-align: left;">{{row.asset_code}}<br>
+                                    {{row.item_name}} <br> {{row.agreement_external_no}} <br> {{row.client_name}}</td>
+                                <td style="width: 10%;text-align: left;" class="if-no-edit-btn">{{row.engine_no}} <br>
+                                    {{row.chassis_no}} <br> {{row.plat_no}}
+                                </td>
+                                <td style="width: 15%;">
+                                    <textarea readonly id="description{{i}}" class="form-control" type="text"
+                                        value="{{row.description}}" name="p_description_detail">
+                                    </textarea>
+                                </td>
+                                <td style="width: 15%;text-align: right;" class="if-no-edit-btn">{{row.purchase_price |
+                                    number : '1.2-2'}} <br> {{row.net_book_value |
+                                    number : '1.2-2'}} <br> {{row.residual_value | number : '1.2-2'}}
+                                </td>
+                                <td style="width: 15%;text-align: right;" class="if-no-edit-btn">{{row.income_amount |
+                                    number : '1.2-2'}} <br> {{row.expense_amount |
+                                    number : '1.2-2'}}
+                                </td>
+                                <td style="width: 15%;text-align: right;" class="if-no-edit-btn">
+                                    {{row.sell_request_amount_detail |
+                                    number :
+                                    '1.2-2'}}
+                                </td>
+                                <td style="width: 10%;text-align: right;" class="if-no-edit-btn">{{row.gain_loss |
+                                    number :
+                                    '1.2-2'}} <br> {{row.gain_loss_profit | number :
+                                    '1.2-2'}}
+                                </td>
+                                <td style="width: 10%;text-align: center;">{{row.sale_detail_status}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--#endregion list view-->
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Branch -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranch"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBranch" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Branch Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbranch;let i=index">
+                                    <td style="text-align: center;">{{lookupbranch.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBranch(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Branch-->
+
+<!--#region lookup Location -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLocation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupLocation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuplocation;let i=index">
+                                    <td style="text-align: center;">{{lookuplocation.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description_location}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowLocation(row.code, row.description_location)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Location-->
+
+<!--#region lookup Auction -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupAuction" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupAuction" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Auctio Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupAuction;let i=index">
+                                    <td style="text-align: center;">{{lookupAuction.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.auction_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowAuction(row.code, row.auction_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Auction-->

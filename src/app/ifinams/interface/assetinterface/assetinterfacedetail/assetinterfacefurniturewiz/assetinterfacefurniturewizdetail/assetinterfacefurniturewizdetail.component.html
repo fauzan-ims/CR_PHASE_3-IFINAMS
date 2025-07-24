@@ -1,0 +1,236 @@
+<div class="main-content" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card "> -->
+            <div class="card-body ">
+                <!--#region form-->
+                <form #AssetFurnitureForm="ngForm"
+                    (ngSubmit)="onFormSubmit(AssetFurnitureForm.value, AssetFurnitureForm.valid)">
+                    <!--#region button submit, button back-->
+                    <button [hidden]="isReadOnly" type="submit" class="btn btn-info btn-round">Save</button>
+                    <!--#endregion button submit, button back-->
+
+                    <!--#region class="row"-->
+                    <div class="row">
+                        <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                        <!--#region asset_code-->
+                        <input type="text" class="form-control" [ngModel]="this.param" maxlength="50"
+                            name="p_asset_code" hidden>
+                        <!--#endregion asset_code-->
+
+                        <!--#region Lookup merk_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="merk_code" class="control-label labelmodule" (click)="btnClearMerk()"
+                                    style="cursor: pointer;" title="Clear">Merk
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="isReadOnly"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupMerk()" data-toggle="modal" data-target="#lookupModalMerk"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.merk_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.merk_code"
+                                            name="p_merk_code" #merk_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.merk_name"
+                                            name="p_merk_name" #merk_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup merk_code-->
+
+                        <!--#region Lookup type_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="type_code" class="control-label labelmodule" (click)="btnClearType()"
+                                    style="cursor: pointer;" title="Clear">Type
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="isReadOnly"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupType()" data-toggle="modal" data-target="#lookupModalType"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.type_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.type_code"
+                                            name="p_type_code" #type_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.type_name"
+                                            name="p_type_name" #type_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup type_code-->
+
+                        <!--#region Lookup model_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="model_code" class="control-label labelmodule" (click)="btnClearModel()"
+                                    style="cursor: pointer;" title="Clear">Model
+                                </label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button [disabled]="isReadOnly"
+                                            class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupModel()" data-toggle="modal"
+                                            data-target="#lookupModalModel" href="#"><i
+                                                class="fa fa-search-plus"></i></button>
+                                        {{model.model_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.model_code"
+                                            name="p_model_code" #model_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.model_name"
+                                            name="p_model_name" #model_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup model_code-->
+
+                        <!--#region remark-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="remark" class="control-label">Remark</label>
+                                <textarea [readonly]="isReadOnly" type="text" class="form-control"
+                                    [ngModel]="model.remark" name="p_remark" #remark="ngModel"
+                                    maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion remark-->
+                    </div>
+                    <!--#endregion class="row"-->
+                </form>
+                <!--#endregion form-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Merk -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalMerk" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupMerk" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupmerk;let i=index">
+                                    <td style="text-align: center;">{{lookupmerk.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowMerk(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Merk-->
+
+<!--#region lookup Type -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalType" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupType" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuptype;let i=index">
+                                    <td style="text-align: center;">{{lookuptype.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowType(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Type-->
+
+<!--#region lookup Model -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalModel" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupModel" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupmodel;let i=index">
+                                    <td style="text-align: center;">{{lookupmodel.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowModel(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Model-->

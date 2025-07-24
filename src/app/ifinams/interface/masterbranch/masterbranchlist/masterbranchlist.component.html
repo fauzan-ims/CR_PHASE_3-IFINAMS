@@ -1,0 +1,47 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanel" class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Interface Office Name List</h5>
+                </div>
+                <div class="card-body">
+                    <div class="toolbar">
+                        <!--#region button add-->
+                        <button class="btn btn-success btn-round custom-button-width" (click)="btnSync()"
+                            data-role="R00016430001644C">Synchronize
+                        </button>
+                        <!--#endregion button add-->
+                    </div>
+
+                    <!--#region list view-->
+                    <table id="datatable" datatable [dtOptions]="dtOptions"
+                        class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="disabled-sorting">No</th>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th>Job Status</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of listmasterbranch;  let i=index">
+                                <td style="text-align: center;">{{listmasterbranch.numberIndex+i+1}}</td>
+                                <td style="width: 25%;text-align: left;">{{row.code}}</td>
+                                <td style="width: 25%;text-align: left;">{{row.description}}</td>
+                                <td style="width: 25%;text-align: left;">{{row.job_status}}</td>
+                                <td style="width: 25%;text-align: left;">{{row.failed_remark}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--#endregion list view-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

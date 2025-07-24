@@ -1,0 +1,260 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Endorsement Loading Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #endorsementloadingForm="ngForm"
+            (ngSubmit)="onFormSubmit(endorsementloadingForm.value, endorsementloadingForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="submit" class="btn btn-info btn-round" data-role="R00022000002201C">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Endorsement Code-->
+              <input type="text" [ngModel]="this.param" maxlength="50" name="p_endorsement_code" hidden>
+              <!--#endregion Endorsement Code-->
+
+              <!--#region Type Agreement No-->
+              <!-- <div class="col-md-4">
+                <label>Agreement No</label>
+                <div class="form-group">
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button disabled class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupAgreement()" data-target="#lookupModalAgreement" data-toggle="modal" href="#">
+                        <i class="fa fa-search-plus"></i></button>-<a>{{model.agreement_external_no}}</a>
+                      <input type="hidden" name="p_agreement_external_no" [ngModel]="model.agreement_external_no" />
+                    </span>
+                  </div>
+                </div>
+              </div> -->
+              <!--#endregion Type Agreement No-->
+
+              <!--#region Client Name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Client Name </label>
+                  <input type="text" class="form-control" [ngModel]="model.client_name" name="p_client_name" readonly>
+                </div>
+              </div>
+              <!--#endregion Client Name-->
+
+              <!--#region Year Period-->
+              <div class="col-md-4">
+                <div class="form-group" >
+                  <label for="year_period" class="control-label">Year Period *</label>
+                  <input type="text" class="form-control col-md-4" [ngModel]="model.year_period" name="p_year_period"
+                    required #year_period="ngModel" pattern="{{NumberOnlyPattern}}">
+                  <!--[readonly]="isStatus" -->
+                  <small *ngIf="(year_period.errors?.required && year_period.touched) || (year_period.errors?.required && endorsementloadingForm.submitted)" class="text-danger">
+                    Year Period is required
+                  </small>
+                  <small *ngIf="year_period.errors?.pattern && year_period.touched" class="text-danger">
+                    Year Period is required and format should be <i>0-9</i>
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Year Period-->
+
+              <!--#region Loading Code [disabled]="isStatus"-->
+              <div class="col-md-4">
+                <label>Loading Code *</label>
+                <div class="form-group">
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupLoading()" data-target="#lookupModalLoading" data-toggle="modal" href="#">
+                        <i class="fa fa-search-plus"></i></button><a>{{model.loading_name}}</a>
+                      <input type="hidden" name="p_loading_code" [ngModel]="model.loading_code" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Loading Code-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Initial Buy Rate-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Initial (%) </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="10" rate="initial_buy_rate"
+                    [ngModel]="model.initial_buy_rate | number : '1.6-6'" name="p_initial_buy_rate" readonly>
+                </div>
+              </div>
+              <!--#endregion Initial Buy Rate-->
+
+              <!--#region Initial Sell Rate-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Selling (%) </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="10" rate="initial_sell_rate"
+                    [ngModel]="model.initial_sell_rate | number : '1.6-6'" name="p_initial_sell_rate" readonly>
+                </div>
+              </div>
+              <!--#endregion Initial Sell Rate-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Initial Buy Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Initial Amount </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="24" amount="initial_buy_amount"
+                    [ngModel]="model.initial_buy_amount | number : '1.2-2'" name="p_initial_buy_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion Initial Buy Amount-->
+
+              <!--#region Initial Sell Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Selling Amount </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="24" amount="initial_sell_amount"
+                    [ngModel]="model.initial_sell_amount | number : '1.2-2'" name="p_initial_sell_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion Initial Sell Rate-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Total Buy Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Total Nett Buy Amount </label>
+                  <input type="text" style="text-align:right" class="form-control"
+                    [ngModel]="model.total_buy_amount | number : '1.2-2'" name="p_total_buy_amount"
+                    maxlength="24" amount="total_buy_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion Total Buy Amount-->
+
+              <!--#region Total Sell Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Total Nett Selling Amount </label>
+                  <input type="text" style="text-align:right" class="form-control"
+                    [ngModel]="model.total_sell_amount | number : '1.2-2'" name="p_total_sell_amount"
+                    maxlength="24" amount="total_sell_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion Total Sell Amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Remain Buy-->
+              <div class="col-md-4">
+                <div class="form-group" >
+                  <label for="remain_buy" class="control-label">Remain Buy *</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.remain_buy | number : '1.2-2'" name="p_remain_buy" required #remain_buy="ngModel"
+                    maxlength="24" amount="remain_buy">
+                  <!--[readonly]="isStatus"-->
+                  <small *ngIf="(remain_buy.errors?.required && remain_buy.touched) || (remain_buy.errors?.required && endorsementloadingForm.submitted)" class="text-danger">
+                    Remain Buy is required
+                  </small>
+                  <small *ngIf="remain_buy.errors?.pattern && remain_buy.touched" class="text-danger">
+                    Remain Buy is required and format should be <i>0-9</i>
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Remain Buy-->
+
+              <!--#region Remain Sell-->
+              <div class="col-md-4">
+                <div class="form-group" >
+                  <label for="remain_sell" class="control-label">Remain Selling *</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.remain_sell | number : '1.2-2'" name="p_remain_sell" required
+                    #remain_sell="ngModel" maxlength="24" amount="remain_sell">
+                  <!--[readonly]="isStatus"-->
+                  <small *ngIf="(remain_sell.errors?.required && remain_sell.touched) || (remain_sell.errors?.required && endorsementloadingForm.submitted)" class="text-danger">
+                    Remain Selling is required
+                  </small>
+                  <small *ngIf="remain_sell.errors?.pattern && remain_sell.touched" class="text-danger">
+                    Remain Selling is required and format should be <i>0-9</i>
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Remain Sell-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region lookup Loading-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLoading"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupLoading" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookuploading;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookuploading.numberIndex+i+1}}</td>
+                  <td style="width: 20%;text-align: center;">{{ row.code }}</td>
+                  <td style="width: 80%;text-align: left;">{{ row.loading_name }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLoading(row.code, row.loading_name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Loading-->

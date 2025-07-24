@@ -1,0 +1,201 @@
+<div class="main-content" style="overflow-y:scroll; overflow-x:hidden; height:100%;">
+    <div class="row">
+        <div class="col-md-12">
+
+            <!--#region watermark-->
+            <div class="watermark" [hidden]="this.isWatermark === '0'">
+                <h6>{{this.companyName}}</h6>
+                <h6>{{this.userName}}</h6>
+                <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+            </div>
+            <!--#endregion watermark-->
+            <div class="card-header">
+            <h5 class="card-title">Order To Service Bureau Info</h5>
+            </div>
+            <div class="card-body ">
+                <!--#region form-->
+                <!-- <form #ordertopublicserviceForm="ngForm"
+                    (ngSubmit)="onFormSubmit(ordertopublicserviceForm.value, ordertopublicserviceForm.valid)"> -->
+
+                    <!--#region button submit dan back-->
+                    <!--#endregion button submit dan back-->
+
+                    <!--#region row-->
+                    <div class="row">
+                        <!--#region code-->
+                        <div class="col-md-4">
+                            <div [hidden]="model.code != null" class="row"
+                                style="margin-bottom: -15px; padding-top: 30px;">
+                                <h1 class="col-md-4" style="font-size: 12px;">Order No</h1>
+                                <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                    Generate-</h1>
+                            </div>
+                            <div [hidden]="model.code == null" class="form-group">
+                                <label>Order No </label>
+                                <input type="text" class="form-control" [ngModel]="model.order_no" maxlength="50"
+                                    name="p_order_no" readonly>
+                                <input type="hidden" class="form-control" [ngModel]="model.code" name="p_code">
+                            </div>
+                        </div>
+                        <!--#endregion code-->
+
+                        <!--#region Branch Code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label labelmodule">Branch *</label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button disabled
+                                            class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin"
+                                            type="button" data-toggle="modal" data-target="#lookupModalBranch"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.branch_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.branch_code"
+                                            name="p_branch_code">
+                                        <input type="hidden" class="form-control" [ngModel]="model.branch_name"
+                                            name="p_branch_name" required #branch_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Branch Code-->
+
+                        <!--#region Order Status-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="order_status" class="control-label">Status</label>
+                                <input type="text" class="form-control" [ngModel]="model.order_status" maxlength="20"
+                                    name="p_order_status" readonly>
+                            </div>
+                        </div>
+                        <!--#endregion Order Status-->
+
+                        <!--#region Order Date-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="order_date" class="control-label">Date *</label>
+                                <div>
+                                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6"
+                                        placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.order_date"
+                                        name="p_order_date" [options]="myDatePickerOptions" required
+                                        #p_order_date="ngModel" #order_date="angular-mydatepicker" autocomplete="off"
+                                        readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Order Date-->
+
+                        <!--#region Order To Public Service Code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Public Service Name *</label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button disabled
+                                            class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin"
+                                            type="button" data-toggle="modal" data-target="#lookupModalPublicService"
+                                            href="#"><i class="fa fa-search-plus"></i></button>
+                                        {{model.public_service_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.public_service_code"
+                                            name="p_public_service_code">
+                                        <input type="hidden" class="form-control" [ngModel]="model.public_service_name"
+                                            name="p_public_service_name" required #public_service_name="ngModel">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion Order To Public Service Code-->
+
+                        <!--#region Order Amount -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="order_amount" class="control-label">DP Amount</label>
+                                <input style="text-align:right" type="text" class="form-control col-md-6"
+                                    [ngModel]="model.order_amount | number : '1.2-2'" name="p_order_amount"
+                                    #order_amount="ngModel" maxlength="24" amount="order_amount" disabled>
+                            </div>
+                        </div>
+                        <!--#endregion Order Amount -->
+
+                        <!--#region Order Remarks-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="order_remarks" class="control-label">Remark *</label>
+                                <textarea type="text" class="form-control" [ngModel]="model.order_remarks"
+                                    maxlength="4000" name="p_order_remarks" required #order_remarks="ngModel"
+                                    readonly></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion Order Remarks-->
+                    </div>
+                    <!--#endregion row-->
+                <!-- </form> -->
+                <!--#endregion form-->
+            </div>
+
+            <div *ngIf="param != null">
+                <!--#region list view-->
+                <span layout="row horizontal-divider">
+                    <hr flex />
+                </span>
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- <div class="card"> -->
+                        <div class="card-header">
+                            <h5>Order Detail List</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="toolbar" [hidden]="model.order_status !== 'HOLD'">
+                                <!--#region button add, delete dan submit-->
+                                <!--#endregion button add, delete dan submit-->
+                            </div>
+
+                            <!--#region list view-->
+                            <table id="datatables" datatable [dtOptions]="dtOptions"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th class="disabled-sorting">No</th>
+                                        <th style="display: none;"></th>
+                                        <th>Register Code</th>
+                                        <th>FA Code/Item Name</th>
+                                        <th>Plat / Chassis / Engine No</th>
+                                        <th>DP Amount</th>
+                                        <th>Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of listorderdetail; let i = index">
+                                        <td style="text-align: center;">{{listorderdetail.numberIndex+i+1}}</td>
+                                        <td style="display: none;"></td>
+                                        <td style="text-align: center;width: 15%;">{{row.register_code}}</td>
+                                        <td style="text-align: left; width: 20%;">{{row.fa_code}} <br>
+                                            {{row.item_name}}
+                                        </td>
+                                        <td style="text-align: left; width: 20%;">{{row.plat_no}} <br>
+                                            {{row.chassis_no}} <br> {{row.engine_no}}</td>
+                                        <td style="width: 15%;">
+                                            <input id="dp_to_public_service{{i}}" class="form-control"
+                                                (blur)="onBlur($event,i,'rate')" (focus)="onFocus($event,i,'rate')"
+                                                type="text" value="{{row.dp_to_public_service | number : '1.2-2'}}"
+                                                style="text-align: right;" rate="dp_to_public_service"
+                                                name="p_dp_to_public_service" amount="dp_to_public_service"
+                                                (change)="changePct($event, row.id, 'amount', i)" readonly>
+                                            <input type="hidden" value="{{row.id}}" name="p_id">
+                                        </td>
+                                        <td style="text-align: left; width: 30%;">{{row.register_remarks}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </div>
+            <!-- </div> -->
+
+        </div>
+    </div>

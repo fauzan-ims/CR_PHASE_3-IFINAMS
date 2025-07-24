@@ -1,0 +1,200 @@
+<div class="main-content margin-wizard-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <!-- <div class="card ">
+        <div class="card-body "> -->
+      <!--#region form-->
+      <form #insurancecompanyFeeForm="ngForm"
+        (ngSubmit)="onFormSubmit(insurancecompanyFeeForm.value, insurancecompanyFeeForm.valid)">
+
+        <!--#region button submit dan back-->
+        <button type="submit" ng-disabled="insurancecompanyFeeForm.$invalid" class="btn btn-info btn-round"
+          data-role="R00021390122139C">Save</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+        <!--#endregion button submit dan back-->
+
+        <!--#region row-->
+        <div class="row">
+          <!--#region id-->
+          <input hidden type="text" [ngModel]="this.params" name="p_id">
+          <!--#endregion id-->
+
+          <!--#region insurancecompany Code-->
+          <input type="text" [ngModel]="this.param" maxlength="50" name="p_insurance_code" hidden>
+          <!--#endregion insurancecompany Code-->
+
+          <!--#region Eff date-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="eff_date" class="control-label">Effective Date *</label>
+              <div>
+                <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                  angular-mydatepicker [ngModel]="model.eff_date" name="p_eff_date" [options]="myDatePickerOptions"
+                  required #p_eff_date="ngModel" #eff_date="angular-mydatepicker" autocomplete="off"
+                  (click)="eff_date.toggleCalendar()" />
+                <small
+                  *ngIf="(p_eff_date.errors?.required && p_eff_date.touched) || (p_eff_date.errors?.required && insurancecompanyFeeForm.submitted)"
+                  class="text-danger">
+                  Effective Date is required
+                </small>
+              </div>
+            </div>
+          </div>
+          <!--#endregion Eff date-->
+
+          <!--#region Lookup depreciation_code-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="pic_code" class="control-label labelgsubcode" style="cursor: pointer;" title="Clear">Currency
+                *</label>
+              <div class="col-md-12 buttons">
+                <span>
+                  <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                    (click)="btnLookupSysCurrency()" data-toggle="modal" data-target="#lookupModalSysCurrency"
+                    href="#"><i class="fa fa-search-plus"></i></button>
+                  {{model.currency_code}}
+                  <input type="hidden" class="form-control" [ngModel]="model.currency_code" name="p_currency_code"
+                    required #currency_code="ngModel">
+                </span>
+              </div>
+              <small [hidden]="currency_code.valid || (currency_code.pristine && !insurancecompanyFeeForm.submitted)"
+                class="text-danger">
+                Currency is required
+              </small>
+            </div>
+          </div>
+          <!--#endregion Lookup depreciation_code-->
+
+          <!--#region currency-->
+          <!-- <div class="col-md-4">
+            <div class="form-group">
+              <label for="currency_code" class="labelmodule">Currency *</label>
+              <div class="col-md-12 buttons btn-lookup-margin">
+                <span>
+                  <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                    (click)="btnLookupSysCurrency()" data-toggle="modal" data-target="#lookupModalSysCurrency"
+                    href="#"><i class="fa fa-search-plus"></i></button>
+                  {{model.currency_code}}
+                  <input type="hidden" class="form-control" [ngModel]="model.currency_code" name="p_currency_code"
+                    required #currency_code="ngModel">
+                </span>
+              </div>
+            </div>
+          </div> -->
+          <!--#endregion currency-->
+        </div>
+        <!--#endregion row-->
+
+        <!--#region row-->
+        <div class="row">
+          <!--#region Buy Amount-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="admin_fee_buy_amount" class="control-label"> Buy Admin Fee Amount *</label>
+              <input type="text" style="text-align:right" class="form-control col-md-6"
+                [ngModel]="model.admin_fee_buy_amount | number : '1.2-2'" name="p_admin_fee_buy_amount" required
+                #admin_fee_buy_amount="ngModel" maxlength="24" amount="admin_fee_buy_amount">
+              <small
+                *ngIf="(admin_fee_buy_amount.errors?.required && admin_fee_buy_amount.touched) || (admin_fee_buy_amount.errors?.required && insurancecompanyFeeForm.submitted)"
+                class="text-danger">
+                Buy Admin Fee Amount is required
+              </small>
+              <small *ngIf="admin_fee_buy_amount.errors?.pattern && admin_fee_buy_amount.touched" class="text-danger">
+                Buy Admin Fee Amount is required and format should be <i>0-9</i>
+              </small>
+            </div>
+          </div>
+          <!--#endregion Buy Amount-->
+
+          <!--#region Sell Amount-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="admin_fee_sell_amount" class="control-label"> Sell Admin Fee Amount *</label>
+              <input type="text" style="text-align:right" class="form-control col-md-6"
+                [ngModel]="model.admin_fee_sell_amount | number : '1.2-2'" name="p_admin_fee_sell_amount" required
+                #admin_fee_sell_amount="ngModel" maxlength="24" amount="admin_fee_sell_amount">
+              <small
+                *ngIf="(admin_fee_sell_amount.errors?.required && admin_fee_sell_amount.touched) || (admin_fee_sell_amount.errors?.required && insurancecompanyFeeForm.submitted)"
+                class="text-danger">
+                Sell Admin Fee Amount is required
+              </small>
+              <small *ngIf="admin_fee_sell_amount.errors?.pattern && admin_fee_sell_amount.touched" class="text-danger">
+                Sell Admin Fee Sell Amount is required and format should be <i>0-9</i>
+              </small>
+            </div>
+          </div>
+          <!--#endregion Sell Amount-->
+
+          <!--#region Stamp Amount-->
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="stamp_fee_amount" class="control-label">Stamp Duty Amount *</label>
+              <input type="text" style="text-align:right" class="form-control col-md-6"
+                [ngModel]="model.stamp_fee_amount | number : '1.2-2'" name="p_stamp_fee_amount" required
+                #stamp_fee_amount="ngModel" maxlength="24" amount="stamp_fee_amount">
+              <small
+                *ngIf="(stamp_fee_amount.errors?.required && stamp_fee_amount.touched) || (stamp_fee_amount.errors?.required && insurancecompanyFeeForm.submitted)"
+                class="text-danger">
+                Stamp Duty Amount is required
+              </small>
+              <small *ngIf="stamp_fee_amount.errors?.pattern && stamp_fee_amount.touched" class="text-danger">
+                Stamp Duty Amount is required and format should be <i>0-9</i>
+              </small>
+            </div>
+          </div>
+          <!--#endregion Stamp Amount-->
+        </div>
+        <!--#endregion row-->
+      </form>
+      <!--#endregion form-->
+    </div>
+  </div>
+</div>
+
+<!--#region lookup Sys Currency-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalSysCurrency"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12" style="width: 100%">
+            <table id="datatableLookupSysCurrency" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Nama</th>
+                  <th style="text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupSysCurrency;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupSysCurrency.numberIndex+i+1}}</td>
+                  <td style="text-align: center;width: 20%;">{{ row.code }}</td>
+                  <td style="text-align: left;width: 80%;">{{ row.description }}</td>
+                  <td class="text-right">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowSysCurrency(row.code)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup sys Currency-->

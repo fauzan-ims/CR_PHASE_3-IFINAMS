@@ -1,0 +1,330 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Monitoring GPS Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #MonitoringGpsForm="ngForm" (ngSubmit)="onFormSubmit(MonitoringGpsForm.value, MonitoringGpsForm.valid)">
+                        <!--#region button-->
+
+                        <button type="submit" [hidden]="model.gps_status !== 'SUBSCRIBE'"
+                            class="btn btn-success btn-round custom-button-width"
+                            data-role="R00024750000002R">UnSubscribe</button>
+
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region asset code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Asset Code</label>
+                                    <input type="text" class="form-control" 
+                                        [ngModel]="model.code" name="p_code" readonly 
+                                        #code="ngModel" />
+                                    <input type="hidden" [ngModel]="'MONITORING'" name="p_source_reff_name" />
+                                </div>
+                            </div>
+                            <!--#endregion asset code-->
+
+                            <!--#region asset name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Asset Name</label>
+                                    <input type="text" class="form-control"
+                                        [ngModel]="model.item_name" name="p_item_name" readonly 
+                                        #item_name="ngModel"/>
+                                </div>
+                            </div>
+                            <!--#endregion asset name-->
+
+                            <!--#region status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="gps_status" class="control-label">Status</label>
+                                    <input type="text" class="form-control" [ngModel]="model.gps_status" name="p_gps_status"
+                                        readonly #gps_status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+                            
+                            <!--#region plat_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="plat_no" class="control-label">Plat No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.plat_no" name="p_plat_no"
+                                        readonly #plat_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion plat_no-->
+                            
+                            <!--#region engine_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="engine_no" class="control-label">Engine No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.engine_no" name="p_engine_no"
+                                        readonly #engine_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion engine_no-->
+                            
+                            <!--#region chasis_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="chassis_no" class="control-label">Chasis No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.chassis_no" name="p_chassis_no"
+                                        readonly #chassis_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion chasis_no-->
+                            
+                            <!--#region agreement_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="agreement_external_no" class="control-label">Agreement No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.agreement_external_no" name="p_agreement_external_no"
+                                        readonly #agreement_external_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion agreement_no-->
+                            
+                            <!--#region agremenet_period-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="agremenet_period" class="control-label">Agreement Periode</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text" readonly
+                                                class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                                [ngModel]="model.from_period"
+                                                name="p_from_period" #from_period="ngModel"
+                                                maxlength="4" pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                        -
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" readonly
+                                                [ngModel]="model.to_period" name="p_to_period"
+                                                maxlength="15" #to_period="ngModel"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion agremenet_period-->
+
+                            <!--#region vendor_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="vendor_name" class="control-label">Vendor</label>
+                                    <input type="text" class="form-control" [ngModel]="model.vendor_name" name="p_vendor_name"
+                                        readonly #vendor_name="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion vendor_name-->
+
+                            <!--#region first_payment_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="paid_date" class="control-label">First Payment Date</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        [ngModel]="model.paid_date" name="paid_date"  readonly 
+                                        [ngStyle]="getStyles()"
+                                        (click)="paid_date.toggleCalendar()" #paid_date="ngModel"
+                                        #paid_date="angular-mydatepicker" autocomplete="off" />
+                                </div>
+                            </div>
+                            <!--#endregion first_payment_date-->
+
+                            <!--#region subcribe_amount_month-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="subcribe_amount_month" class="control-label">Total Paid</label>
+                                    <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.subcribe_amount_month | number : '1.2-2'" amount="subcribe_amount_month"
+                                            name="p_subcribe_amount_month" #subcribe_amount_month="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion subcribe_amount_month-->
+
+                            <!--#region Lookup reason_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reason_unsubscribe" class="control-label labelmodule" style="cursor: pointer;"
+                                        title="Clear">Reason UnSubscribe *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button 
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupReasonUnsubscribe()" data-toggle="modal" [disabled]="model.gps_status != 'SUBSCRIBE'"
+                                                data-target="#lookupModalReasonUnsubsribe" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.reason_unsubscribe}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.reason_code"
+                                                name="p_reason_code" #reason_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.reason_unsubscribe"
+                                                name="p_reason_unsubscribe" required #reason_unsubscribe="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        *ngIf="(reason_unsubscribe.errors?.required && reason_unsubscribe.touched) || (reason_unsubscribe.errors?.required && MonitoringGpsForm.submitted)"
+                                        class="text-danger">
+                                    Reason Unsubcribe is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup reason_code-->
+
+                            <!--#region remarks-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remarks UnSubscribe *</label>
+                                    <textarea type="text" class="form-control" [readonly]="model.gps_status != 'SUBSCRIBE'"
+                                        [ngModel]="model.remark" name="p_remark" #remark="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remark.errors?.required && remark.touched) || (remark.errors?.required && MonitoringGpsForm.submitted)"
+                                        class="text-danger">
+                                        Remarks UnSubscribe is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remarks-->
+
+                            <!--#region unsubscribe_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="unsubscribe_date" class="control-label">UnSubscribe Date</label>
+                                    <input angular-mydatepicker class="form-control col-md-6"
+                                        [(ngModel)]="model.unsubscribe_date" placeholder="dd/mm/yyyy"
+                                        name="p_unsubscribe_date"
+                                        [options]="myDatePickerOptions"
+                                        #unsubscribe_date="angular-mydatepicker"
+                                        class="form-control"
+                                        autocomplete="off"
+                                        (click)="unsubscribe_date.toggleCalendar()" 
+                                    />
+                                    <!-- <input [ngStyle]="getStyles()" class="form-control col-md-6"
+                                        placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        [(ngModel)]="model.unsubscribe_date" name="p_unsubscribe_date" #p_unsubscribe_date="ngModel"
+                                        [options]="myDatePickerOptions" required #unsubscribe_date="angular-mydatepicker"
+                                        autocomplete="off" (click)="unsubscribe_date.toggleCalendar()" />
+                                    <small
+                                        *ngIf="(unsubscribe_date.errors?.required && unsubscribe_date.touched) || (unsubscribe_date.errors?.required && MonitoringGpsForm.submitted)"
+                                        class="text-danger">
+                                        UnSubscribe Date is required
+                                    </small> -->
+                                </div>
+                            </div>
+                            <!--#endregion unsubscribe_date-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+
+                <!-- Sub Book Detail -->
+                <span *ngIf="param !== null" layout="row horizontal-divider">
+                    <hr flex />
+                </span>
+                <div *ngIf="param !== null" class="row">
+                    <div class="col-md-12">
+                        <!-- <div class="card"> -->
+                        <div class="card-header">
+                            <h5 class="card-title">Monitoring GPS Detail List</h5>
+                        </div>
+                        <div class="card-body">
+                            <!--#region list view-->
+                            <table id="datatablesMonitoringGpsDetail" datatable [dtOptions]="dtOptions"
+                                class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                                <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Invoice No</th>
+                                    <th>Payment Code</th>
+                                    <th>Payment Date</th>
+                                    <th>Subscription Amount</th>
+                                    <th>Paid Date</th>
+                                    <th>Next Billing</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let row of listAssetGpsSchedule;  let i=index">
+                                    <td style="text-align: center;">{{listAssetGpsSchedule.numberIndex+i+1}}</td>
+                                    <td style="width: 15%;">{{row.invoice_no}}</td>
+                                    <td style="width: 15%;">{{row.installment_no}}</td>
+                                    <td style="text-align: center;width: 15%;">{{row.payment_date}}</td>
+                                    <td style="width: 15%;">{{row.subcribe_amount_month | number: '1.2-2'}}</td>
+                                    <td style="text-align: center;width: 15%;">{{row.paid_date}}</td>
+                                    <td style="text-align: center;width: 15%;">{{row.next_billing}}</td>
+                                    <td style="width: 10%;">{{row.status}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <!--#endregion list view-->
+                        </div>
+                        <!-- </div> -->
+                    </div>
+                </div>
+                <!-- End Sub Book Detail -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup process status-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalReasonUnsubsribe"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupReasonUnsubsribe" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupReasonUnsubsribe;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupReasonUnsubsribe.numberIndex+i+1}}</td>
+                                    <td style="width: 100%;">{{ row.general_subcode_desc }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowReasonUnsubsribe(row.code, row.general_subcode_desc)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup process status -->

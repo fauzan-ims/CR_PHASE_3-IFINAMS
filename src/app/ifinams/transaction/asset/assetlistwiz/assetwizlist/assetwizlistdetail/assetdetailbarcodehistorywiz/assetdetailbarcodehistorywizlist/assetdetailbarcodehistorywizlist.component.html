@@ -1,0 +1,33 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body">
+                <!--#region list view-->
+                <table id="datatableBarcodehistory" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th>Previous Barcode</th>
+                            <th>New Barcode</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listbarcodehistory;  let i=index">
+                            <td style="text-align: center;">{{listbarcodehistory.numberIndex+i+1}}</td>
+                            <td style="width: 25%;text-align: left;" class="if-no-edit-btn">{{row.previous_barcode}}
+                            </td>
+                            <td style="width: 25%;text-align: left;">{{row.new_barcode}}</td>
+                            <td style="width: 50%;text-align: left;">{{row.remark}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>

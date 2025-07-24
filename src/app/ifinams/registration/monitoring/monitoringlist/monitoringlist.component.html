@@ -1,0 +1,175 @@
+<router-outlet></router-outlet>
+
+<div id="hideMainPanel" class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="card">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header">
+          <h5 class="card-title">Assets Uninsured List</h5>
+        </div>
+        <div class="card-body">
+
+          <!--#region button Procced-->
+          <div class="toolbar">
+            <button [hidden]="this.status === 'ALL' || this.status === 'ON PROCESS'" class="btn btn-success btn-round"
+              (click)="btnProceed()" data-role="R00022760000002O">
+              Proceed
+            </button>
+          </div>
+          <!--#endregion button Procced-->
+
+          <!--#region row-->
+          <div class="row">
+            <!--#region lookup Branch code -->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="control-label labelmodule" (click)="btnClearBranch()" style="cursor: pointer;"
+                  title="Clear">Branch </label>
+                <div class="col-md-12 buttons btn-lookup-margin">
+                  <span>
+                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                      (click)="btnLookupbranch()" data-toggle="modal" data-target="#lookupModalbranch" href="#"><i
+                        class="fa fa-search-plus"></i></button>
+                    {{branchName}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!--#endregion lookup Branch code -->
+
+            <!--#region Status-->
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Existing Insurance</label>
+                <select class='form-control' [ngModel]="this.status" (change)="PageStatus($event)">
+                  <option value='ALL'>ALL</option>
+                  <option value='EXIST'>EXIST</option>
+                  <option value='NOT EXIST'>NOT EXIST</option>
+                  <option value='ON PROCESS'>ON PROCESS</option>
+                </select>
+              </div>
+            </div>
+
+            <!--#region Status-->
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>Budget Status</label>
+                <select class='form-control' [ngModel]="this.budget_status" (change)="BudgetStatus($event)">
+                  <option value='ALL'>ALL</option>
+                  <option value='YES'>YES</option>
+                  <option value='NO'>NO</option>
+                </select>
+              </div>
+            </div>
+            <!--#endregion Status-->
+          </div>
+
+          <!--#region list view -->
+          <table id="datatablemonitoringlistpolicy" datatable [dtOptions]="dtOptions"
+            class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th class="disabled-sorting">No</th>
+                <th class="disabled-sorting">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" id="checkall" [(ngModel)]="selectedAll"
+                        (change)="selectAllTable();" />
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </th>
+                <th>FA Code / Name</th>
+                <th>Plat / Engine / Chassis No</th>
+                <th>Branch / Insco</th>
+                <th>Policy No / Expired Date</th>
+                <th>Net Book Value</th>
+                <th>Status / Fisical /Rental Status</th>
+                <th>Budget Insurance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of listmonitoring; let i=index">
+                <td style="text-align: center;">{{listmonitoring.numberIndex+i+1}}</td>
+                <td class="disabled-sorting">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                        (change)="checkIfAllTableSelected($event, row.code);">
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </td>
+                <td style="width: 20%;text-align: left;">{{row.code}}<br> {{row.item_name}}</td>
+                <td style="width: 15%;text-align: left;">{{row.plat_no}}<br>{{row.engine_no}}<br>{{row.chassis_no}}</td>
+                <td style="width: 15%;text-align: left;">{{row.branch_name}} <br> {{row.insurance_company}}</td>
+                <td style="width: 10%;text-align: center;">{{row.policy_no}} <br> {{row.policy_exp_date}}</td>
+                <td style="width: 15%;text-align: right;">{{row.net_book_value_comm | number: '1.2-2'}}</td>
+                <td style="width: 15%;text-align: left;" class="if-no-edit-btn">{{row.status}} <br>
+                  {{row.fisical_status}} <br>
+                  {{row.rental_status}}</td>
+                <td style="width: 10%;text-align: center;">{{row.budget_status}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <!--#endregion list view-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region lookup branch-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalbranch"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupBranch" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Branch Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupBranch;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupBranch.numberIndex+i+1}}</td>
+                  <td style="text-align: center;width: 15%;">{{ row.code }}</td>
+                  <td style="text-align: left;width: 85%;">{{ row.name }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLookupBranch(row.code, row.name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup branch-->

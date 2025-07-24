@@ -1,0 +1,55 @@
+<router-outlet></router-outlet>
+
+
+<div class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card"> -->
+            <div class="card-body">
+                <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                <!--#region list view-->
+                <table id="datatableDocument" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th style="display: none;"></th>
+                            <th>Description</th>
+                            <th>File Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listdassetdocument; let i=index">
+                            <td style="text-align: center;">{{listdassetdocument.numberIndex+i+1}}</td>
+                            <td style="display: none;"></td>
+                            <input hidden name="p_id_doc" [ngModel]="row.id">
+                            <td style="width: 50%;">
+                                <textarea readonly id="description{{i}}" class="form-control" type="text"
+                                    value="{{row.description}}" name="p_description_doc">
+                                </textarea>
+                            </td>
+                            <td style="width: 50%;">
+                                <a [hidden]="row.file_name === '' && row.file_name == null">{{row.file_name}}</a>
+                                <input hidden name="p_file_path" [ngModel]="row.path">
+                            </td>
+                            <td style="text-align: center;" class="if-no-edit-btn">
+                                <span>
+                                    <a [hidden]="row.file_name == '' || row.file_name == null"
+                                        (click)="previewFile(row.file_name, row.path)" style="cursor: pointer;">
+                                        Preview</a> <br>
+                                    <!-- <a [hidden]="row.file_name == '' || row.file_name == null"
+                                        (click)="deleteImage(row.id, row.path)" style="cursor: pointer;">
+                                        Remove</a> -->
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>

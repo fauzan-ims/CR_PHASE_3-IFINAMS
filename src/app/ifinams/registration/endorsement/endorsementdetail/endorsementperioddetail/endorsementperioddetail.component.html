@@ -1,0 +1,405 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Endorsement Period Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #endorsementperiodForm="ngForm"
+            (ngSubmit)="onFormSubmit(endorsementperiodForm.value, endorsementperiodForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="submit" class="btn btn-info btn-round" data-role="R00022000012200C">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Endorsement Code-->
+              <input type="text" [ngModel]="this.param" maxlength="50" name="p_endorsement_code" hidden>
+              <!--#endregion Endorsement Code-->
+
+              <!--#region Endorsement id-->
+              <input type="text" [ngModel]="this.paramssss" name="p_id" hidden>
+              <!--#endregion Endorsement id-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Asset Name-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label>Asset Name </label>
+                  <input type="text" class="form-control" [ngModel]="model.asset_name" name="p_asset_name" readonly>
+                </div>
+              </div>
+              <!--#endregion Asset Name-->
+
+              <!--#region Year Period-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="year_period" class="control-label">Period (Year) *</label>
+                  <input type="text" class="form-control col-md-4" [ngModel]="model.year_period" name="p_year_period"
+                    required #year_period="ngModel" [readonly]="isStatus" pattern="{{NumberOnlyPattern}}">
+                  <small
+                    *ngIf="(year_period.errors?.required && year_period.touched) || (year_period.errors?.required && endorsementperiodForm.submitted)"
+                    class="text-danger">
+                    Period (Year) is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Year Period-->
+
+              <!--#region Lookup coverage code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Coverage *</label>
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupCoverage()" data-toggle="modal" data-target="#lookupModalCoverage" href="#"><i
+                          class="fa fa-search-plus"></i></button>
+                      {{model.coverage_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.coverage_code" name="p_coverage_code"
+                        required #coverage_code="ngModel">
+                    </span>
+                  </div>
+                  <small [hidden]="coverage_code.valid || (coverage_code.pristine && !endorsementperiodForm.submitted)"
+                    class="text-danger">
+                    Coverage is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Lookup coverage code -->
+
+              <!--#region currency-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="currency_code" class="control-label">Currency </label>
+                  <input readonly type="text" class="form-control col-md-4" [ngModel]="model.currency_code"
+                    name="p_currency_code" #currency_code="ngModel">
+                </div>
+              </div>
+              <!--#endregion currency-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Sum Insured-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="sum_insured" class="control-label">Sum Insured *</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" required
+                    [ngModel]="model.sum_insured | number : '1.2-2'" name="p_sum_insured" #sum_insured="ngModel"
+                    [readonly]='isReadOnly' maxlength="24" amount="sum_insured" (change)="SumInsured($event)">
+                  <small
+                    *ngIf="(sum_insured.errors?.required && sum_insured.touched) || (sum_insured.errors?.required && sum_insured?.submitted)"
+                    class="text-danger">
+                    Sum Insured is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion Sum Insured-->
+
+              <!--#region Rate Depreciation-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="rate_depreciation" class="control-label">Depreciation (%)</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.rate_depreciation | number : '1.6-6'" name="p_rate_depreciation"
+                    readonly #rate_depreciation="ngModel" readonly maxlength="10"
+                    rate="rate_depreciation">
+                </div>
+              </div>
+              <!--#endregion Rate Depreciation-->
+            </div>
+            <!--#endregion row-->
+
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+            <br>
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region Initial Buy Rate-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_buy_rate" class="control-label">Initial (%) </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.initial_buy_rate | number : '1.6-6'" name="p_initial_buy_rate"
+                    #initial_buy_rate="ngModel" readonly maxlength="10" rate="initial_buy_rate"
+                    (change)="stampInitialBuy($event)">
+                </div>
+              </div>
+              <!--#endregion Initial Buy Rate-->
+
+              <!--#region Initial Sell Rate-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_sell_rate" class="control-label">Selling (%) </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.initial_sell_rate | number : '1.6-6'" name="p_initial_sell_rate"
+                    #initial_sell_rate="ngModel" readonly maxlength="10" rate="initial_sell_rate"
+                    (change)="stampInitialSell($event)">
+                </div>
+              </div>
+              <!--#endregion Initial Sell Rate-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region Initial Buy Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_buy_amount" class="control-label">Initial Amount </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.initial_buy_amount | number : '1.2-2'" name="p_initial_buy_amount"
+                    #initial_buy_amount="ngModel" readonly maxlength="24" amount="initial_buy_amount"
+                    (change)="stampInitialAmount($event)">
+                </div>
+              </div>
+              <!--#endregion Initial Buy Amount-->
+
+              <!--#region Initial Sell Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_sell_amount" class="control-label">Selling Amount</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.initial_sell_amount | number : '1.2-2'" name="p_initial_sell_amount"
+                    #initial_sell_amount="ngModel" readonly maxlength="24" amount="initial_sell_amount"
+                    (change)="stampInitialSellAmount($event)">
+                </div>
+              </div>
+              <!--#endregion Initial Sell Rate-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region buy_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Nett Amount</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;" maxlength="24"
+                    amount="buy_amount" [ngModel]="model.buy_amount | number : '1.2-2'" name="p_buy_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion buy_amount-->
+
+              <!--#region sell_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Nett Selling Amount</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;" maxlength="24"
+                    amount="sell_amount" [ngModel]="model.sell_amount | number : '1.2-2'" name="p_sell_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion sell_amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region Initial Discount Pct-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_discount_pct" class="control-label">Discount (%) </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.initial_discount_pct | number : '1.6-6'" name="p_initial_discount_pct"
+                    #initial_discount_pct="ngModel" readonly maxlength="10" rate="initial_discount_pct"
+                    (change)="DisPct($event)">
+                </div>
+              </div>
+              <!--#endregion Initial Discount Pct-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region Initial Discount Amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_discount_amount" class="control-label">Discount Amount</label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.initial_discount_amount | number : '1.2-2'" name="p_initial_discount_amount"
+                    #initial_discount_amount="ngModel" readonly maxlength="24" amount="initial_discount_amount">
+                </div>
+              </div>
+              <!--#endregion Initial Discount Amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region initial_buy_admin_fee_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_buy_admin_fee_amount" class="control-label"> Initial Fee Amount </label>
+                  <input type="text" class="form-control col-md-6" maxlength="24" amount="initial_buy_admin_fee_amount"
+                    style="text-align: right;" [ngModel]="model.initial_buy_admin_fee_amount | number : '1.2-2'"
+                    name="p_initial_buy_admin_fee_amount" #initial_buy_admin_fee_amount="ngModel" readonly
+                    (change)="Buy($event)">
+                </div>
+              </div>
+              <!--#endregion initial_buy_admin_fee_amount-->
+
+              <!--#region initial_sell_admin_fee_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="initial_sell_admin_fee_amount" class="control-label"> Selling Fee Amount </label>
+                  <input type="text" class="form-control col-md-6" maxlength="24" amount="initial_sell_admin_fee_amount"
+                    style="text-align: right;" [ngModel]="model.initial_sell_admin_fee_amount | number : '1.2-2'"
+                    name="p_initial_sell_admin_fee_amount" #initial_sell_admin_fee_amount="ngModel" readonly
+                    (change)="Sell($event)">
+                </div>
+              </div>
+              <!--#endregion initial_sell_admin_fee_amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region initial_stamp_fee_amount-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="initial_stamp_fee_amount.invalid && initial_stamp_fee_amount.touched">
+                  <label for="initial_stamp_fee_amount" class="control-label">Stamp Duty Amount </label>
+                  <input type="text" class="form-control col-md-6" maxlength="24" amount="initial_stamp_fee_amount"
+                    style="text-align: right;" [ngModel]="model.initial_stamp_fee_amount | number : '1.2-2'" readonly
+                    name="p_initial_stamp_fee_amount" #initial_stamp_fee_amount="ngModel" (change)="StampDuty($event)">
+                </div>
+              </div>
+              <!--#endregion Initial Stamp Fee Amount-->
+
+              <!--#region initial_stamp_fee_amount //(change)="stampFeeAmount($event)"-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="initial_stamp_fee_amount.invalid && initial_stamp_fee_amount.touched">
+                  <label for="initial_stamp_fee_amount" class="control-label">Selling Stamp Duty Amount</label>
+                  <input type="text" class="form-control col-md-6" maxlength="24" amount="initial_stamp_fee_amount"
+                    style="text-align: right;" [ngModel]="model.initial_stamp_fee_amount | number : '1.2-2'" readonly
+                    name="p_initial_stamp_fee_amount" #initial_stamp_fee_amount="ngModel">
+                </div>
+              </div>
+              <!--#endregion Initial Stamp Fee Amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region total_buy_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Total Nett Amount</label>
+                  <input type="text" class="form-control col-md-6" maxlength="24" amount="total_buy_amount"
+                    style="text-align: right;" [ngModel]="model.total_buy_amount | number : '1.2-2'"
+                    name="p_total_buy_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion total_buy_amount-->
+
+              <!--#region total_sell_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Total Nett Selling Amount</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.total_sell_amount | number : '1.2-2'" maxlength="24" amount="total_sell_amount"
+                    name="p_total_sell_amount" readonly>
+                </div>
+              </div>
+              <!--#endregion total_sell_amount-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="this.paramssss == null">
+              <!--#region Remain Buy-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="remain_buy" class="control-label">Remaining </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.remain_buy | number : '1.2-2'" name="p_remain_buy" #remain_buy="ngModel"
+                    [readonly]="isStatus" maxlength="24" amount="remain_buy">
+                </div>
+              </div>
+              <!--#endregion Remain Buy-->
+
+              <!--#region Remain Sell-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="remain_sell" class="control-label">Remain Selling </label>
+                  <input type="text" style="text-align:right" class="form-control col-md-6" maxlength="24"
+                    amount="remain_sell" [ngModel]="model.remain_sell | number : '1.2-2'" name="p_remain_sell"
+                    #remain_sell="ngModel" [readonly]="isStatus">
+                </div>
+              </div>
+              <!--#endregion Remain Sell-->
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--#region lookup coverage-->
+  <div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCoverage"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body" style="overflow:hidden;">
+          <div class="col-md-12 buttons btn-lookup-margin">
+            <div class="card-body col-md-12">
+              <table id="datatableLookupCoverage" class="table table-striped table-bordered hover" cellspacing="0"
+                style="min-width: 100%;">
+                <thead>
+                  <tr>
+                    <th style="display: none;"></th>
+                    <th class="disabled-sorting">No</th>
+                    <th>Coverage Name</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of lookupcoverage;  let i=index">
+                    <td style="display: none;"></td>
+                    <td style="text-align: center;">{{lookupcoverage.numberIndex+i+1}}</td>
+                    <td style="text-align: left;width: 100%;">{{ row.coverage_name }}</td>
+                    <td class="text-center">
+                      <button class="btn btn-outline-default btn-round"
+                        (click)="btnSelectRowCoverage(row.code, row.coverage_name, row.currency_code)">Select</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--#endregion lookup coverage-->

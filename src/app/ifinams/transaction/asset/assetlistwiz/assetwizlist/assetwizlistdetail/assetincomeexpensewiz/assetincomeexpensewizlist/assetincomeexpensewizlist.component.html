@@ -1,0 +1,90 @@
+<div class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body">
+                <!--#region div-->
+                <div class="row">
+                    <!--#region purchase_price-->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="purchase_price" class="control-label">Acquisition
+                            </label>
+                            <div class="col-md-8" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.purchase_price | number : '1.2-2'" amount="purchase_price"
+                                    name="p_purchase_price" #purchase_price="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion purchase_price-->
+
+                    <!--#region expense_amount-->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="expense_amount" class="control-label">Total Expense (-)
+                            </label>
+                            <div class="col-md-8" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.expense_amount | number : '1.2-2'" amount="expense_amount"
+                                    name="p_expense_amount" #expense_amount="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion expense_amount-->
+
+                    <!--#region income_amount-->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="income_amount" class="control-label">Total Income (+)
+                            </label>
+                            <div class="col-md-8" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.income_amount | number : '1.2-2'" amount="income_amount"
+                                    name="p_income_amount" #income_amount="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion total_depre_fiscal-->
+
+                    <!--#region gain_loss-->
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="gain_loss" class="control-label">Gain/Loss
+                            </label>
+                            <div class="col-md-8" style="margin-left: -15px;">
+                                <input readonly type="text" style="text-align:right" class="form-control"
+                                    [ngModel]="model.gain_loss | number : '1.2-2'" amount="gain_loss" name="p_gain_loss"
+                                    #gain_loss="ngModel">
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion gain_loss-->
+                </div>
+                <!--#endregion div-->
+
+                <!--#region wizard container-->
+                <div class="nav-tabs-navigation">
+                    <ul id="tabs1" class="nav nav-pills nav-justified" role="tablist">
+                        <li class="nav-item" id="assetexpenseledgerwiz">
+                            <a class="nav-link" (click)="AssetExpenseLedgerWiz()" href="#assetexpenseledgerwizlist"
+                                data-toggle="tab" role="tab" aria-controls="assetexpenseledgerwizlist"
+                                aria-selected="true">
+                                Expense
+                            </a>
+                        </li>
+                        <li class="nav-item" id="assetincomeledgerwiz">
+                            <a class="nav-link" (click)="AssetIncomeLedgerWiz()" href="#assetincomeledgerwizlist"
+                                data-toggle="tab" role="tab" aria-controls="assetincomeledgerwizlist"
+                                aria-selected="true">
+                                Income
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <router-outlet></router-outlet>
+                <!--#endregion wizard container-->
+            </div>
+        </div>
+    </div>
+</div>

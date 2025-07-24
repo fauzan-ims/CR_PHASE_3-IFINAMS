@@ -1,0 +1,199 @@
+<router-outlet></router-outlet>
+
+<div id="hideMainPanel" class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="card">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header">
+          <h5 class="card-title">SPPA List</h5>
+        </div>
+        <div class="card-body">
+
+          <!--#region row-->
+          <div class="row">
+            <!--#region lookup Branch code -->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="control-label labelmodule" (click)="btnClearBranch()" style="cursor: pointer;"
+                  title="Clear">Branch </label>
+                <div class="col-md-12 buttons btn-lookup-margin">
+                  <span>
+                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                      (click)="btnLookupbranch()" data-toggle="modal" data-target="#lookupModalbranch" href="#"><i
+                        class="fa fa-search-plus"></i></button>
+                    {{branchName}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!--#endregion lookup Branch code -->
+
+            <!--#region lookup insurance code-->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="control-label" (click)="btnClearInsurance()" style="cursor: pointer;"
+                  title="Clear">Insurance Name</label>
+                <div class="col-md-12 buttons btn-lookup-margin">
+                  <span>
+                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                      (click)="btnLookupInsurance()" data-toggle="modal" data-target="#lookupModalInsurance" href="#"><i
+                        class="fa fa-search-plus"></i></button>
+                    {{insurance_name}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!--#endregion lookup insurance code -->
+
+            <!--#region Status-->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Status</label>
+                <select class="form-control col-md-4" [ngModel]="this.tampStatus" (change)="PageStatus($event)">
+                  <option value='ALL'>ALL</option>
+                  <option value="HOLD">HOLD</option>
+                  <option value="ON PROCESS">ON PROCESS</option>
+                  <option value="POST">POST</option>
+                  <option value="CANCEL">CANCEL</option>
+                </select>
+              </div>
+            </div>
+            <!--#endregion rounding Status-->
+          </div>
+          <!--#endregion row-->
+
+          <!-- #region List view -->
+          <table id="datatable" datatable [dtOptions]="dtOptions"
+            class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th style="display: none;"></th>
+                <th class="disabled-sorting">No</th>
+                <th>Code</th>
+                <th>Branch</th>
+                <th>Date</th>
+                <th>Insurance Name</th>
+                <th>Remark</th>
+                <th>Status</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of listsppa; let i=index">
+                <td style="display: none;"></td>
+                <td style="text-align: center;">{{listsppa.numberIndex+i+1}}</td>
+                <td style="width: 15%;text-align: left;">{{row.code}}</td>
+                <td style="width: 15%;">{{row.sppa_branch_name}}</td>
+                <td style="width: 10%;text-align: center;">{{row.sppa_date}}</td>
+                <td style="width: 20%;">{{row.insurance_name}}</td>
+                <td style="width: 30%;">{{row.sppa_remarks}}</td>
+                <td style="width: 10%;text-align: center;">{{row.sppa_status}}</td>
+                <td style="text-align: center;">
+                  <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit" (click)="btnEdit(row.code)"><i
+                      class="fa fa-edit"></i></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!--#endregion List view-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region modal lookup branch-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalbranch"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupBranch" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Branch Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupBranch;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupBranch.numberIndex+i+1}}</td>
+                  <td style="text-align: center;width: 15%;">{{ row.code }}</td>
+                  <td style="text-align: left;width: 85%;">{{ row.name }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLookupBranch(row.code, row.name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion modal lookup branch-->
+
+<!--#region modal lookup insurance code-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalInsurance"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupInsurance" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Insurance Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupinsurance;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupinsurance.numberIndex+i+1}}</td>
+                  <td style="text-align: left;width: 100%;">{{ row.insurance_name }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowInsurance(row.code, row.insurance_name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion modal lookup insurance code-->

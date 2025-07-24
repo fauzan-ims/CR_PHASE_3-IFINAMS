@@ -1,0 +1,77 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="toolbar" [hidden]="model.policy_payment_status !== 'HOLD'">
+        <!--#region button Save //[hidden]="isStatus"-->
+        <button id="reloadWiz" class="btn btn-info btn-round" (click)="this.ngOnInit()" hidden
+          data-role="R00022090012209C">
+          Reload
+        </button>
+
+        <button class="btn btn-info btn-round" (click)="btnSaveList()" data-role="R00022090022209C">
+          Save
+        </button>
+        <!--#endregion button Save-->
+      </div>
+      <!--#region List view-->
+      <table id="datatabless" datatable [dtOptions]="dtOptions"
+        class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th style="display: none;"></th>
+            <th class="disabled-sorting">No</th>
+            <th>Periode (Year)</th>
+            <th>Total Buy Amount</th>
+            <th>Total Discount Amount</th>
+            <th>Total Admin Amount</th>
+            <th>Buy Amount</th>
+            <th>Discount Amount</th>
+            <th>Admin Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of listpolicymainperiodadjusment; let i = index">
+            <td style="display: none;"></td>
+            <td style="text-align: center;">{{listpolicymainperiodadjusment.numberIndex+i+1}}</td>
+            <td style="display: none;"><input name="p_id" value="{{row.id}}"></td>
+            <td style="width: 10%;text-align: center;">{{row.year_periode}}</td>
+            <td style="width: 15%;text-align: right;">{{row.total_buy_amount | number : '1.2-2'}}</td>
+            <td style="width: 15%;text-align: right;">{{row.total_discount_amount | number : '1.2-2'}}</td>
+            <td style="width: 15%;text-align: right;">{{row.initial_admin_fee_amount | number : '1.2-2'}}</td>
+            <td style="width: 15%;text-align: right;">
+              <input id="adjustment_buy_amount{{i}}" (blur)="onBlur($event,i,'amount')" style="text-align: right;"
+                (focus)="onFocus($event,i,'amount')" type="text" name="p_adjustment_buy_amount"
+                amount="adjustment_buy_amount" value="{{row.adjustment_buy_amount | number : '1.2-2'}}"
+                [disabled]="model.policy_payment_status !== 'HOLD'">
+            </td>
+
+            <td style="width: 15%;text-align: right;">
+              <input id="adjustment_discount_amount{{i}}" style="text-align: right;" type="text"
+                (blur)="onBlur($event,i,'amount')" amount="adjustment_discount_amount"
+                (focus)="onFocus($event,i,'amount')" name="p_adjustment_discount_amount"
+                value="{{row.adjustment_discount_amount | number : '1.2-2'}}"
+                [disabled]="model.policy_payment_status !== 'HOLD'">
+            </td>
+
+            <td style="width: 15%;text-align: right;">
+              <input id="adjustment_admin_amount{{i}}" (blur)="onBlur($event,i,'amount')" style="text-align: right;"
+                [hidden]="row.initial_admin_fee_amount === 0" (focus)="onFocus($event,i,'amount')" type="text"
+                name="p_adjustment_admin_amount" amount="adjustment_admin_amount"
+                value="{{row.adjustment_admin_amount | number : '1.2-2'}}"
+                [disabled]="model.policy_payment_status !== 'HOLD'">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!--#endregion List view-->
+    </div>
+  </div>
+</div>

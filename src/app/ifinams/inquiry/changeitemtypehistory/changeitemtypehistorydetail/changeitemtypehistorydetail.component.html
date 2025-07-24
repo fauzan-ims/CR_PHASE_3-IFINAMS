@@ -1,0 +1,600 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <div class="card-header ">
+                    <h5 class="card-title">Change Item Type Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #ChangeItemTypeForm="ngForm"
+                        (ngSubmit)="onFormSubmit(ChangeItemTypeForm.value, ChangeItemTypeForm.valid)">
+                        <!--#region button-->
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" readonly>
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="date" class="control-label">Date *</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.date" name="p_date" readonly
+                                        [options]="myDatePickerOptions" (click)="date.toggleCalendar()"
+                                        #p_date="ngModel" #date="angular-mydatepicker" autocomplete="off" />
+                                    <small
+                                        *ngIf="(p_date.errors?.required && p_date.touched) || (p_date.errors?.required && ChangeItemTypeForm.submitted)"
+                                        class="text-danger">
+                                        Date is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion date-->
+
+                            <!--#region status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status</label>
+                                    <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                        readonly #status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+
+                            <!--#region Lookup branch_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="branch_code" class="control-label labelmodule" style="cursor: pointer;"
+                                        title="Clear">Office Name
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupBranch()" data-toggle="modal"
+                                                data-target="#lookupModalBranch" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.branch_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.branch_code"
+                                                name="p_branch_code" required #branch_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.branch_name"
+                                                name="p_branch_name" #branch_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="branch_code.valid || (branch_code.pristine && !ChangeItemTypeForm.submitted)"
+                                        class="text-danger">
+                                        Branch is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup branch_code-->
+
+                            <!--#region Lookup location_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="location_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">Location
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupLocation()" data-toggle="modal"
+                                                data-target="#lookupModalLocation" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.location_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.location_code"
+                                                name="p_location_code" required #location_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.location_name"
+                                                name="p_location_name" #location_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="location_code.valid || (location_code.pristine && !ChangeItemTypeForm.submitted)"
+                                        class="text-danger">
+                                        Location is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup location_code-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region Lookup from_item_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="from_item_code" class="control-label labelmodule"
+                                        style="cursor: pointer;" title="Clear">From Item
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupFromItem()" data-toggle="modal"
+                                                data-target="#lookupModalFromItem" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.asset_code}} - {{model.barcode}} - {{model.from_item_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.from_item_code"
+                                                name="p_from_item_code" required #from_item_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.from_item_name"
+                                                name="p_from_item_name" #from_item_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="from_item_code.valid || (from_item_code.pristine && !ChangeItemTypeForm.submitted)"
+                                        class="text-danger">
+                                        From Item is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_item_code-->
+
+                            <!--#region Lookup to_item_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="to_item_code" class="control-label labelmodule" style="cursor: pointer;"
+                                        title="Clear">To Item
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupToItem()" data-toggle="modal"
+                                                data-target="#lookupModalToItem" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.to_item_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_item_code"
+                                                name="p_to_item_code" #to_item_code="ngModel" required>
+                                            <input type="hidden" class="form-control" [ngModel]="model.to_item_name"
+                                                name="p_to_item_name" #to_item_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="to_item_code.valid || (to_item_code.pristine && !ChangeItemTypeForm.submitted)"
+                                        class="text-danger">
+                                        From Item is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup from_item_code-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region from_category_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="from_category_code" class="control-label">From Category</label>
+                                    <input type="hidden" class="form-control" [ngModel]="model.from_category_code"
+                                        name="p_from_category_code" readonly #from_category_code="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.from_category_name"
+                                        name="p_from_category_name" readonly #from_category_name="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion category_code-->
+
+                            <!--#region to_category_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="to_category_code" class="control-label">To Category</label>
+                                    <input type="hidden" class="form-control" [ngModel]="model.to_category_code"
+                                        name="p_to_category_code" readonly #to_category_code="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.to_category_name"
+                                        name="p_to_category_name" readonly #to_category_name="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion to_category_code-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region item_code-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="item_code" class="control-label">From Item Group</label>
+                                    <input type="text" class="form-control" [ngModel]="model.item_code"
+                                        name="p_item_code" readonly #item_code="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion item_code-->
+
+                            <!--#region to_item_code-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="to_item_code" class="control-label">To Item Group</label>
+                                    <input type="text" class="form-control" [ngModel]="model.to_item_code"
+                                        name="p_to_item_code" readonly #to_item_code="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion to_item_code-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region from_net_book_value_comm-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="from_net_book_value_comm" class="control-label">From Net Book Value
+                                        Comm</label>
+                                    <input type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.from_net_book_value_comm | number : '1.2-2'"
+                                        name="p_from_net_book_value_comm" readonly
+                                        #from_net_book_value_comm="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion from_net_book_value_comm-->
+
+                            <!--#region to_net_book_value_comm-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="to_net_book_value_comm" class="control-label">To Net Book Value
+                                        Comm</label>
+                                    <input type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.to_net_book_value_comm | number : '1.2-2'"
+                                        name="p_to_net_book_value_comm" readonly #to_net_book_value_comm="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion to_net_book_value_comm-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region from_net_book_value_fiscal-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="from_net_book_value_fiscal" class="control-label">From Net Book Value
+                                        Fiscal</label>
+                                    <input type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.from_net_book_value_fiscal | number : '1.2-2'"
+                                        name="p_from_net_book_value_fiscal" readonly
+                                        #from_net_book_value_fiscal="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion from_net_book_value_fiscal-->
+
+                            <!--#region to_net_book_value_fiscal-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="to_net_book_value_fiscal" class="control-label">To Net Book Value
+                                        Fiscal</label>
+                                    <input type="text" style="text-align:right" class="form-control"
+                                        [ngModel]="model.to_net_book_value_fiscal | number : '1.2-2'"
+                                        name="p_to_net_book_value_fiscal" readonly
+                                        #to_net_book_value_fiscal="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion to_net_book_value_fiscal-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region purchase_price-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="purchase_price" class="control-label">Purchase Price
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.purchase_price | number : '1.2-2'" amount="purchase_price"
+                                            name="p_purchase_price" #purchase_price="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion purchase_price-->
+
+                            <!--#region Lookup cost_center-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="cost_center" class="control-label labelmodule">Cost Center *
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button disabled
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupCostCenter()" data-toggle="modal"
+                                                data-target="#lookupModalCostCenter" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.cost_center_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.cost_center_code"
+                                                name="p_cost_center_code" required #cost_center_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.cost_center_name"
+                                                name="p_cost_center_name" #cost_center_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="cost_center_code.valid || (cost_center_code.pristine && !ChangeItemTypeForm.submitted)"
+                                        class="text-danger">
+                                        Cost Center is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup cost_center-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region description-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="description" class="control-label">Description</label>
+                                    <textarea readonly type="text" class="form-control" [ngModel]="model.description"
+                                        name="p_description" #description="ngModel" maxlength="4000"></textarea>
+                                </div>
+                            </div>
+                            <!--#endregion description-->
+
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark</label>
+                                    <textarea readonly type="text" class="form-control" [ngModel]="model.remark"
+                                        name="p_remark" #remark="ngModel" maxlength="4000"></textarea>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Branch -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranch"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBranch" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Office Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbranch;let i=index">
+                                    <td style="text-align: center;">{{lookupbranch.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBranch(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Branch-->
+
+<!--#region lookup Location -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLocation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupLocation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuplocation;let i=index">
+                                    <td style="text-align: center;">{{lookuplocation.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description_location}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowLocation(row.code, row.description_location)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Location-->
+
+<!--#region lookup From Item -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalFromItem"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupFromItem" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Barcode</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupfromitem;let i=index">
+                                    <td style="text-align: center;">{{lookupfromitem.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 35%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 35%; text-align: center;">{{row.barcode}}</td>
+                                    <td style="width: 30%; text-align: left;">{{row.item_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowFromItem(row.code, row.barcode, row.item_name, row.depre_category_comm_code, row.depre_category_comm_name, row.depre_category_fiscal_code, row.depre_category_fiscal_name
+                                            , row.category_code, row.category_name, row.item_code, row.purchase_price, row.net_book_value_comm, row.net_book_value_fiscal)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup From Item-->
+
+<!--#region lookup CostCenter -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCostCenter"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupCostCenter" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupcostcenter;let i=index">
+                                    <td style="text-align: center;">{{lookupcostcenter.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowCostCenter(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup CostCenter-->
+
+<!--#region lookup To Item -->
+
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalToItem"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupToItem" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Item Type</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuptoitem;let i=index">
+                                    <td style="text-align: center;">{{lookuptoitem.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 25%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 25%; text-align: center;">{{row.transaction_type}}</td>
+                                    <td style="width: 50%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowToItem(row.code, row.description, row.fa_category_code, row.fa_category_name, row.item_group_code)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup To Item-->

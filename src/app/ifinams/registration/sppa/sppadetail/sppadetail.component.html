@@ -1,0 +1,268 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">SPPA Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #sppaForm="ngForm" (ngSubmit)="onFormSubmit(sppaForm.value, sppaForm.valid)">
+
+            <!--#region button save, send, reject dan back-->
+            <button *ngIf="model.sppa_status === 'HOLD'" type="submit" class="btn btn-info btn-round"
+              data-role="R00022080002209C">Save</button>
+
+            <button [hidden]="model.code == null || model.sppa_status !== 'HOLD'" type="button"
+              data-role="R00022080012208O" class="btn btn-success btn-round"
+              (click)="btnSend(model.code)">Proceed</button>
+
+            <button *ngIf="model.sppa_status === 'ON PROCESS'" type="button" class="btn btn-success btn-round"
+              data-role="R00022080002209O" (click)="btnPost(model.code)">Post</button>
+
+            <button [hidden]="this.param == null || model.sppa_status !== 'ON PROCESS'" type="button"
+              class="btn btn-warning btn-round" (click)="btnReturn()" data-role="R00022080012209R">Return</button>
+
+            <button [hidden]="model.sppa_status !== 'HOLD'" type="button" class="btn btn-warning btn-round"
+              data-role="R00022080002209R" (click)="btnCancel(model.code)">Cancel</button>
+
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+
+            <button type="button" style='float: right;'
+              class="btn btn-info btn-print-round btn-round custom-button-width" (click)="btnPrintSppaWithOut()"
+              data-role="R00022080012211P" [hidden]="param == null">Print
+              SPPA WithOut Payment Status</button>
+            <button type="button" style='float: right;'
+              class="btn btn-info btn-print-round btn-round custom-button-width" (click)="btnPrintSppaWith()"
+              data-role="R00022080012210P" [hidden]="param == null">Print
+              SPPA With Payment Status</button>
+            <!--#endregion button save, send, reject dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="code" class="control-label">Code </label>
+                  <input type="text" class="form-control" [ngModel]="model.code" maxlength="50" name="p_code" required
+                    #code="ngModel" [readonly]="isReadOnly">
+                  <small
+                    *ngIf="(code.errors?.required && code.touched) || (code.errors?.required && sppaForm.submitted)"
+                    class="text-danger">
+                    Code is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region lookup SPPA Branch Code -->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="labelmodule">Branch</label>
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button disabled class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupBranch()" data-toggle="modal" data-target="#lookupModalBranch" href="#"><i
+                          class="fa fa-search-plus"></i></button>
+                      {{model.sppa_branch_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.sppa_branch_code"
+                        name="p_sppa_branch_code">
+                      <input type="hidden" class="form-control" [ngModel]="model.sppa_branch_name"
+                        name="p_sppa_branch_name">
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion lookup SPPA Branch code -->
+
+              <!--#region sppa_status-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Status</label>
+                  <input type="text" class="form-control" [ngModel]="model.sppa_status" maxlength="10"
+                    name="p_sppa_status" readonly>
+                </div>
+              </div>
+              <!--#endregion sppa_status-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region insurance code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Insurance Name</label>
+                  <div class="col-md-12 buttons btn-lookup-margin">
+                    <span>
+                      <button disabled class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupInsurance()" data-toggle="modal" data-target="#lookupModalInsurance"
+                        href="#"><i class="fa fa-search-plus"></i></button>
+                      {{model.insurance_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.insurance_code"
+                        name="p_insurance_code">
+                      <input type="hidden" class="form-control" [ngModel]="model.insurance_type"
+                        name="p_insurance_type">
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion insurance code-->
+
+              <!--#region result_date-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="result_date" class="control-label">Received Date *</label>
+                  <div>
+                    <input [ngStyle]="getStyles(isButton)" class="form-control col-md-6" placeholder="dd/mm/yyyy"
+                      angular-mydatepicker [ngModel]="model.sppa_date" name="p_sppa_date"
+                      [options]="myDatePickerOptions" required #p_sppa_date="ngModel" [readonly]="isButton"
+                      #result_date="angular-mydatepicker" autocomplete="off" (click)="result_date.toggleCalendar()" />
+                    <small
+                      *ngIf="(p_sppa_date.errors?.required && p_sppa_date.touched) || (p_sppa_date.errors?.required && sppaForm.submitted)"
+                      class="text-danger">
+                      SPPA Date is required
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <!--#result_date-->
+
+              <!--#region result_total_buy_amount-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="result_total_buy_amount.invalid && result_total_buy_amount.touched">
+                  <label for="result_total_buy_amount" class="control-label">Net Premi
+                    Amount</label>
+                  <input readonly type="text" style="text-align:right" class="form-control col-md-6"
+                    [ngModel]="model.result_total_buy_amount | number : '1.2-2'" name="p_result_total_buy_amount"
+                    #result_total_buy_amount="ngModel" maxlength="24" amount="result_total_buy_amount">
+                </div>
+              </div>
+              <!--#endregion result_total_buy_amount-->
+
+              <!--#region sppa_remarks-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Remark</label>
+                  <textarea type="text" class="form-control" [ngModel]="model.sppa_remarks" maxlength="4000"
+                    name="p_sppa_remarks" [disabled]="model.sppa_status !== 'HOLD'"></textarea>
+                </div>
+              </div>
+              <!--#endregion sppa_remarks-->
+            </div>
+            <!--#endregion row-->
+          </form>
+
+          <div *ngIf="param != null">
+            <!--#region list view-->
+            <span layout="row horizontal-divider">
+              <hr flex />
+            </span>
+            <div class="row">
+              <div class="col-md-12 buttons btn-lookup-margin">
+                <div class="card-header">
+                  <h5 class="card-title">SPPA Detail List</h5>
+                </div>
+                <div class="card-body">
+                  <div class="toolbar" [hidden]="this.param == null || model.sppa_status !== 'HOLD'">
+                    <!--#region button add-->
+                    <!--#region file name-->
+                    <button type="button" class="btn btn-info btn-round custom-button-width" (click)="btnPrint()"
+                      data-role="R00002380000000P">
+                      Download
+                    </button>
+                    <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                      <div [hidden]="this.tampHidden === false">
+                        <span class="btn btn-info btn-round btn-file ">
+                          <input type="file" accept=".pdf, .xls, .xlsx" (change)="onUploadReader($event)"
+                            id="fileControl" />
+                          <span>Upload</span>
+                        </span>
+                        {{tempFile}}
+                      </div>
+                    </div>
+                    <!--#endregion file name-->
+                    <button *ngIf="model.sppa_status === 'HOLD'" class="btn btn-danger btn-round"
+                      (click)="btnDeleteAll()" data-role="R00002380000239D">
+                      Delete
+                    </button>
+                    <!--#endregion button add, delete-->
+                  </div>
+
+                  <!--#region list view-->
+                  <table id="datatables" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                      <tr>
+                        <th class="disabled-sorting">No</th>
+                        <th class="disabled-sorting" [hidden]="model.sppa_status !== 'HOLD'">
+                          <div class="form-check">
+                            <label class="form-check-label">
+                              <input class="form-check-input" type="checkbox" id="checkall"
+                                [(ngModel)]="selectedAllTable" (change)="selectAllTable();" />
+                              <span class="form-check-sign"></span>
+                            </label>
+                          </div>
+                        </th>
+                        <th>Fixed Asset No</th>
+                        <th>Sum Insured Amount</th>
+                        <th>From Year</th>
+                        <th>To Year</th>
+                        <th>Policy No</th>
+                        <th>Premi Amount</th>
+                        <th>Result Status</th>
+                        <th style="text-align: center;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let row of listsppadetail; let i=index">
+                        <td style="text-align: center;">{{listsppadetail.numberIndex+i+1}}</td>
+                        <td class="disabled-sorting" [hidden]="model.sppa_status !== 'HOLD'">
+                          <div class="form-check">
+                            <label class="form-check-label">
+                              <input class="form-check-input" type="checkbox" [(ngModel)]="row.selectedTable"
+                                (change)="checkIfAllTableSelected($event, row.id);">
+                              <span class="form-check-sign"></span>
+                            </label>
+                          </div>
+                        </td>
+                        <td style="width: 25%;">{{row.fa_code}} <br> {{row.fa_name}}/ {{row.plat_no}} {{row.colour}}
+                          <br>{{row.accessories}}
+                        </td>
+                        <td style="width: 15%;text-align: right;">{{row.sum_insured_amount | number : '1.2-2'}}</td>
+                        <td style="width: 10%;text-align: center;">{{row.from_year}}</td>
+                        <td style="width: 10%;text-align: center;">{{row.to_year}}</td>
+                        <td style="width: 10%;text-align: left;">{{row.result_policy_no}}</td>
+                        <td style="width: 15%;text-align: right;">{{row.result_total_buy_amount | number : '1.2-2'}}
+                        </td>
+                        <td style="width: 15%;text-align: center;" class="if-no-edit-btn">{{row.result_status}}</td>
+                        <td style="text-align: center;">
+                          <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit"
+                            (click)="btnEdit(row.id)"><i class="fa fa-edit"></i></a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!--#endregion list view-->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

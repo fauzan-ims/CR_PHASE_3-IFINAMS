@@ -1,0 +1,388 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Auction Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #auctionForm="ngForm" (ngSubmit)="onFormSubmit(auctionForm.value, auctionForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button type="submit" class="btn btn-info btn-round" data-role="R00023800000002C">Save</button>
+            <button [hidden]="param == null || model.is_validate == true" type="button"
+              class="btn btn-success btn-round" (click)="btnValidate()" data-role="R00023800000004U">Validate</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <button id="auctionDetail" hidden type="button" class="btn btn-danger btn-round"
+              (click)="callGetrow()"></button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region code-->
+              <div class="col-md-4">
+                <div [hidden]="model.code != null" class="row" style="margin-bottom: -15px; padding-top: 30px;">
+                  <h1 class="col-md-4" style="font-size: 12px;">Auction No</h1>
+                  <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                    Generate-</h1>
+                </div>
+                <div [hidden]="model.code == null" class="form-group">
+                  <label>Auction No *</label>
+                  <input type="text" class="form-control" [ngModel]="model.code" name="p_code" [readonly]="isReadOnly">
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="auction_name" class="control-label">Name *</label>
+                  <input type="text" class="form-control" [ngModel]="model.auction_name" name="p_auction_name" required
+                    #auction_name="ngModel">
+                  <small
+                    *ngIf="(auction_name.errors?.required && auction_name.touched) || (auction_name.errors?.required && auctionForm.submitted)"
+                    class="text-danger">
+                    Name is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion name-->
+
+              <!--#region is_active-->
+              <div class="col-md-4">
+                <div class="form-check mt-3" style="margin-left: -35px;">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input disabled class="form-check-input" type="checkbox" [ngModel]="model.is_validate"
+                        name="p_is_validate">
+                      Validated
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion is_active-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region contact person name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="contact_person_name" class="control-label">Contact Person Name *</label>
+                  <input type="text" class="form-control" [ngModel]="model.contact_person_name"
+                    name="p_contact_person_name" required #contact_person_name="ngModel">
+                  <small
+                    *ngIf="(contact_person_name.errors?.required && contact_person_name.touched) || (contact_person_name.errors?.required && auctionForm.submitted)"
+                    class="text-danger">
+                    Contact Person Name is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion contact person name-->
+
+              <!--#region area phone no-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="contact_person_area_phone_no.invalid && contact_person_area_phone_no.touched && contact_person_phone_no.invalid && contact_person_phone_no.touched">
+                  <label for="contact_person_area_phone_no && contact_person_phone_no" class="control-label">Contact
+                    Person Phone No *</label>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control area-code input-mini aid-primary-phone1-lbl"
+                        [ngModel]="model.contact_person_area_phone_no" name="p_contact_person_area_phone_no" required
+                        #contact_person_area_phone_no="ngModel" maxlength="4" pattern={{NumberOnlyPattern}}>
+                    </div>
+                    -
+                    <div class="col-md-7">
+                      <input type="text" class="form-control" [ngModel]="model.contact_person_phone_no"
+                        name="p_contact_person_phone_no" maxlength="15" required #contact_person_phone_no="ngModel"
+                        pattern={{NumberOnlyPattern}}>
+                    </div>
+                  </div>
+                </div>
+                <small
+                  *ngIf="(contact_person_area_phone_no.errors?.required && contact_person_area_phone_no.touched || contact_person_phone_no.errors?.required && contact_person_phone_no.touched) || (contact_person_area_phone_no.errors?.required && auctionForm.submitted)"
+                  class="text-danger">
+                  Contact Person Phone No is required
+                </small>
+                <small
+                  *ngIf="contact_person_area_phone_no.errors?.pattern && contact_person_area_phone_no.touched || contact_person_phone_no.errors?.pattern && contact_person_phone_no.touched"
+                  class="text-danger">
+                  Contact Person Phone No is required and format should be <i>0-9</i>.
+                </small>
+              </div>
+              <!--#endregion area phone no-->
+
+              <!--#region tax_file_type-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Tax File Type</label>
+                  <select class='form-control col-md-8' name="p_tax_file_type" [(ngModel)]="model.tax_file_type">
+                    <option value='N21'>WITHOUT TAX - PERSONAL</option>
+                    <option value='N23'>WITHOUT TAX - CORPORATE</option>
+                    <option value='P21'>WITH TAX - PERSONAL</option>
+                    <option value='P23'>WITH TAX - CORPORATE</option>
+                  </select>
+                </div>
+              </div>
+              <!--#endregion tax_file_type-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row" [hidden]="model.tax_file_type === 'N21' || model.tax_file_type === 'N23'">
+              <!--#region tax file no-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="tax_file_no" class="control-label">Tax File No *</label>
+                  <input id="npwp" [disabled]="model.tax_file_type ==='N21' || model.tax_file_type ==='N23'" type="text"
+                    class="form-control" [ngModel]="model.tax_file_no" name="p_tax_file_no" #tax_file_no="ngModel"
+                    maxlength="16" npwp="tax_file_no" pattern="{{NpwpPattern}}" (keydown)="onKeydownNpwp($event)"
+                    (paste)="onPasteNpwp($event)" (focus)="onFokusNpwp($event)" (blur)="onChangeNpwp($event)" required>
+                  <small
+                    *ngIf="(tax_file_no.errors?.required && tax_file_no.touched) || (tax_file_no.errors?.required && auctionForm.submitted)"
+                    class="text-danger">
+                    Tax File No is required
+                  </small>
+                  <small *ngIf="tax_file_no.errors?.pattern && tax_file_no.touched" class="text-danger">
+                    Tax File No is required and format should be <i>00.000.000.0–000.000</i>
+                  </small>
+                </div>
+              </div>
+              <!--#endregion tax file no-->
+
+              <!--#region tax file name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="tax_file_name" class="control-label">Tax File Name * </label>
+                  <input type="text" class="form-control" [ngModel]="model.tax_file_name" maxlength="250"
+                    name="p_tax_file_name" #tax_file_name="ngModel"
+                    [disabled]="model.tax_file_type === 'N21'  || model.tax_file_type === 'N23'">
+                  <small
+                    *ngIf="(tax_file_name.errors?.required && tax_file_name.touched) || (tax_file_name.errors?.required && auctionForm.submitted)"
+                    class="text-danger">
+                    Tax File Name is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion tax file name-->
+
+              <!--#region tax file address-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="tax_file_address" class="control-label">Tax File Address *</label>
+                  <input type="text" class="form-control" [ngModel]="model.tax_file_address" maxlength="250"
+                    name="p_tax_file_address" #tax_file_address="ngModel"
+                    [disabled]="model.tax_file_type === 'N21'  || model.tax_file_type === 'N23'">
+                  <small
+                    *ngIf="(tax_file_address.errors?.required && tax_file_address.touched) || (tax_file_address.errors?.required && auctionForm.submitted)"
+                    class="text-danger">
+                    Tax File address is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion tax file address-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region area phone no-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="area_phone_no.invalid && area_phone_no.touched && phone_no.invalid && phone_no.touched">
+                  <label for="area_phone_no && phone_no" class="control-label">Phone No. *</label>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control area-code input-mini aid-primary-phone1-lbl"
+                        [ngModel]="model.area_phone_no" name="p_area_phone_no" required #area_phone_no="ngModel"
+                        maxlength="4" pattern={{NumberOnlyPattern}}>
+                    </div>
+                    -
+                    <div class="col-md-7">
+                      <input type="text" class="form-control" [ngModel]="model.phone_no" name="p_phone_no"
+                        maxlength="15" required #phone_no="ngModel" pattern={{NumberOnlyPattern}}>
+                    </div>
+                  </div>
+                </div>
+                <small
+                  *ngIf="(area_phone_no.errors?.required && area_phone_no.touched || phone_no.errors?.required && phone_no.touched) || (area_phone_no.errors?.required && auctionForm.submitted)"
+                  class="text-danger">
+                  Phone No is required
+                </small>
+                <small
+                  *ngIf="area_phone_no.errors?.pattern && area_phone_no.touched || phone_no.errors?.pattern && phone_no.touched"
+                  class="text-danger">
+                  Phone No is required and format should be <i>0-9</i>.
+                </small>
+              </div>
+              <!--#endregion area phone no-->
+
+              <!--#region fax no-->
+              <div class="col-md-4">
+                <div class="form-group"
+                  [class.has-error]="area_fax_no.invalid && area_fax_no.touched && area_fax_no.invalid && area_fax_no.touched">
+                  <label for="area_fax_no && fax_no" class="control-label">Fax No. *</label>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <input type="text" class="form-control area-code input-mini aid-primary-phone1-lbl"
+                        [ngModel]="model.area_fax_no" name="p_area_fax_no" required #area_fax_no="ngModel" maxlength="4"
+                        pattern={{NumberOnlyPattern}}>
+                    </div>
+                    -
+                    <div class="col-md-7">
+                      <input type="text" class="form-control" [ngModel]="model.fax_no" name="p_fax_no" maxlength="15"
+                        required #fax_no="ngModel" pattern={{NumberOnlyPattern}}>
+                    </div>
+                  </div>
+                </div>
+                <small
+                  *ngIf="(area_fax_no.errors?.required && area_fax_no.touched || fax_no.errors?.required && fax_no.touched) || (area_fax_no.errors?.required && auctionForm.submitted)"
+                  class="text-danger">
+                  Fax No is required
+                </small>
+                <small
+                  *ngIf="area_fax_no.errors?.pattern && area_fax_no.touched || fax_no.errors?.pattern && fax_no.touched"
+                  class="text-danger">
+                  Fax No is required and format should be <i>0-9</i>.
+                </small>
+              </div>
+              <!--#endregion fax no-->
+
+              <!--#region email-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="email" class="control-label">Email</label>
+                  <input type="email" class="form-control" [ngModel]="model.email" name="p_email" #email="ngModel"
+                    pattern={{EmailPattern}}>
+                </div>
+                <small *ngIf="email.errors?.pattern && email.touched" class="text-danger">
+                  Email is required and format should be <i>john@doe.com</i>.
+                </small>
+              </div>
+              <!--#endregion email-->
+
+              <!--#region website-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="website" class="control-label">Website</label>
+                  <input type="text" class="form-control" [ngModel]="model.website" name="p_website" #website="ngModel"
+                    pattern={{WebsitePattern}}>
+                  <small *ngIf="website.errors?.pattern && website.touched" class="text-danger">
+                    Website is required and format should be <i>www.example.com</i>.
+                  </small>
+                </div>
+              </div>
+              <!--#endregion website-->
+
+              <!--#region ktp_no-->
+              <div class="col-md-4" [hidden]="model.tax_file_type ==='N23' || model.tax_file_type ==='P23'">
+                <div class="form-group" [class.has-error]="ktp_no.invalid && ktp_no.touched">
+                  <label for="ktp_no" class="control-label">KTP No *</label>
+                  <input [disabled]="model.tax_file_type ==='N23' || model.tax_file_type ==='P23'" type="text"
+                    class="form-control" [ngModel]="model.ktp_no" name="p_ktp_no" maxlength="16" #ktp_no="ngModel"
+                    pattern={{NumberOnlyPattern}} required>
+                </div>
+                <small
+                  *ngIf="(ktp_no.errors?.required && ktp_no.touched) || (ktp_no.errors?.required && auctionForm.submitted)"
+                  class="text-danger">
+                  KTP No is required
+                </small>
+                <small *ngIf="ktp_no.errors?.pattern && ktp_no.touched || ktp_no.errors?.pattern && ktp_no.touched"
+                  class="text-danger">
+                  KTP No is required and format should be <i>0-9</i>.
+                </small>
+              </div>
+              <!--#endregion ktp_no-->
+
+              <!--#region NITKU-->
+              <div class="col-md-4">
+                <div class="form-group">
+                <label for="nitku" class="control-label">NITKU</label>
+                <input type="text" class="form-control" [ngModel]="model.nitku" name="p_nitku"
+                    #nitku="ngModel">
+                </div>
+            </div>
+            <!--#endregion NITKU-->
+
+            <!--#region NPWP HO-->
+            <div class="col-md-4">
+                <div class="form-group">
+                <label for="npwp_pusat" class="control-label">NPWP HO</label>
+                <input type="text" class="form-control" [ngModel]="model.npwp_pusat" name="p_npwp_pusat"
+                    #npwp_pusat="ngModel">
+                </div>
+            </div>
+            <!--#endregion NPWP HO-->
+
+            </div>
+            <!--#endregion row-->
+          </form>
+          <!--#endregion form-->
+        </div>
+
+        <!--#region wizard-->
+        <div class="wizard-custom-margin" [hidden]="param == null">
+          <!--#region wizard container -->
+          <div class="wizard-container">
+            <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+              id="wizardProfile">
+              <div class="text-center">
+                <div class="wizard-navigation">
+                  <ul>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="auctionaddresswiz()" href="#auctionaddresslist" data-toggle="tab"
+                        role="tab" aria-controls="address" aria-selected="true">
+                        Address
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="auctionbankwiz()" href="#auctionbanklist" data-toggle="tab"
+                        role="tab" aria-controls="bank" aria-selected="true">
+                        Bank
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="auctionbranchwiz()" href="#auctionbranchlist" data-toggle="tab"
+                        role="tab" aria-controls="branch" aria-selected="true">
+                        Branch
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" (click)="auctiondocumentwiz()" href="#auctiondocumentlist" data-toggle="tab"
+                        role="tab" aria-controls="document" aria-selected="true">
+                        Document
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--#endregion wizard container-->
+        </div>
+        <!--endregion wizard-->
+        <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- <router-outlet (activate)="onRouterOutletActivate($event)"></router-outlet> -->

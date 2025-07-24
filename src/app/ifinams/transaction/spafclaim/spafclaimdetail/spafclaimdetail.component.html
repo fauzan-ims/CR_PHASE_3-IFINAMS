@@ -1,0 +1,423 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">SPAF / Subvention Claim Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #SpafClaimForm="ngForm" (ngSubmit)="onFormSubmit(SpafClaimForm.value, SpafClaimForm.valid)">
+                        <!--#region button submit, button back-->
+                        <button hidden type="submit" class="btn btn-info btn-round"
+                            data-role="R00024190000003C">Save</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'COMPLETE'" type="button"
+                            class="btn btn-success btn-round" (click)="btnPost()"
+                            data-role="R00024190000004O">Post</button>
+
+                        <button [hidden]="model.code == null || model.status !== 'HOLD'" type="button"
+                            data-role="R00024190000005R" class="btn btn-warning btn-round"
+                            (click)="btnCancel()">Cancel</button>
+
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+
+                        <button type="button" style='float: right;'
+                            class="btn btn-info btn-print-round btn-round custom-button-width"
+                            (click)="btnPrintKwitansi()" data-role="R00024190000008P" [hidden]="param == null">Print
+                            Kwitansi</button>
+                        <!--#endregion button submit, button back-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" [readonly]="isReadOnly">
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="date" class="control-label">Date *</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.date" name="p_date"
+                                        [readonly]="model.status !== 'HOLD'" [ngStyle]="getStyles(isDate)"
+                                        [options]="myDatePickerOptions" (click)="date.toggleCalendar()"
+                                        #p_date="ngModel" #date="angular-mydatepicker" autocomplete="off" />
+                                    <small
+                                        *ngIf="(p_date.errors?.required && p_date.touched) || (p_date.errors?.required && SpafClaimForm.submitted)"
+                                        class="text-danger">
+                                        Date is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion date-->
+
+                            <!--#region status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status</label>
+                                    <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                        readonly #status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+
+                            <!--#region receipt_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="receipt_no" class="control-label">Receipt No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.receipt_no"
+                                        name="p_receipt_no" readonly #receipt_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion receipt_no-->
+
+                            <!--#region reff_claim_req_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reff_claim_req_no" class="control-label">Claim Request No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.reff_claim_req_no"
+                                        name="p_reff_claim_req_no" readonly #reff_claim_req_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion reff_claim_req_no-->
+
+                            <!--#region claim_type-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="p_claim_type" class="control-label">Type</label>
+                                    <select [disabled]="this.param != null" class="form-control col-md-6"
+                                        [ngModel]="model.claim_type" name="p_claim_type" #p_claim_type="ngModel">
+                                        <option value='OPL SPAF'>OPL SPAF</option>
+                                        <option value='OPL Subsidy (FE)'>OPL Subsidy (FE)</option>
+                                        <option value='OPL Subsidy (FUSO)'>OPL Subsidy (FUSO)</option>
+                                        <option value='OPL SPAF MMKSI'>OPL SPAF MMKSI</option>
+                                        <option value='OPL Subsidy L300'>OPL Subsidy L300</option>
+                                        <option value='OPL Subsidy Triton'>OPL Subsidy Triton</option>
+                                        <option value='OPL Subsidy Xpander'>OPL Subsidy Xpander</option>
+                                        <option value='OPL Subsidy Outlander'>OPL Subsidy Outlander</option>
+                                        <option value='OPL Subsidy Xforce'>OPL Subsidy Xforce</option>
+                                        <option value='OPL Subsidy Pajero'>OPL Subsidy Pajero</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--#endregion claim_type-->
+
+                            <!--#region claim_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="claim_amount" class="control-label">Total Claim Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.claim_amount | number : '1.2-2'" amount="claim_amount"
+                                            name="p_claim_amount" #claim_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion claim_amount-->
+
+                            <!--#region total_PPN_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="ppn_amount" class="control-label">Total PPN Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.ppn_amount | number : '1.2-2'" amount="ppn_amount"
+                                            name="p_ppn_amount" #ppn_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_PPN_amount-->
+
+                            <!--#region total_PPH_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pph_amount" class="control-label">Total PPH Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.pph_amount | number : '1.2-2'" amount="pph_amount"
+                                            name="p_pph_amount" #pph_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_PPH_amount-->
+
+                            <!--#region total_Receive_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_receive" class="control-label">Total Receive Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_receive | number : '1.2-2'" amount="total_receive"
+                                            name="p_total_receive" #total_receive="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_Receive_amount-->
+
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark * </label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remark="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remark.errors?.required && remark.touched) || (remark.errors?.required && SpafClaimForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+                        <!--#endregion-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region faktur_no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="faktur_no" class="control-label">Faktur No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.faktur_no"
+                                        name="p_faktur_no" readonly #faktur_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion reff_claim_req_no-->
+
+                            <!--#region faktur_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="faktur_date" class="control-label">Faktur Date</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.faktur_date" name="p_faktur_date" readonly
+                                        [ngStyle]="getStyles(true)" [options]="myDatePickerOptions"
+                                        (click)="date.toggleCalendar()" #p_faktur_date="ngModel"
+                                        #faktur_date="angular-mydatepicker" autocomplete="off" />
+                                </div>
+                            </div>
+                            <!--#endregion faktur_date-->
+                        </div>
+                        <!--#endregion-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+
+                <div *ngIf="param != null">
+                    <!--#region list view-->
+                    <span layout="row horizontal-divider">
+                        <hr flex />
+                    </span>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card-header">
+                                <h5 class="card-title">SPAF / Subvention Claim Detail List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="toolbar">
+                                    <!--#region button add-->
+                                    <button
+                                        [hidden]="this.param == null || model.status !== 'CONFIRMATION' && model.status !== 'COMPLETE'"
+                                        type="submit" class="btn btn-info btn-round" (click)="btnSaveList()"
+                                        data-role="R00024190000009C">
+                                        Save
+                                    </button>
+                                    <!--#endregion button add-->
+                                </div>
+
+                                <!--#region list view-->
+                                <table id="datatablespafclaimdetail" datatable [dtOptions]="dtOptions"
+                                    class="table table-striped table-bordered row-border hover" cellspacing="0"
+                                    width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="disabled-sorting">No</th>
+                                            <!-- <th>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" id="checkall"
+                                                            [(ngModel)]="selectedAll" (change)="selectAll();" />
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </th> -->
+                                            <th style="display: none;"></th>
+                                            <th>SPAF Asset Code</th>
+                                            <th>FA Code/Name</th>
+                                            <th>Plat/Engine/Chasis No</th>
+                                            <th>Purchase Price</th>
+                                            <th>Claim Amount</th>
+                                            <th>PPN</th>
+                                            <th>PPH</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let row of lsitspafclaimdetaillist; let i=index">
+                                            <td style="text-align: center;">{{lsitspafclaimdetaillist.numberIndex+i+1}}
+                                            </td>
+                                            <!-- <td class="disabled-sorting">
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            [(ngModel)]="row.selected"
+                                                            (change)="checkIfAllTableSelected($event, row.id);">
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                                <input hidden name="p_id_doc" [ngModel]="row.id">
+                                            </td> -->
+                                            <td style="display: none;"></td>
+                                            <input hidden name="p_id_doc" [ngModel]="row.id">
+                                            <td style="width: 10%;text-align: left;">{{row.code}}</td>
+                                            <td style="width: 15%;text-align: left;">{{row.fa_code}} <br>
+                                                {{row.item_name}}</td>
+                                            <td style="width: 15%;text-align: left;">{{row.plat_no}} <br>
+                                                {{row.engine_no}} <br> {{row.chassis_no}}</td>
+                                            <td style="width: 15%;text-align: right;">{{row.purchase_price | number
+                                                : '1.2-2'}}
+                                            </td>
+                                            <td style="width: 15%;text-align: right;" class="if-no-edit-btn">
+                                                <div class="form-group">
+                                                    <input id="claim_amount{{i}}"
+                                                        (blur)="onBlur($event,i,'claim_amount')"
+                                                        (focus)="onFocus($event,i,'claim_amount')"
+                                                        class="form-control text-right" type="text"
+                                                        value="{{row.claim_amount | number : '1.2-2'}}"
+                                                        amount="claim_amount" name="p_claim_amount_detail"
+                                                        [disabled]="model.status !== 'CONFIRMATION' && model.status !== 'COMPLETE'">
+                                                </div>
+                                            </td>
+                                            <td style="width: 15%;text-align: right;" class="if-no-edit-btn">
+                                                <div class="form-group">
+                                                    <input id="ppn_amount_detail{{i}}"
+                                                        (blur)="onBlur($event,i,'ppn_amount_detail')"
+                                                        (focus)="onFocus($event,i,'ppn_amount_detail')"
+                                                        class="form-control text-right" type="text"
+                                                        value="{{row.ppn_amount_detail | number : '1.2-2'}}"
+                                                        name="p_ppn_amount_detail"
+                                                        [disabled]="model.status !== 'CONFIRMATION' && model.status !== 'COMPLETE'">
+                                                </div>
+                                            </td>
+                                            <td style="width: 15%;text-align: right;" class="if-no-edit-btn">
+                                                <div class="form-group">
+                                                    <input id="pph_amount_detail{{i}}"
+                                                        (blur)="onBlur($event,i,'pph_amount_detail')"
+                                                        (focus)="onFocus($event,i,'pph_amount_detail')"
+                                                        class="form-control text-right" type="text"
+                                                        value="{{row.pph_amount_detail | number : '1.2-2'}}"
+                                                        name="p_pph_amount_detail"
+                                                        [disabled]="model.status !== 'CONFIRMATION' && model.status !== 'COMPLETE'">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!--#endregion list view-->
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion list view-->
+                </div>
+                <!--#endregion list view-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Disposal Detail-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalSpafAsset"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" (click)="btnLookupClose()" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <!--#region button add //data-role="R0000041U"-->
+                        <button class="btn btn-info btn-round" (click)="btnSelectAllLookup()">
+                            add
+                        </button>
+                        <!--#endregion button add--->
+
+                        <table id="datatableSpafAsset" class="table table-striped table-bordered hover" cellspacing="0"
+                            style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th class="disabled-sorting">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" id="checkallLookup"
+                                                    [(ngModel)]="selectedAllLookup" (change)="selectAllLookup();" />
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>FA Code</th>
+                                    <th>FA Name</th>
+                                    <th>SPAF Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupSpafAsset;  let i=index">
+                                    <td style="text-align: center;">{{lookupSpafAsset.numberIndex+i+1}}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [(ngModel)]="row.selectedLookup"
+                                                    (change)="checkIfAllLookupSelected($event, row.fa_code);">
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;width: 20%;" class="if-no-edit-btn">{{ row.fa_code }}
+                                    </td>
+                                    <td style="text-align: left;width: 60%;">{{ row.item_name }}</td>
+                                    <td style="text-align: right;width: 20%;">{{ row.spaf_amount | number
+                                        : '1.2-2' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Disposal Detail-->

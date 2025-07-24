@@ -1,0 +1,1148 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Sell Request Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #SoldRequestForm="ngForm"
+                        (ngSubmit)="onFormSubmit(SoldRequestForm.value, SoldRequestForm.valid)">
+                        <!--#region button submit, button back-->
+                        <button [hidden]="model.status !== 'HOLD'" type="submit" class="btn btn-info btn-round"
+                            data-role="R00022580000003C">Save</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'HOLD'" type="button"
+                            class="btn btn-success btn-round" (click)="btnProceed()"
+                            data-role="R00022580000007O">Proceed</button>
+
+                        <button hidden type="button" class="btn btn-success btn-round" (click)="btnPost()"
+                            data-role="R00022580000008O">Post</button>
+
+                        <button hidden type="button" class="btn btn-warning btn-round" (click)="btnReturn()"
+                            data-role="R00022580000011R">Return</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'HOLD'" type="button"
+                            data-role="R00022580000009R" class="btn btn-warning btn-round"
+                            (click)="btnCancel()">Cancel</button>
+
+                        <button
+                            [hidden]="this.param == null || model.status != 'ON PROCESS' && model.status != 'APPROVE' && model.status != 'HOLD'"
+                            type="button" style='float: right;' class="btn btn-success btn-round custom-button-width"
+                            (click)="btnViewApproval()" data-toggle="modal" data-target="#lookupModalApproval" href="#">
+                            View Approval
+                        </button>
+                        <!-- <button [hidden]="this.param == null || model.status!== 'APPROVE'" type="button"
+                            style='float: right;' class="btn btn-info btn-print-round btn-round custom-button-width"
+                            (click)="btnPrintPJB()" data-role="R00022580000010P">Print PJB</button> -->
+
+                        <button hidden type="button" data-role="R00021720012172R" class="btn btn-warning btn-round"
+                            (click)="btnReject()">Reject</button>
+
+                        <!-- <button type="button" style='float: right;' class="btn btn-info btn-round"
+                            [hidden]="model.code == null || model.status !== 'POST'" (click)="btnPrint(model.code)"
+                            data-role="R00013260001327R">
+                            Print
+                        </button> -->
+
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+
+                        <button hidden id="reloadHeader" type="button" class="btn btn-danger btn-round"
+                            (click)="this.callGetrow()">Back</button>
+                        <!--#endregion button submit, button back-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" readonly>
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region description-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="description" class="control-label">Description *</label>
+                                    <input required [readonly]="model.status !== 'HOLD'" type="text"
+                                        class="form-control" [ngModel]="model.description" name="p_description"
+                                        #description="ngModel" maxlength="4000" />
+                                </div>
+                                <small
+                                    *ngIf="(description.errors?.required && description.touched) || (description.errors?.required && SoldRequestForm.submitted)"
+                                    class="text-danger">
+                                    Description is required
+                                </small>
+                            </div>
+                            <!--#endregion description-->
+
+                            <!--#region status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status</label>
+                                    <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                        readonly #status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region sale_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="sale_date" class="control-label">Sell Date *</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.sale_date" name="p_sale_date"
+                                        [readonly]="model.status !== 'HOLD'" [options]="myDatePickerOptions"
+                                        (click)="sale_date.toggleCalendar()" #p_sale_date="ngModel"
+                                        [ngStyle]="getStyles(this.isReadOnly)" #sale_date="angular-mydatepicker"
+                                        autocomplete="off" />
+                                    <small
+                                        *ngIf="(p_sale_date.errors?.required && p_sale_date.touched) || (p_sale_date.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Sale Date is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion sale_date-->
+
+                            <!--#region Lookup branch_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="branch_code" class="control-label labelmodule" style="cursor: pointer;"
+                                        title="Clear">Branch
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="this.param != null"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupBranch()" data-toggle="modal"
+                                                data-target="#lookupModalBranch" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.branch_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.branch_code"
+                                                name="p_branch_code" required #branch_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.branch_name"
+                                                name="p_branch_name" #branch_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="branch_code.valid || (branch_code.pristine && !SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Branch is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup branch_code-->
+
+                            <!--#region sell_type-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Sell Type</label>
+                                    <select [disabled]="this.param != null" class='form-control col-md-8'
+                                        [(ngModel)]="model.sell_type" name="p_sell_type" (change)="sellType($event)">
+                                        <option value='AUCTION'>AUCTION</option>
+                                        <option value='MOCIL'>MOCIL</option>
+                                        <option value='COP'>PURCHASE REQUIREMENT AFTER LEASE</option>
+                                        <option value='CLAIM' [hidden]="model.sell_type !== 'CLAIM'">CLAIM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--#endregion sell_type-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!-- #region row -->
+                        <div class="row">
+                            <!--#region Lookup auction_code-->
+                            <!-- <div class="col-md-4" [hidden]="this.isAuction">
+                                <div class="form-group">
+                                    <label for="auction_code" class="control-label" style="cursor: pointer;">Auction
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="model.status !== 'HOLD'"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupAution()" data-toggle="modal"
+                                                data-target="#lookupAuction" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.auction_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.auction_code"
+                                                name="p_auction_code" [required]="!isAuction" #auction_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.auction_name"
+                                                name="p_auction_name" #auction_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="auction_code.valid || (auction_code.pristine && !SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Auction is required
+                                    </small>
+                                </div>
+                            </div> -->
+                            <!--#endregion Lookup auction_code-->
+
+                            <!--#region buyer_name-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type === 'COP'">
+                                <div class="form-group">
+                                    <label for="buyer_name" class="control-label">Buyer Name *</label>
+                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.buyer_name" name="p_buyer_name" #buyer_name="ngModel"
+                                        maxlength="250" [required]="isCOP">
+                                    <small
+                                        *ngIf="(buyer_name.errors?.required && buyer_name.touched) || (buyer_name.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Buyer Name is required
+                                    </small>
+                                </div>
+                            </div> -->
+                            <!--#endregion buyer_name-->
+
+                            <!--#region buyer_name-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="buyer_name" class="control-label">Auction Period *</label>
+                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.buyer_name" name="p_buyer_name" #buyer_name="ngModel"
+                                        maxlength="250" [required]="isCOP">
+                                    <small
+                                        *ngIf="(buyer_name.errors?.required && buyer_name.touched) || (buyer_name.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Buyer Name is required
+                                    </small>
+                                </div>
+                            </div> -->
+                            <!--#endregion buyer_name-->
+
+                            <!--region sell_request_amount-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="sell_request_amount" class="control-label">Total Auction Recommended
+                                        Price
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sell_request_amount | number : '1.2-2'"
+                                            amount="sell_request_amount" name="p_sell_request_amount"
+                                            #sell_request_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sell_request_amount-->
+
+                            <!--#region sell_request_amount-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="sell_request_amount" class="control-label">Total Asset Selling Price
+                                        (Incl. VAT)
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sell_request_amount | number : '1.2-2'"
+                                            amount="sell_request_amount" name="p_sell_request_amount"
+                                            #sell_request_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sell_request_amount-->
+
+                            <!--#region sell_request_amount-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="sell_request_amount" class="control-label">Total Book Value
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sell_request_amount | number : '1.2-2'"
+                                            amount="sell_request_amount" name="p_sell_request_amount"
+                                            #sell_request_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sell_request_amount-->
+
+                            <!--#region sell_request_amount-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="sell_request_amount" class="control-label">Gain /Loss Selling Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sell_request_amount | number : '1.2-2'"
+                                            amount="sell_request_amount" name="p_sell_request_amount"
+                                            #sell_request_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sell_request_amount-->
+
+                            <!--#region sell_request_amount-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="sell_request_amount" class="control-label">Total Profitability Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sell_request_amount | number : '1.2-2'"
+                                            amount="sell_request_amount" name="p_sell_request_amount"
+                                            #sell_request_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sell_request_amount-->
+
+                            <!--#region buyer_name-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="buyer_name" class="control-label">Related Code Sell Req</label>
+                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.buyer_name" name="p_buyer_name" #buyer_name="ngModel"
+                                        maxlength="250">
+                                </div>
+                            </div> -->
+                            <!--#endregion buyer_name-->
+
+                            <!--#region remark-->
+                            <!-- <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Auction Notes *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remarks="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div> -->
+                            <!--#endregion remark
+
+                            <!--#region sell_request_amount-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="sell_request_amount" class="control-label">Sell Request Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sell_request_amount | number : '1.2-2'"
+                                            amount="sell_request_amount" name="p_sell_request_amount"
+                                            #sell_request_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sell_request_amount-->
+
+                            <!--#region remark-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remarks="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div> -->
+                            <!--#endregion remark-->
+                        </div>
+                        <!-- #region row -->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region buyer-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="buyer" class="control-label">Sell To</label>
+                                    <input type="text" class="form-control" [ngModel]="model.buyer" name="p_buyer"
+                                        #buyer="ngModel" maxlength="250" readonly />
+                                </div>
+                            </div>
+                            <!--#endregion buyer-->
+
+                            <!--#region buyer_phone_no-->
+                            <div class="col-md-4" hidden>
+                                <div class="form-group">
+                                    <label for="buyer_phone_no" class="control-label">Buyer Phone No
+                                    </label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.buyer_phone_no"
+                                        name="p_buyer_phone_no" #buyer_phone_no="ngModel" maxlength="50"
+                                        pattern={{NumberOnlyPattern}}>
+                                    <small *ngIf="buyer_phone_no.errors?.pattern && buyer_phone_no.touched"
+                                        class="text-danger">
+                                        Buyer Phone No is required and format should be <i>0-9</i>
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion buyer_phone_no-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row" [hidden]="model.sell_type !== 'AUCTION'">
+                            <!--#region Lookup auction_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="auction_code" class="control-label" style="cursor: pointer;">Auction
+                                        *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="model.status !== 'HOLD'"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupAution()" data-toggle="modal"
+                                                data-target="#lookupAuction" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.auction_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.auction_code"
+                                                name="p_auction_code" [required]="!isAuction" #auction_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.auction_name"
+                                                name="p_auction_name" #auction_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="auction_code.valid || (auction_code.pristine && !SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Auction is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup auction_code-->
+
+                            <!--#region auction_period-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="auction_period" class="control-label">Auction Period *</label>
+                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.auction_period" name="p_auction_period"
+                                        #auction_period="ngModel" maxlength="250" [required]="!isAuction">
+                                    <small
+                                        *ngIf="(auction_period.errors?.required && auction_period.touched) || (auction_period.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Auction Period is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion auction_period-->
+
+                            <!--#region total_auction_recommended_price-->
+                            <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="total_auction_recommended_price" class="control-label">Total Auction
+                                        Recommended
+                                        Price
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_auction_recommended_price | number : '1.2-2'"
+                                            amount="total_auction_recommended_price"
+                                            name="p_total_auction_recommended_price"
+                                            #total_auction_recommended_price="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_auction_recommended_price-->
+
+                            <!--#region total_asset_selling_price-->
+                            <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="total_asset_selling_price" class="control-label">Total Asset Selling
+                                        Price
+                                        (Incl. VAT)
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_asset_selling_price | number : '1.2-2'"
+                                            amount="total_asset_selling_price" name="p_total_asset_selling_price"
+                                            #total_asset_selling_price="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_asset_selling_price-->
+
+                            <!--#region total_book_value-->
+                            <div class="col-md-4" [hidden]="model.sell_type !== 'AUCTION'">
+                                <div class="form-group">
+                                    <label for="total_book_value" class="control-label">Total Book Value
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_book_value | number : '1.2-2'"
+                                            amount="total_book_value" name="p_total_book_value"
+                                            #total_book_value="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_book_value-->
+
+                            <!--#region gain_loss_selling_asset-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="gain_loss_selling_asset" class="control-label">Gain /Loss Selling Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.gain_loss_selling_asset | number : '1.2-2'"
+                                            amount="gain_loss_selling_asset" name="p_gain_loss_selling_asset"
+                                            #gain_loss_selling_asset="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion gain_loss_selling_asset-->
+
+                            <!--#region total_profitability_asset-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_profitability_asset" class="control-label">Total Profitability
+                                        Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_profitability_asset | number : '1.2-2'"
+                                            amount="total_profitability_asset" name="p_total_profitability_asset"
+                                            #total_profitability_asset="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_profitability_asset-->
+
+                            <!--#region related_code_sell_req-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="related_code_sell_req" class="control-label">Related Code Sell
+                                        Req</label>
+                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.related_code_sell_req" name="p_related_code_sell_req"
+                                        #related_code_sell_req="ngModel" maxlength="50">
+                                </div>
+                            </div>
+                            <!--#endregion related_code_sell_req-->
+
+                            <!--#region auction_notes-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="auction_notes" class="control-label">Auction Notes *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.auction_notes" name="p_auction_notes" #auction_notes="ngModel"
+                                        [required]="!isAuction" maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(auction_notes.errors?.required && auction_notes.touched) || (auction_notes.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Auction Notes is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion auction_notes-->
+
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remarks="ngModel"
+                                        [required]="!isAuction" maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+
+                        <!--#region div-->
+                        <div class="row" [hidden]="model.sell_type !== 'MOCIL'">
+                            <!--#region buyer_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="buyer_name" class="control-label">Buyer Name *</label>
+                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.buyer_name" name="p_buyer_name" #buyer_name="ngModel"
+                                        maxlength="250" [required]="isCOP">
+                                    <small
+                                        *ngIf="(buyer_name.errors?.required && buyer_name.touched) || (buyer_name.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Buyer Name is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion buyer_name-->
+
+                            <!--#region total_asset_selling_price-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_asset_selling_price" class="control-label">Total Asset Selling
+                                        Price
+                                        (Incl. VAT)
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_asset_selling_price | number : '1.2-2'"
+                                            amount="total_asset_selling_price" name="p_total_asset_selling_price"
+                                            #total_asset_selling_price="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_asset_selling_price-->
+
+                            <!--#region total_book_value-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_book_value" class="control-label">Total Book Value
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_book_value | number : '1.2-2'"
+                                            amount="total_book_value" name="p_total_book_value"
+                                            #total_book_value="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_book_value-->
+
+                            <!--#region gain_loss_selling_asset-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="gain_loss_selling_asset" class="control-label">Gain /Loss Selling Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.gain_loss_selling_asset | number : '1.2-2'"
+                                            amount="gain_loss_selling_asset" name="p_gain_loss_selling_asset"
+                                            #gain_loss_selling_asset="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion gain_loss_selling_asset-->
+
+                            <!--#region total_profitability_asset-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_profitability_asset" class="control-label">Total Profitability
+                                        Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_profitability_asset | number : '1.2-2'"
+                                            amount="total_profitability_asset" name="p_total_profitability_asset"
+                                            #total_profitability_asset="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_profitability_asset-->
+
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remarks="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+
+                        <!--#region div-->
+                        <div class="row" [hidden]="model.sell_type !== 'COP'">
+                            <!--#region customer_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="customer_name" class="control-label">Customer Name</label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.customer_name"
+                                        name="p_customer_name" #customer_name="ngModel" maxlength="250">
+                                </div>
+                            </div>
+                            <!--#endregion customer_name-->
+
+                            <!--#region buyer_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="buyer_name" class="control-label">Buyer Name *</label>
+                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.buyer_name" name="p_buyer_name" #buyer_name="ngModel"
+                                        maxlength="250" [required]="isCOP">
+                                    <small
+                                        *ngIf="(buyer_name.errors?.required && buyer_name.touched) || (buyer_name.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Buyer Name is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion buyer_name-->
+
+                            <!--#region total_asset_purchase_price-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_asset_purchase_price" class="control-label">Total Asset Purchase
+                                        Price
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_asset_purchase_price | number : '1.2-2'"
+                                            amount="total_asset_purchase_price" name="p_total_asset_purchase_price"
+                                            #total_asset_purchase_price="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_asset_purchase_price-->
+
+                            <!--#region total_asset_selling_price-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_asset_selling_price" class="control-label">Total Asset Selling
+                                        Price
+                                        (Incl. VAT)
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_asset_selling_price | number : '1.2-2'"
+                                            amount="total_asset_selling_price" name="p_total_asset_selling_price"
+                                            #total_asset_selling_price="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_asset_selling_price-->
+
+                            <!--#region total_book_value-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_book_value" class="control-label">Total Book Value
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_book_value | number : '1.2-2'"
+                                            amount="total_book_value" name="p_total_book_value"
+                                            #total_book_value="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_book_value-->
+
+                            <!--#region gain_loss_selling_asset-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="gain_loss_selling_asset" class="control-label">Gain /Loss Selling Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.gain_loss_selling_asset | number : '1.2-2'"
+                                            amount="gain_loss_selling_asset" name="p_gain_loss_selling_asset"
+                                            #gain_loss_selling_asset="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion gain_loss_selling_asset-->
+
+                            <!--#region total_profitability_asset-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_profitability_asset" class="control-label">Total Profitability
+                                        Asset
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_profitability_asset | number : '1.2-2'"
+                                            amount="total_profitability_asset" name="p_total_profitability_asset"
+                                            #total_profitability_asset="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion total_profitability_asset-->
+
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remarks="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+
+                        <!--#region div-->
+                        <div class="row" [hidden]="model.sell_type !== 'CLAIM'">
+                            <!--#region buyer_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="buyer_name" class="control-label">Insurance Name</label>
+                                    <input readonly type="text" class="form-control" [ngModel]="model.buyer_name"
+                                        name="p_buyer_name" #buyer_name="ngModel" maxlength="250">
+                                </div>
+                            </div>
+                            <!--#endregion buyer_name-->
+
+                            <!--#region sell_request_amount-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="sell_request_amount" class="control-label">Claim Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sell_request_amount | number : '1.2-2'"
+                                            amount="sell_request_amount" name="p_sell_request_amount"
+                                            #sell_request_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion sell_request_amount-->
+
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remarks="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+                        </div>
+
+                        <!--#region div-->
+                        <div class="row" hidden>
+                            <!--#region sale_amount-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="sale_amount" class="control-label">Sale Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.sale_amount_header | number : '1.2-2'" amount="sale_amount"
+                                            name="p_sale_amount_header" #sale_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion sale_amount-->
+
+                            <!--#region Total Sell Net Book-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_sell_net_book_value" class="control-label">Total Sell Net Book
+                                        Value
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_sell_net_book_value | number : '1.2-2'"
+                                            amount="total_sell_net_book_value" name="p_total_sell_net_book_value"
+                                            #total_sell_net_book_value="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion Total Sell Net Book-->
+
+                            <!--#region Total Sell Amount-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_sell_amount" class="control-label">Total Sell Amount
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_sell_amount | number : '1.2-2'"
+                                            amount="total_sell_amount" name="p_total_sell_amount"
+                                            #total_sell_amount="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion Total Sell Amount-->
+
+                            <!--#region Gain Loss-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="total_gain_loss" class="control-label">Gain / (Loss)
+                                    </label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <input readonly type="text" style="text-align:right" class="form-control"
+                                            [ngModel]="model.total_gain_loss | number : '1.2-2'"
+                                            amount="total_gain_loss" name="p_total_gain_loss"
+                                            #total_gain_loss="ngModel">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion Gain Loss-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <!-- <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remarks="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remarks.errors?.required && remarks.touched) || (remarks.errors?.required && SoldRequestForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                        </div> -->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+
+                <!--#region wizard-->
+                <div class="wizard-custom-margin" [hidden]="param == null">
+                    <!--#region wizard container -->
+                    <div class="wizard-container">
+                        <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+                            id="wizardProfile">
+                            <div class="text-center">
+                                <div class="wizard-navigation">
+                                    <ul>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="saledetailwiz()" href="#saledetail"
+                                                data-toggle="tab" role="tab" aria-controls="saledetail"
+                                                aria-selected="true">
+                                                Asset
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="saledetailattachwiz()" href="#saledetailattach"
+                                                data-toggle="tab" role="tab" aria-controls="saledetailattach"
+                                                aria-selected="true">
+                                                Attachment
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion wizard container-->
+                </div>
+                <!--endregion wizard-->
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Branch -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranch"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBranch" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Branch Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbranch;let i=index">
+                                    <td style="text-align: center;">{{lookupbranch.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBranch(row.code, row.name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Branch-->
+
+<!--#region lookup Location -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLocation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupLocation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuplocation;let i=index">
+                                    <td style="text-align: center;">{{lookuplocation.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description_location}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowLocation(row.code, row.description_location)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Location-->
+
+<!--#region lookup Auction -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupAuction" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupAuction" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Auctio Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupAuction;let i=index">
+                                    <td style="text-align: center;">{{lookupAuction.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.auction_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowAuction(row.code, row.auction_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Auction-->
+
+<!--#region lookup Approval-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalApproval"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+
+                        <table id="datatableLookupApproval" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Employee</th>
+                                    <th>Position</th>
+                                    <th>Level</th>
+                                    <th>Result</th>
+                                    <th>Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupapproval;let i=index ">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupapproval.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="width: 30%;text-align: left;">
+                                        {{row.emp_name}} {{row.is_mandatory_level}}</td>
+                                    <td style="width: 20%;text-align: left;">{{row.emp_position_name}}</td>
+                                    <td style="width: 5%;text-align: center;">{{row.approval_level}}</td>
+                                    <td style="width: 15%;text-align: center;">
+                                        {{row.result_status}}<br>
+                                        {{row.result_date}}
+                                    </td>
+                                    <td style="width: 30%;">{{row.result_remarks}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Approval-->

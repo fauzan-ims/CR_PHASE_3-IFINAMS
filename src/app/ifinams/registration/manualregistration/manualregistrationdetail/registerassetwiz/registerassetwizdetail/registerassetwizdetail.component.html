@@ -1,0 +1,512 @@
+<div class="main-content margin-wizard-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <!--#region form-->
+            <form #insuranceregisterassetForm="ngForm"
+                (ngSubmit)="onFormSubmit(insuranceregisterassetForm.value, insuranceregisterassetForm.valid)">
+
+                <!--#region button submit dan back-->
+                <button type="submit"
+                    [hidden]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                    class="btn btn-info btn-round" data-role="R00022030002204C">Save</button>
+                <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                <!--#endregion button submit dan back-->
+
+                <!--#region row-->
+                <div class="row">
+                    <!--#region id-->
+                    <input hidden type="text" [ngModel]="this.params" name="p_code">
+                    <!--#endregion id-->
+
+                    <!--#region Register Code-->
+                    <input type="text" [ngModel]="this.param" maxlength="50" name="p_register_code" hidden>
+                    <!--#endregion Register Code-->
+
+                    <!--#region insurance_type-->
+                    <input type="text" [ngModel]="modeldetail.insurance_type" name="p_insurance_type" hidden>
+                    <!--#endregion insurance_type-->
+
+                    <!--#region currency_code-->
+                    <input type="text" [ngModel]="modeldetail.currency_code" name="p_currency_code" hidden>
+                    <!--#endregion currency_code-->
+
+                    <!--#region fa_code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="fa_code" class="control-label">FA Code</label>
+                            <input type="text" class="form-control" [ngModel]="model.fa_code" name="p_fa_code"
+                                #fa_code="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion fa_code-->
+
+                    <!--#region item_name-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="item_name" class="control-label">FA Name</label>
+                            <input type="text" class="form-control" [ngModel]="model.item_name" name="p_item_name"
+                                #item_name="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion item_name-->
+
+                    <!--#region collateral_type-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="collateral_type" class="control-label">Type</label>
+                            <input type="text" class="form-control" [ngModel]="model.collateral_type"
+                                name="p_collateral_type" #collateral_type="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion collateral_type-->
+
+                    <!--#region collateral_year-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="collateral_year" class="control-label">Asset Year </label>
+                            <input readonly type="text" class="form-control col-md-4" [ngModel]="model.collateral_year"
+                                name="p_collateral_year" #collateral_year="ngModel">
+                        </div>
+                    </div>
+                    <!--#endregion collateral_year-->
+
+                    <!--#region collateral_category_code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="collateral_category_code" class="control-label">Asset Category</label>
+                            <input type="hidden" class="form-control" [ngModel]="model.collateral_category_code"
+                                name="p_collateral_category_code" #collateral_category_code="ngModel" readonly>
+                            <input type="text" class="form-control" [ngModel]="model.collateral_category_name"
+                                name="p_collateral_category_name" #collateral_category_name="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion collateral_category_code-->
+
+                    <!--#region sum_insured_amount-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Sum Insured</label>
+                            <input type="text" class="form-control col-md-6" style="text-align: right;" maxlength="24"
+                                amount="sum_insured_amount" [ngModel]="model.sum_insured_amount | number : '1.2-2'"
+                                name="p_sum_insured_amount"
+                                [readonly]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'">
+                        </div>
+                    </div>
+                    <!--#endregion sum_insured_amount-->
+
+                    <!--#region plat_no-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="plat_no" class="control-label">Plat No</label>
+                            <input type="text" class="form-control" [ngModel]="model.plat_no" name="p_lat_no"
+                                #plat_no="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion plat_no-->
+
+                    <!--#region engine_no-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="engine_no" class="control-label">Engine No</label>
+                            <input type="text" class="form-control" [ngModel]="model.engine_no" name="p_engine_no"
+                                #engine_no="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion engine_no-->
+
+                    <!--#region chassis_no-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="chassis_no" class="control-label">Chasis No</label>
+                            <input type="text" class="form-control" [ngModel]="model.chassis_no" name="p_chassis_no"
+                                #chassis_no="ngModel" readonly>
+                        </div>
+                    </div>
+                    <!--#endregion chassis_no-->
+
+                    <!--#region lookup Asset Type -->
+                    <!-- <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Asset Type *</label>
+                            <div class="col-md-12 buttons btn-lookup-margin">
+                                <span>
+                                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                        (click)="btnLookupAssetType()" data-toggle="modal"
+                                        data-target="#lookupModalAssetType" href="#"><i
+                                            class="fa fa-search-plus"></i></button>
+                                    {{model.collateral_type_description}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.collateral_type"
+                                        #collateral_type="ngModel" required name="p_collateral_type">
+                                </span>
+                            </div>
+                            <small
+                                [hidden]="collateral_type.valid || (collateral_type.pristine && !insuranceregisterassetForm.submitted)"
+                                class="text-danger">
+                                Asset Type is required
+                            </small>
+                        </div>
+                    </div> -->
+                    <!--#endregion lookup Asset Type-->
+
+                    <!--#region colllateral category-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Asset Category *</label>
+                            <div class="col-md-12 buttons btn-lookup-margin">
+                                <span>
+                                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                        (click)="btnLookupCollateralCategory()" data-toggle="modal"
+                                        [disabled]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                                        data-target="#lookupModalCollateralCategory" href="#"><i
+                                            class="fa fa-search-plus"></i></button>
+                                    {{model.collateral_category_name}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.collateral_category_code"
+                                        #collateral_category_code="ngModel" required name="p_collateral_category_code">
+                                    <input type="hidden" class="form-control" [ngModel]="model.collateral_category_name"
+                                        #collateral_category_name="ngModel" name="p_collateral_category_name">
+                                </span>
+                            </div>
+                            <small
+                                [hidden]="collateral_category_code.valid || (collateral_category_code.pristine && !insuranceregisterassetForm.submitted)"
+                                class="text-danger">
+                                Asset Category is required
+                            </small>
+                        </div>
+                    </div>
+                    <!--#endregion colllateral category-->
+
+                    <!--#region region code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Region</label>
+                            <div class="col-md-12 buttons btn-lookup-margin">
+                                <span>
+                                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                        (click)="btnLookupRegion()" data-toggle="modal" data-target="#lookupModalRegion"
+                                        [disabled]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                                        href="#"><i class="fa fa-search-plus"></i></button>
+                                    {{model.region_name}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.region_code"
+                                        name="p_region_code" #region_code="ngModel">
+                                    <input type="hidden" class="form-control" [ngModel]="model.region_name"
+                                        name="p_region_name" #region_name="ngModel">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion region code -->
+
+                    <!--#region lookup Depreciation Code -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Depreciation *</label>
+                            <div class="col-md-12 buttons btn-lookup-margin">
+                                <span>
+                                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                        (click)="btnLookupDepreciation()" data-toggle="modal"
+                                        [disabled]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                                        data-target="#lookupModalDepreciation" href="#"><i
+                                            class="fa fa-search-plus"></i></button>
+                                    {{model.depreciation_name}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.depreciation_code"
+                                        #depreciation_code="ngModel" required name="p_depreciation_code">
+                                    <input type="hidden" class="form-control" [ngModel]="model.depreciation_name"
+                                        #depreciation_name="ngModel" name="p_depreciation_name">
+                                </span>
+                            </div>
+                            <small
+                                [hidden]="depreciation_code.valid || (depreciation_code.pristine && !insuranceregisterassetForm.submitted)"
+                                class="text-danger">
+                                Depreciation is required
+                            </small>
+                        </div>
+                    </div>
+                    <!--#endregion lookup Depreciation Code -->
+
+                    <!--#region occupation code-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Occupation</label>
+                            <div class="col-md-12 buttons btn-lookup-margin">
+                                <span>
+                                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                        (click)="btnLookupOccupation()" data-toggle="modal"
+                                        [disabled]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                                        data-target="#lookupModalOccupation" href="#"><i
+                                            class="fa fa-search-plus"></i></button>
+                                    {{model.occupation_name}}
+                                    <input type="hidden" class="form-control" [ngModel]="model.occupation_code"
+                                        name="p_occupation_code" #occupation_code="ngModel">
+                                    <input type="hidden" class="form-control" [ngModel]="model.occupation_name"
+                                        name="p_occupation_name" #occupation_name="ngModel">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion occupation code -->
+
+                    <!--#region is_authorized_workshop-->
+                    <div class="col-md-4">
+                        <div class="form-check mt-4" style="margin-left: -35px;">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox"
+                                        [disabled]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                                        [ngModel]="model.is_authorized_workshop" name="p_is_authorized_workshop">
+                                    Loading Authorized Dealer
+                                    <span class="form-check-sign"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden">
+                    <!--#endregion is_authorized_workshop-->
+
+                    <!--#region is_commercial-->
+                    <div class="col-md-4">
+                        <div class="form-check mt-4" style="margin-left: -35px;">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" [ngModel]="model.is_commercial"
+                                        [disabled]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                                        name="p_is_commercial">
+                                    Loading Commercial
+                                    <span class="form-check-sign"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion is_commercial-->
+
+                    <!--#region accessories-->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="accessories" class="control-label">Accessories</label>
+                            <textarea
+                                [readonly]="modeldetail.register_status !== 'HOLD' || modeldetail.register_type == 'PERIOD' || model.insert_type == 'EXISTING'"
+                                type="text" class="form-control" [ngModel]="model.accessories" name="p_accessories"
+                                #accessories="ngModel"></textarea>
+                        </div>
+                    </div>
+                    <!--#endregion accessories-->
+                </div>
+                <!--#endregion row-->
+            </form>
+            <!--#endregion form-->
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Asset Type-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalAssetType"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 buttons btn-lookup-margin">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupAssetType" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupassettype;  let i=index">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupassettype.numberIndex+i+1}}</td>
+                                    <td style="text-align: center;width: 20%;">{{ row.code }}</td>
+                                    <td style="text-align: left;width: 80%;">{{ row.general_subcode_desc }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowAssetType(row.code, row.general_subcode_desc)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Asset Type-->
+
+<!--#region collateral category-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalCollateralCategory"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 buttons btn-lookup-margin">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupCollateralCategory" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Description</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupcollateralcategory;  let i=index">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupcollateralcategory.numberIndex+i+1}}</td>
+                                    <td style="text-align: left;width: 100%;">{{ row.category_name }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowCollateralCategory(row.code, row.category_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion collateral category-->
+
+<!--#region lookup region-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalRegion"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 buttons btn-lookup-margin">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupRegion" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Code</th>
+                                    <th>Region Name</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupregion;  let i=index">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupregion.numberIndex+i+1}}</td>
+                                    <td style="text-align: center; width: 20%;">{{ row.code }}</td>
+                                    <td style="width: 80%;">{{ row.region_name }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowRegion(row.code, row.region_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup region-->
+
+<!--#region modal lookup Depreciation-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalDepreciation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 buttons btn-lookup-margin">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupDepreciation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Depreciation Name</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupdepreciation;  let i=index">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupdepreciation.numberIndex+i+1}}</td>
+                                    <td style="text-align: left;width: 100%;">{{ row.depreciation_name }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowDepreciation(row.code,row.depreciation_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion modal lookup Depreciation-->
+
+<!--#region modal lookup Occupation-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalOccupation"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12 buttons btn-lookup-margin">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupOccupation" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Occupation Name</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupoccupation;  let i=index">
+                                    <td style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupoccupation.numberIndex+i+1}}</td>
+                                    <td style="text-align: left;width: 100%;">{{ row.occupation_name }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowOccupation(row.code,row.occupation_name)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion modal lookup Occupation-->

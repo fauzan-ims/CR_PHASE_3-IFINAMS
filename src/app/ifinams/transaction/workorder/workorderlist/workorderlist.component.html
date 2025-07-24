@@ -1,0 +1,88 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanel" class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header">
+                    <h5 class="card-title">Work Order List</h5>
+                </div>
+                <div class="card-body">
+                    <!--#region row-->
+                    <div class="row">
+                        <!--#region Status-->
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class='form-control' [ngModel]="this.status" (change)="PageStatus($event)">
+                                    <option value='ALL'>ALL</option>
+                                    <option value='HOLD'>HOLD</option>
+                                    <option value='ON PROCESS'>ON PROCESS</option>
+                                    <option value='POST'>POST</option>
+                                    <option value='PAID'>PAID</option>
+                                    <option value='CANCEL'>CANCEL</option>
+                                    <!-- <option value='ASSET OUT'>ASSET OUT</option>
+                                    <option value='DONE'>DONE</option> -->
+                                </select>
+                            </div>
+                        </div>
+                        <!--#endregion Status-->
+                    </div>
+                    <!--#endregion row-->
+
+                    <!--#region list view-->
+                    <table id="datatable" datatable [dtOptions]="dtOptions"
+                        class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="disabled-sorting">No</th>
+                                <th style="display: none;"></th>
+                                <th>Work Order / SPK No</th>
+                                <th>Asset</th>
+                                <th>Date / Status</th>
+                                <th>Vendor</th>
+                                <th>Maintenance By</th>
+                                <th>KM Service</th>
+                                <th>Payment</th>
+                                <th>Remark</th>
+                                <th style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of listworkorder;  let i=index">
+                                <td style="text-align: center;">{{listworkorder.numberIndex+i+1}}</td>
+                                <th style="display: none;"></th>
+                                <td style="width: 15%;text-align: left;">{{row.code}} <br> {{row.spk_no}}
+                                </td>
+                                <td style="width: 15%;text-align: left;">{{row.asset_code}} <br> {{row.item_name}} <br>
+                                    {{row.plat_no}} <br> {{row.engine_no}} <br> {{row.chassis_no}}
+                                </td>
+                                <td style="width: 10%;text-align: center;">{{row.work_date}} <br> {{row.status}}</td>
+                                <td style="width: 10%;text-align: left;">{{row.vendor_name}}</td>
+                                <td style="width: 15%;text-align: left;">{{row.maintenance_by}} <br>
+                                    {{row.service_type}}</td>
+                                <td style="width: 10%;text-align: center;">{{row.last_meter| number : '1.0'}}</td>
+                                <td style="width: 10%;text-align: right;">{{row.payment_amount | number : '1.2-2'}}
+                                </td>
+                                <td style="width: 15%;text-align: left;">{{row.remark}}</td>
+                                <td style="text-align: center;">
+                                    <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit"
+                                        (click)="btnEdit(row.code)"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--#endregion list view-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

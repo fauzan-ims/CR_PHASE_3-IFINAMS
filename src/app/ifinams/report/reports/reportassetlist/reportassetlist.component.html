@@ -1,0 +1,428 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h4 class="card-title">{{model.name}}</h4>
+        </div>
+        <div class="card-body ">
+
+          <form #rptForm="ngForm" (ngSubmit)="onFormSubmit(rptForm.value, rptForm.valid)">
+            <!--#region button print dan back-->
+            <button type="submit" class="btn btn-info btn-round">Print</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button print dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region radio button date_type-->
+              <div class="col-md-6">
+                <label>Date Type</label>
+                <div class="form-group" style="margin-left: 15px;">
+                  <div class="row">
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_date_type" value="RANGE"
+                          [(ngModel)]="model.date_type" (change)="Datetype($event)">Range
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_date_type" value="ALL"
+                          [(ngModel)]="model.date_type" (change)="Datetype($event)">Cut Off
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion radio button date_type-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region from_date-->
+              <div class="col-md-5">
+                <div class="form-group col-md-6" style="margin-left: -15px;">
+                  <label for="from_date" class="control-label">From Date</label>
+                  <div>
+                    <input [readonly]="isButton" [ngStyle]="getStyles(isButton)" class="form-control col-md-8"
+                      placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.from_date" name="p_from_date"
+                      [options]="myDatePickerOptions" #p_from_date="ngModel" #from_date="angular-mydatepicker"
+                      autocomplete="off" max="{{rptForm.value.p_to_date}}" (click)="from_date.toggleCalendar()"
+                      (dateChanged)="FromDate($event)" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion from_date-->
+
+              <!--#region to_date-->
+              <div class="col-md-5">
+                <div class="form-group col-md-6" style="margin-left: -260px;">
+                  <label for="to_date" class="control-label">To Date</label>
+                  <div>
+                    <input class="form-control col-md-8" placeholder="dd/mm/yyyy" angular-mydatepicker
+                      [ngModel]="model.to_date" name="p_to_date" [options]="myDatePickerOptions" #p_to_date="ngModel"
+                      #to_date="angular-mydatepicker" autocomplete="off" min="{{rptForm.value.p_from_date}}"
+                      (click)="to_date.toggleCalendar()" (dateChanged)="ToDate($event)" />
+                  </div>
+                </div>
+              </div>
+              <!--#endregion to_date-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region region_code-->
+              <div class="col-md-4">
+                <label class="region_code labelmodule" (click)="btnClearLookupRegion()" style="cursor: pointer;"
+                  title="Clear">Regional</label>
+                <div class="form-group">
+                  <div class="col-md-12">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin" type="button"
+                        (click)="btnLookupRegionCode()" data-target="#lookupModalRegionCode" data-toggle="modal"
+                        href="#">
+                        <i class="fa fa-search-plus"></i></button> {{model.region_description}}
+                      <input type="hidden" name="p_region_code" [ngModel]="model.region_code" #region_code="ngModel" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion region_code-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Lookup office_name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="branch" class="control-label labelmodule" (click)="btnClearLookupBranch()"
+                    style="cursor: pointer;" title="Clear">Office Name
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupBranch()" data-toggle="modal" data-target="#lookupModalBranch" href="#"><i
+                          class="fa fa-search-plus"></i></button>
+                      {{model.branch_name}}
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_code" name="p_branch_code"
+                        #branch_code="ngModel">
+                      <input type="hidden" class="form-control" [ngModel]="model.branch_name" name="p_branch_name"
+                        #branch_name="ngModel">
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Lookup office_name-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Lookup location_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="location_code" class="control-label labelmodule" (click)="btnClearLookupLocation()"
+                    style="cursor: pointer;" title="Clear">Location
+                  </label>
+                  <div class="col-md-12 buttons">
+                    <span>
+                      <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                        (click)="btnLookupLocation()" data-toggle="modal" data-target="#lookupModalLocation" href="#"><i
+                          class="fa fa-search-plus"></i></button>
+                      {{model.description_location}}
+                      <input type="hidden" class="form-control" [ngModel]="model.location_code" name="p_location_code"
+                        #location_code="ngModel">
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion Lookup location_code-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region LastSOCondition-->
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Last SO Condition</label>
+                  <select class='form-control' [(ngModel)]="model.last_so_condition" name="p_last_so_condition">
+                    <option value='ALL'>ALL</option>
+                    <option value='BROKEN'>BROKEN ASSET</option>
+                    <option value='GOOD'>ACTIVE GOOD CONDITION</option>
+                  </select>
+                </div>
+              </div>
+              <!--#endregion LastSOCondition-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region Status-->
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label>Status</label>
+                  <select class='form-control' [(ngModel)]="model.status" name="p_status">
+                    <option value='ALL'>ALL</option>
+                    <option value='NEW'>NEW</option>
+                    <option value='ON PROGRESS'>ON PROGRESS</option>
+                    <option value='AVAILABLE'>AVAILABLE</option>
+                    <option value='REJECT'>REJECT</option>
+                    <option value='CANCEL'>CANCEL</option>
+                    <option value='DISPOSED'>DISPOSED</option>
+                    <option value='ON REPAIR'>ON REPAIR</option>
+                    <option value='SOLD'>SOLD</option>
+                  </select>
+                </div>
+              </div>
+              <!--#endregion Status-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region radio button net_book_value_commercial-->
+              <div class="col-md-4">
+                <label>Net Book Value Commercial</label>
+                <div class="form-group" style="margin-left: 15px;">
+                  <div class="row">
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_net_book_value_commercial"
+                          value="ZERO" [(ngModel)]="model.net_book_value_commercial">Nol
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_net_book_value_commercial"
+                          value="MORE" [(ngModel)]="model.net_book_value_commercial">Lebih Dari Nol
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_net_book_value_commercial"
+                          value="ALL" [(ngModel)]="model.net_book_value_commercial">All
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion radio button net_book_value_commercial-->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region radio button net_book_value_fiscal -->
+              <div class="col-md-4">
+                <label>Net Book Value Fiscal</label>
+                <div class="form-group" style="margin-left: 15px;">
+                  <div class="row">
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_net_book_value_fiscal "
+                          value="ZERO" [(ngModel)]="model.net_book_value_fiscal ">Nol
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_net_book_value_fiscal "
+                          value="MORE" [(ngModel)]="model.net_book_value_fiscal ">Lebih Dari Nol
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input col-md-6" type="radio" name="p_net_book_value_fiscal "
+                          value="ALL" [(ngModel)]="model.net_book_value_fiscal ">All
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion radio button net_book_value_fiscal -->
+            </div>
+            <!--#endregion row-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region print_option-->
+              <div hidden class="col-md-4">
+                <label>Print Option</label>
+                <div class="form-group col-md-12">
+                  <div class="row">
+                    <div class="form-check-radio form-check-inline">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="p_print_option" value="ExcelRecord"
+                          [(ngModel)]="model.print_option">Excel (Data Only)
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#endregion print_option-->
+            </div>
+            <!--#endregion row-->
+          </form>
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region lookup RegionCode-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalRegionCode"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupRegionCode" class="table table-striped table-bordered hover" cellspacing="0"
+              style="width: 100%;">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th style="text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupregioncode;let i=index ">
+                  <td class="if-no-edit-btn" style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupregioncode.numberIndex+i+1}}</td>
+                  <td style="width: 20%;text-align: center;">{{ row.code }}</td>
+                  <td style="width: 80%;">{{ row.description }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowRegionCode(row.code, row.description)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup RegionCode -->
+
+<!--#region lookup Office Name -->
+
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranch"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12" style="width: 100%">
+            <table id="datatableLookupBranch" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th class="disabled-sorting">No</th>
+                  <th style="display: none;"></th>
+                  <th>Code</th>
+                  <th>Office Name</th>
+                  <th style="text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupbranch;let i=index">
+                  <td style="text-align: center;">{{lookupbranch.numberIndex+i+1}}</td>
+                  <td class="if-no-edit-btn" style="display: none;"></td>
+                  <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                  <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                  <td class="text-right">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowBranch(row.code, row.description)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Office Name-->
+
+<!--#region lookup Location -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalLocation"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12">
+          <div class="card-body col-md-12" style="width: 100%">
+            <table id="datatableLookupLocation" class="table table-striped table-bordered hover" cellspacing="0"
+              style="min-width: 100%;">
+              <thead>
+                <tr>
+                  <th class="disabled-sorting">No</th>
+                  <th style="display: none;"></th>
+                  <th>Code</th>
+                  <th>Description</th>
+                  <th style="text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookuplocation;let i=index">
+                  <td style="text-align: center;">{{lookuplocation.numberIndex+i+1}}</td>
+                  <td class="if-no-edit-btn" style="display: none;"></td>
+                  <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                  <td style="width: 70%; text-align: left;">{{row.description_location}}</td>
+                  <td class="text-right">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLocation(row.code, row.description_location)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion lookup Location-->

@@ -1,0 +1,297 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Master Custom Report Info</h5>
+                </div>
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #MasterCustomReportForm="ngForm"
+                        (ngSubmit)="onFormSubmit(MasterCustomReportForm.value, MasterCustomReportForm.valid)">
+                        <!--#region button submit, button back-->
+                        <button type="submit" class="btn btn-info btn-round" data-role="R00021280012128C">Save</button>
+                        <button [hidden]="this.param == null" class="btn btn-success btn-round col-md-4" type="button"
+                            (click)="btnActive(model.code)" data-role="R00021280002128U">
+                            <span [hidden]="model.is_active === true || this.param == null">Active</span>
+                            <span [hidden]="model.is_active === false || this.param == null">Inactive</span>
+                        </button>
+
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button submit, button back-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" [readonly]="isReadOnly">
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region description-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="description" class="control-label">Description *</label>
+                                    <textarea type="text" class="form-control" [ngModel]="model.description"
+                                        maxlength="4000" required #description="ngModel"
+                                        name="p_description"></textarea>
+                                    <small
+                                        *ngIf="(description.errors?.required && description.touched) || (description.errors?.required && MasterCustomReportForm.submitted)"
+                                        class="text-danger">
+                                        Description is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion description-->
+
+                            <!--#region asset_type-->
+                            <div class="col-md-4" [hidden]="isHidden">
+                                <div class="form-group">
+                                    <label>Asset Type</label>
+                                    <select class='form-control col-md-8' [(ngModel)]="model.asset_type"
+                                        name="p_asset_type" (change)="AssetType($event)" [disabled]="isReadOnly">
+                                        <option value='ELCT'>ELECTRONIC</option>
+                                        <option value='FNTR'>FURNITURE</option>
+                                        <option value='MCHN'>MACHINE</option>
+                                        <option value='OTHR'>OTHERS</option>
+                                        <option value='PRTY'>PROPERTY</option>
+                                        <option value='VHCL'>VEHICLE</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--#endregion asset_type-->
+
+                            <!--#region transaction_type-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Transaction Type</label>
+                                    <select class='form-control col-md-8' [(ngModel)]="model.transaction_type"
+                                        name="p_transaction_type" (change)="TransactionType($event)"
+                                        [disabled]="isReadOnly">
+                                        <option value='ASSET'>Asset</option>
+                                        <option value='DISPOSAL'>Disposal</option>
+                                        <option value='MUTATION'>Mutation</option>
+                                        <option value='SALE'>Sell</option>
+                                        <option value='MAINTENANCE'>Maintenance</option>
+                                        <option value='WORKORDER'>Work Order</option>
+                                        <option value='OPNAME'>Opname</option>
+                                        <option value='DEPRECIATION'>Depreciation</option>
+                                        <option value='ADJUSTMENT'>Adjustment</option>
+                                        <option value='CHANGECATEGORY'>Change Category</option>
+                                        <option value='CHANGEITEM'>Change Item</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--#endregion transaction_type-->
+
+                            <!--#region Lookup asset_type-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="asset_type" class="control-label labelgsubcode" style="cursor: pointer;"
+                                        title="Clear">Asset Type</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button class="btn btn-icon btn-outline-default btn-round btn-md"
+                                                type="button" (click)="btnLookupTypeCode()" data-toggle="modal"
+                                                data-target="#lookupModalTypeCode" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.general_subcode_desc}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.asset_type"
+                                                name="p_asset_type" #asset_type="ngModel">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion Lookup asset_type-->
+
+                            <!--#region transaction_type-->
+                            <!-- <div class="col-md-4">
+                                <label class="labelgsubcode">Transaction Type</label>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <span>
+                                            <button
+                                                class="btn btn-icon btn-outline-default btn-round btn-md btn-lookup-margin"
+                                                type="button" (click)="btnLookupTransactionType()"
+                                                data-target="#lookupModalTransactionType" data-toggle="modal" href="#">
+                                                <i class="fa fa-search-plus"></i></button>
+                                            {{model.transaction_description}}
+                                            <input type="hidden" name="p_transaction_type"
+                                                [ngModel]="model.transaction_type" #transaction_type="ngModel" />
+                                        </span>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!--#endregion transaction_type-->
+
+                            <!--#region is_active-->
+                            <div class="col-md-4">
+                                <div class="form-check mt-4" style="margin-left: -25px;">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input disabled class="form-check-input" type="checkbox"
+                                                [ngModel]="model.is_active" name="p_is_active">
+                                            Active
+                                            <span class="form-check-sign"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion is_active-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+
+                <!--#region wizard-->
+                <div class="wizard-custom-margin" [hidden]="param == null">
+                    <!--#region wizard container -->
+                    <div class="wizard-container">
+                        <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+                            id="wizardProfile">
+                            <div class="text-center">
+                                <div class="wizard-navigation">
+                                    <ul>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="columnwiz()" href="#mastercustreportcol"
+                                                data-toggle="tab" role="tab" aria-controls="mastercustomreportcolumn"
+                                                aria-selected="true">
+                                                Column
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="conditionwiz()" href="#mutationdocument"
+                                                data-toggle="tab" role="tab" aria-controls="mastercustomreportcondition"
+                                                aria-selected="true">
+                                                Condition
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion wizard container-->
+                </div>
+                <!--endregion wizard-->
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Asset Type Code -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTypeCode"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupTypeCode" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuptypecode;let i=index">
+                                    <td style="text-align: center;">{{lookuptypecode.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.general_subcode_desc}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowTypeCode(row.code, row.general_subcode_desc)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Asset Type Code-->
+
+<!--#region lookup TransactionType-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTransactionType"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupTransactionType" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th hidden>Order Key</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookuptransactiontype;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookuptransactiontype.numberIndex+i+1}}</td>
+                                    <td style="width: 20%;text-align: center;">{{ row.code }}</td>
+                                    <td style="width: 80%;">{{ row.general_subcode_desc }}</td>
+                                    <td hidden>{{ row.order_key}}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowTransactionType(row.code, row.general_subcode_desc)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup TransactionType -->

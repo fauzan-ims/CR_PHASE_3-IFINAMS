@@ -1,0 +1,275 @@
+<router-outlet></router-outlet>
+
+<div id="hideMainPanel" class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 col-sm-12">
+      <div class="card">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header">
+          <h5 class="card-title">Policy List</h5>
+        </div>
+        <div class="card-body">
+          <button [hidden]="this.tampPolicyPaymentStatus !== 'PAID'"
+            class="btn btn-info btn-print-round btn-round custom-button-width col-md-4" (click)="btnPrintPajak()"
+            data-role="R00022090022214P">Print Pajak </button>
+
+          <!--#region row-->
+          <div class="row">
+            <!--#region lookup Branch code -->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="control-label labelmodule" (click)="btnClearBranch()" style="cursor: pointer;"
+                  title="Clear">Branch </label>
+                <div class="col-md-12 buttons btn-lookup-margin">
+                  <span>
+                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                      (click)="btnLookupbranch()" data-toggle="modal" data-target="#lookupModalbranch" href="#"><i
+                        class="fa fa-search-plus"></i></button>
+                    {{branchName}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!--#endregion lookup Branch code -->
+            <!--#region lookup insurance code-->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="control-label" (click)="btnClearInsurance()" style="cursor: pointer;"
+                  title="Clear">Insurance Name</label>
+                <div class="col-md-12 buttons btn-lookup-margin">
+                  <span>
+                    <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                      (click)="btnLookupInsurance()" data-toggle="modal" data-target="#lookupModalInsurance" href="#"><i
+                        class="fa fa-search-plus"></i></button>
+                    {{insurance_name}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!--#endregion lookup insurance code -->
+
+            <!--#region Status-->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Status</label>
+                <select class='form-control col-md-6' [ngModel]="this.tampPolicyStatus" (change)="PageStatus($event)">
+                  <option value='ACTIVE'>ACTIVE</option>
+                  <option value='IN ACTIVE'>INACTIVE</option>
+                  <option value='TERMINATE'>TERMINATE</option>
+                </select>
+              </div>
+            </div>
+            <!--#endregion rounding Status-->
+
+            <!--#region Status-->
+            <div class="col-md-4" hidden>
+              <div class="form-group">
+                <label>Payment type</label>
+                <!-- <select class='form-control col-md-6' [ngModel]="this.tampType" (change)="PageType($event)">
+                  <option value='ALL'>ALL</option>
+                  <option value='FTFP'>Full Tenor Full Payment</option>
+                  <option value='FTAP'>Full Tenor Annualy Payment</option> -->
+                <!-- <option value='ATAP'>ATAP</option> -->
+                <!-- </select> -->
+              </div>
+            </div>
+            <!--#endregion rounding Status-->
+
+            <!--#region Status-->
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Payment Status</label>
+                <select class='form-control col-md-6' [ngModel]="this.tampPolicyPaymentStatus"
+                  (change)="PagePaymentStatus($event)">
+                  <option value='ALL'>ALL</option>
+                  <option value='HOLD'>HOLD</option>
+                  <option value='ON PROCESS'>ON PROCESS</option>
+                  <option value='CANCEL'>CANCEL</option>
+                  <option value='PAID'>PAID</option>
+                </select>
+              </div>
+            </div>
+            <!--#endregion rounding Status-->
+
+            <!--#region from date-->
+            <div class="col-md-1">
+              <div class="form-group">
+                <label for="pdc_date">From Date</label>
+                <input class="form-control" placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.from_date"
+                  name="p_from_date" [options]="myDatePickerOptions" (click)="from_date.toggleCalendar()"
+                  #p_from_date="ngModel" #from_date="angular-mydatepicker" autocomplete="off"
+                  (dateChanged)="FromDate($event)" />
+                <!-- <input type="date" class="form-control" [ngModel]="this.from_date" name="p_from_date"
+                  (change)="FromDate($event)"> -->
+              </div>
+            </div>
+            <!--#endregion from date-->
+
+            <!--#region to date-->
+            <div class="col-md-1">
+              <div class="form-group">
+                <label for="pdc_date">To Date</label>
+                <input class="form-control" placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.to_date"
+                  name="p_to_date" [options]="myDatePickerOptions" (click)="to_date.toggleCalendar()"
+                  #p_to_date="ngModel" #to_date="angular-mydatepicker" autocomplete="off"
+                  (dateChanged)="ToDate($event)" />
+                <!-- <input type="date" class="form-control" [ngModel]="this.from_date" name="p_from_date"
+                  (change)="FromDate($event)"> -->
+              </div>
+            </div>
+            <!--#endregion to date-->
+          </div>
+          <!--#endregion row-->
+
+          <!--#region List view -->
+          <table id="datatable" datatable [dtOptions]="dtOptions"
+            class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th class="disabled-sorting">No</th>
+                <th class="disabled-sorting">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" id="checkall" [(ngModel)]="selectedAll"
+                        (change)="selectAllTable();" />
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </th>
+                <th style="display: none;"></th>
+                <th>Policy No</th>
+                <th>Branch</th>
+                <th>Eff / Exp Date</th>
+                <th>Insurance Name</th>
+                <th>Status/Payment Status</th>
+                <th>Print Count</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of listpolicy; let i=index">
+                <td style="text-align: center;">{{listpolicy.numberIndex+i+1}}</td>
+                <td style="display: none;"></td>
+                <td>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                        (change)="checkIfAllTableSelected($event, row.code);">
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </td>
+                <td style="width: 10%;">{{row.policy_no}}</td>
+                <td style="width: 15%;">{{row.branch_name}}</td>
+                <td style="width: 15%;text-align: center;">{{row.policy_eff_date}} <br> {{row.policy_exp_date}} </td>
+                <td style="width: 30%;">{{row.insurance_name}}</td>
+                <td style="width: 20%;text-align: center;">{{row.policy_status}} <br> {{row.policy_payment_status}}</td>
+                <td style="width: 10%;text-align: center;">{{row.print_count}}</td>
+                <td class="text-center">
+                  <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit" (click)="btnEdit(row.code)"><i
+                      class="fa fa-edit"></i></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!--#endregion List view-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--#region modal lookup branch-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalbranch"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupBranch" class="table table-striped table-bordered hover" cellspacing="0"
+              width="100%">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Code</th>
+                  <th>Branch Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupBranch;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupBranch.numberIndex+i+1}}</td>
+                  <td style="text-align: center;width: 20%;">{{ row.code }}</td>
+                  <td style="text-align: left;width: 80%;">{{ row.name }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowLookupBranch(row.code, row.name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion modal lookup branch-->
+
+<!--#region modal lookup insurance code-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalInsurance"
+  style="margin-top: -65px">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow:hidden;">
+        <div class="col-md-12 buttons btn-lookup-margin">
+          <div class="card-body col-md-12">
+            <table id="datatableLookupInsurance" class="table table-striped table-bordered hover" cellspacing="0"
+              width="100%">
+              <thead>
+                <tr>
+                  <th style="display: none;"></th>
+                  <th class="disabled-sorting">No</th>
+                  <th>Insurance Name</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of lookupinsurance;  let i=index">
+                  <td style="display: none;"></td>
+                  <td style="text-align: center;">{{lookupinsurance.numberIndex+i+1}}</td>
+                  <td style="text-align: left;width: 100%;">{{ row.insurance_name }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-default btn-round"
+                      (click)="btnSelectRowInsurance(row.code, row.insurance_name)">Select</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--#endregion modal lookup insurance code-->

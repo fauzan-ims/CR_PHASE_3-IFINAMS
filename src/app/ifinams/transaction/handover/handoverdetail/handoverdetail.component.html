@@ -1,0 +1,728 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+
+                <div class="card-header ">
+                    <!--#region row-->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5 class="card-title">Handover Info</h5>
+                        </div>
+                        <div class="col-md-5">
+                            <h5 style="color: red;" [hidden]="model.flag_handover_req != '1'"><b>Handover
+                                    {{this.model.type_handover}} No : {{this.model.handover_request_code}} must be
+                                    process</b>
+                            </h5>
+                            <h5 style="color: #d2d21c;" [hidden]="model.flag_handover_req != '0'"><b>Handover
+                                    {{this.model.type_handover}} No : {{this.model.handover_request_code}} must be
+                                    process</b>
+                            </h5>
+                        </div>
+                        <div class="col-md-3">
+                            <h5 style="color: #000000;" [hidden]="this.ishidden === true">
+                                <b>Maturity Date : {{this.model.maturity_date}} </b>
+                            </h5>
+                        </div>
+                    </div>
+                    <!--#endregion row-->
+                </div>
+
+                <div class="card-body ">
+                    <!--#region form-->
+                    <form #handoverForm="ngForm" (ngSubmit)="onFormSubmit(handoverForm.value, handoverForm.valid)">
+                        <!--#region button-->
+                        <button [hidden]="model.status !== 'HOLD'" type="submit" class="btn btn-info btn-round"
+                            data-role="R00021880002189C">Save</button>
+
+                        <button [hidden]="this.param == null || model.status !== 'HOLD'" type="button"
+                            data-role="R00021880002189O" class="btn btn-success btn-round"
+                            (click)="btnPost()">Post</button>
+
+                        <button [hidden]="model.code == null || model.status !== 'HOLD'" type="button"
+                            data-role="R00021880002189R" class="btn btn-warning btn-round"
+                            (click)="btnCancel()">Cancel</button>
+
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+
+                        <button [hidden]="this.param == null || model.status != 'HOLD' || model.type == 'PICK UP' || model.type =='MAINTENANCE IN' ||
+                        model.type == 'REPLACE IN' || model.type =='RETURN IN'" type="button" style='float: right;'
+                            class="btn btn-info btn-print-round btn-round custom-button-width"
+                            (click)="btnPrintGatePass()" data-role="R00021880052190P">Print Gate Pass</button>
+
+                        <button [hidden]="this.param == null || this.isButtonBAST" type="button" style='float: right;'
+                            class="btn btn-info btn-print-round btn-round" (click)="btnPrint()"
+                            data-role="R00021880002189P">Print BAST</button>
+
+                        <button type="button" style='float: right;'
+                            class="btn btn-info btn-print-round btn-round custom-button-width"
+                            (click)="btnPrintDeliveryCollect()" data-role="R00021880052192P">Print Order</button>
+
+                        <!-- <button type="button" (click)="btnPrintSuratJalan()" style='float: right;'
+                            data-role="R00021880052193P" class="btn btn-info btn-round custom-button-width">Print Surat
+                            Tugas</button> -->
+
+                        <button type="button" style='float: right;'
+                            class="btn btn-info btn-print-round btn-round custom-button-width"
+                            (click)="btnPrintSuratJalan()" data-role="R00021880052193P">Print Surat
+                            Tugas</button>
+                        <!--#endregion button-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div [hidden]="model.code != null" class="row"
+                                    style="margin-bottom: -15px; padding-top: 30px;">
+                                    <h1 class="col-md-4" style="font-size: 12px;">Code</h1>
+                                    <h1 class="col-md-8" style="font-size: 12px;">-Auto
+                                        Generate-</h1>
+                                </div>
+                                <div [hidden]="model.code == null" class="form-group">
+                                    <label>Code </label>
+                                    <input type="text" class="form-control" placeholder="Enter Code"
+                                        [ngModel]="model.code" name="p_code" [readonly]="isReadOnly">
+                                    <input type="hidden" class="form-control" [ngModel]="model.agreement_no"
+                                        name="p_agreement_no" #branch_code="ngModel">
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region Lookup branch_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="branch_code" class="control-label labelmodule" style="cursor: pointer;"
+                                        title="Clear">Branch *</label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="this.param != null"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupBranch()" data-toggle="modal"
+                                                data-target="#lookupModalBranch" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.branch_name}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.branch_code"
+                                                name="p_branch_code" required #branch_code="ngModel">
+                                            <input type="hidden" class="form-control" [ngModel]="model.branch_name"
+                                                name="p_branch_name" #branch_name="ngModel">
+                                        </span>
+                                    </div>
+                                    <small
+                                        [hidden]="branch_code.valid || (branch_code.pristine && !handoverForm.submitted)"
+                                        class="text-danger">
+                                        Branch is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup branch_code-->
+
+                            <!--#region status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status</label>
+                                    <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                        readonly #status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion status-->
+
+                            <!--#region transaction_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="transaction_date" class="control-label">Transaction Date *</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.transaction_date" name="p_transaction_date"
+                                        [readonly]="model.status !== 'HOLD'" [options]="myDatePickerOptions"
+                                        (click)="transaction_date.toggleCalendar()" #p_transaction_date="ngModel"
+                                        #transaction_date="angular-mydatepicker" autocomplete="off"
+                                        [ngStyle]="getStyles(model.status !== 'HOLD')" />
+                                    <small
+                                        *ngIf="(p_transaction_date.errors?.required && p_transaction_date.touched) || (p_transaction_date.errors?.required && handoverForm.submitted)"
+                                        class="text-danger">
+                                        Transaction Date is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion transaction_date-->
+
+                            <!--#region type-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="type" class="control-label">Type / Status</label>
+                                    <input hidden type="text" class="form-control" [ngModel]="model.type" name="p_type"
+                                        readonly #type="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.type_status"
+                                        name="p_type_status" readonly #type_status="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion type-->
+
+                            <!--#region type-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Type / Status</label>
+                                    <select class='form-control col-md-8' [(ngModel)]="model.type"
+                                        [ngStyle]="getStyles(this.param !== null)" readonly name="p_type"
+                                        #type="ngModel">
+                                        <option value='DELIVERY'>DELIVERY</option>
+                                        <option value='MAINTENANCE IN'>MAINTENANCE IN</option>
+                                        <option value='MAINTENANCE OUT'>MAINTENANCE OUT</option>
+                                        <option value='RETURN IN'>RETURN IN</option>
+                                        <option value='RETURN OUT'>RETURN OUT</option>
+                                        <option value='REPLACE IN'>REPLACE IN</option>
+                                        <option value='REPLACE OUT'>REPLACE OUT</option>
+                                        <option value='REPLACE GTS IN'>REPLACE GTS IN</option>
+                                        <option value='REPLACE GTS OUT'>REPLACE GTS OUT</option>
+                                        <option value='PICK UP'>PICK UP</option>
+                                        <option value='MOBILISASI'>MOBILISASI</option>
+                                        <option value='SELL OUT'>SELL OUT</option>
+                                    </select>
+                                </div>
+                            </div> -->
+                            <!--#endregion type-->
+
+                            <!--#region estimate_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="estimate_date" class="control-label">Request BAST Date</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        [ngModel]="model.estimate_date" name="p_estimate_date" readonly
+                                        [options]="myDatePickerOptions" (click)="estimate_date.toggleCalendar()"
+                                        #p_estimate_date="ngModel" #estimate_date="angular-mydatepicker"
+                                        autocomplete="off" [ngStyle]="getStyles(true)" />
+                                </div>
+                            </div>
+                            <!--#endregion estimate_date-->
+
+                            <!--#region handover_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="handover_date" class="control-label">Handover Date *</label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        required [ngModel]="model.handover_date" name="p_handover_date"
+                                        [readonly]="model.status !== 'HOLD'" [options]="myDatePickerOptions"
+                                        (click)="handover_date.toggleCalendar()" #p_handover_date="ngModel"
+                                        #handover_date="angular-mydatepicker" autocomplete="off"
+                                        [ngStyle]="getStyles(model.status !== 'HOLD')" />
+                                    <small
+                                        *ngIf="(p_handover_date.errors?.required && p_handover_date.touched) || (p_handover_date.errors?.required && handoverForm.submitted)"
+                                        class="text-danger">
+                                        Handover Date is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion handover_date-->
+
+                            <!--#region handover_from-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="handover_from" class="control-label">Handover From</label>
+                                    <input type="text" class="form-control" [ngModel]="model.handover_from"
+                                        name="p_handover_from" readonly #handover_from="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion handover_from-->
+
+                            <!--#region handover_to-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="handover_to" class="control-label">Handover To</label>
+                                    <input type="text" class="form-control" [ngModel]="model.handover_to"
+                                        name="p_handover_to" readonly #handover_to="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion handover_to-->
+
+                            <!--#region contact person-->
+                            <!-- <div class="col-md-4">
+                            <div class="form-group" >
+                            <label for="handover_phone_area && handover_phone_area" class="control-label">Buyer Area / Phone</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                <input readonly type="text"class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                    [ngModel]="model.handover_phone_area" name="p_handover_phone_area"
+                                    #handover_phone_area="ngModel" maxlength="4" >
+                                </div>
+                                /
+                                <div class="col-md-7">
+                                <input readonly type="text"class="form-control" [ngModel]="model.handover_phone_no"
+                                    name="p_handover_phone_no" maxlength="15" #handover_phone_no="ngModel">
+                                </div>
+                            </div>
+                            </div>
+                        </div> -->
+                            <!--#endregion contact person-->
+
+                            <!--#region area phone no-->
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="handover_phone_area.invalid && handover_phone_area.touched && handover_phone_no.invalid && handover_phone_no.touched">
+                                    <label for="handover_phone_area && handover_phone_no" class="control-label">Handover
+                                        Area / Phone</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text" disabled
+                                                class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                                [ngModel]="model.handover_phone_area" name="p_handover_phone_area"
+                                                #handover_phone_area="ngModel" maxlength="4"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                        -
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" disabled
+                                                [ngModel]="model.handover_phone_no" name="p_handover_phone_no"
+                                                maxlength="15" #handover_phone_no="ngModel"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion area phone no-->
+
+                            <!--#region address-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="handover_address" class="control-label">Handover Address</label>
+                                    <textarea readonly type="text" class="form-control"
+                                        [ngModel]="model.handover_address" name="p_handover_address" #remark="ngModel"
+                                        maxlength="4000"></textarea>
+                                </div>
+                            </div>
+                            <!--#endregion address-->
+
+                            <!--#region courier-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="p_courier" class="control-label">Courier</label>
+                                    <select [disabled]="model.status !== 'HOLD'" class="form-control col-md-6"
+                                        [ngModel]="model.courier" name="p_courier" #p_courier="ngModel">
+                                        <option value='INTERNAL'>INTERNAL</option>
+                                        <option value='VENDOR'>VENDOR</option>
+                                        <option value='EKSPEDISI'>EKSPEDISI</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--#endregion courier-->
+                        </div>
+                        <!--#endregion div-->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pic_handover_name" class="control-label">PIC Handover Name</label>
+                                    <input type="text" class="form-control" [ngModel]="model.pic_handover_name"
+                                        [readonly]="model.status !== 'HOLD'" name="p_pic_handover_name"
+                                        #pic_handover_name="ngModel" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pic_handover_address" class="control-label">PIC Handover Address</label>
+                                    <textarea readonly type="text" class="form-control"
+                                        [readonly]="model.status !== 'HOLD'" [ngModel]="model.pic_handover_address"
+                                        name="p_pic_handover_address" #remark="ngModel" maxlength="4000"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="pic_handover_phone_area.invalid && pic_handover_phone_area.touched && pic_handover_phone_no.invalid && pic_handover_phone_no.touched">
+                                    <label for="pic_handover_phone_area && pic_handover_phone_no"
+                                        class="control-label">PIC Handover
+                                        Area / Phone</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text" [readonly]="model.status !== 'HOLD'"
+                                                class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                                [ngModel]="model.pic_handover_phone_area"
+                                                name="p_pic_handover_phone_area" #pic_handover_phone_area="ngModel"
+                                                maxlength="4" pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                        -
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" [readonly]="model.status !== 'HOLD'"
+                                                [ngModel]="model.pic_handover_phone_no" name="p_pic_handover_phone_no"
+                                                maxlength="15" #pic_handover_phone_no="ngModel"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="pic_recipient_name" class="control-label">PIC Recipient Name</label>
+                                    <input type="text" class="form-control" [ngModel]="model.pic_recipient_name"
+                                        [readonly]="model.status !== 'HOLD'" name="p_pic_recipient_name"
+                                        #pic_recipient_name="ngModel" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group"
+                                    [class.has-error]="pic_recipient_phone_area.invalid && pic_recipient_phone_area.touched && pic_recipient_phone_no.invalid && pic_recipient_phone_no.touched">
+                                    <label for="pic_recipient_phone_area && pic_recipient_phone_no"
+                                        class="control-label">PIC Recipient
+                                        Area / Phone</label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <input type="text" [readonly]="model.status !== 'HOLD'"
+                                                class="form-control area-code input-mini aid-primary-phone1-lbl"
+                                                [ngModel]="model.pic_recipient_phone_area"
+                                                name="p_pic_recipient_phone_area" #pic_recipient_phone_area="ngModel"
+                                                maxlength="4" pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                        -
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" [readonly]="model.status !== 'HOLD'"
+                                                [ngModel]="model.pic_recipient_phone_no" name="p_pic_recipient_phone_no"
+                                                maxlength="15" #pic_recipient_phone_no="ngModel"
+                                                pattern={{NumberOnlyPattern}}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region process-->
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Process Status</label>
+                                    <select class='form-control col-md-8' [(ngModel)]="model.process_status"
+                                        [disabled]="model.status !== 'HOLD'" [ngStyle]="getStyles(false)"
+                                        name="p_process_status" #process_status="ngModel">
+                                        <option value='CHECK AFTER REPLACEMENT'>CHECK AFTER REPLACEMENT</option>
+                                        <option value='CHECK AFTER GTS'>CHECK AFTER GTS</option>
+                                        <option value='CHECK EARLY TERMINATE CAR'>CHECK EARLY TERMINATE CAR</option>
+                                        <option value='CHECK TERMINATE CAR'>CHECK TERMINATE CAR</option>
+                                        <option value='NEED CLAIM BODY REPAIR'>NEED CLAIM BODY REPAIR</option>
+                                        <option value='NEED GENERAL REPAIR'>NEED GENERAL REPAIR</option>
+                                        <option value='UNIT TITIP'>UNIT TITIP</option>
+                                    </select>
+                                </div>
+                            </div> -->
+                            <!--#endregion process-->
+
+                            <!--#region Lookup process_status-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="process_status" (click)="btnClearProcessStatus()"
+                                        class="control-label labelmodule">Process Status
+                                    </label>
+                                    <div class="col-md-12 buttons">
+                                        <span>
+                                            <button [disabled]="model.status !== 'HOLD'"
+                                                class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                                (click)="btnLookupProcessStatus()" data-toggle="modal"
+                                                data-target="#lookupModalProcessStatus" href="#"><i
+                                                    class="fa fa-search-plus"></i></button>
+                                            {{model.process_status}}
+                                            <input type="hidden" class="form-control" [ngModel]="model.process_status"
+                                                name="p_process_status" #process_status="ngModel">
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion Lookup process_status-->
+
+                            <!--#region plan_date-->
+                            <div class="col-md-4">
+                                <div class="form-group col-md-8" style="margin-left: -15px;">
+                                    <label for="plan_date" class="control-label">Delivery Plan Date </label>
+                                    <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        [ngModel]="model.plan_date" name="p_plan_date"
+                                        [readonly]="model.status !== 'HOLD'" [options]="myDatePickerOptions"
+                                        (click)="plan_date.toggleCalendar()" #p_plan_date="ngModel"
+                                        #plan_date="angular-mydatepicker" autocomplete="off" />
+                                </div>
+                            </div>
+                            <!--#endregion plan_date-->
+
+                            <!--#region bbn-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="bbn" class="control-label">BBN</label>
+                                    <input type="text" class="form-control" [ngModel]="model.bbn" name="p_bbn" readonly
+                                        #bbn="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion bbn-->
+
+                            <!--#region km-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="km" class="control-label">KM *</label>
+                                    <div class="col-md-6" style="margin-left: -15px;">
+                                        <!-- <div class="col-md-12" style="margin-left: -15px;"> -->
+                                        <input type="text" class="form-control" [ngModel]="model.km" name="p_km"
+                                            [readonly]="model.status !== 'HOLD'" #km="ngModel" maxlength="10"
+                                            pattern={{NumberOnlyPattern}} required>
+                                        <!-- </div> -->
+                                    </div>
+                                </div>
+                                <small *ngIf="km.errors?.pattern && km.touched || km.errors?.pattern && km.touched"
+                                    class="text-danger">
+                                    KM format should be <i>0-9</i>.
+                                </small>
+                                <small
+                                    *ngIf="(km.errors?.required && km.touched) || (km.errors?.required && handoverForm.submitted)"
+                                    class="text-danger">
+                                    KM is required
+                                </small>
+                            </div>
+                            <!--#endregion KM-->
+
+                            <!--#region unit_condition-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="unit_condition" class="control-label">Unit Condition *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.unit_condition" name="p_unit_condition"
+                                        #unit_condition="ngModel" required maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(unit_condition.errors?.required && unit_condition.touched) || (unit_condition.errors?.required && handoverForm.submitted)"
+                                        class="text-danger">
+                                        Unit Condition is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion unit_condition-->
+
+                            <!--#region remark-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="remark" class="control-label">Remark *</label>
+                                    <textarea [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
+                                        [ngModel]="model.remark" name="p_remark" #remark="ngModel" required
+                                        maxlength="4000"></textarea>
+                                    <small
+                                        *ngIf="(remark.errors?.required && remark.touched) || (remark.errors?.required && handoverForm.submitted)"
+                                        class="text-danger">
+                                        Remark is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion remark-->
+
+                            <!--#region reff_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reff_code" class="control-label">Reff Code</label>
+                                    <input type="text" class="form-control" [ngModel]="model.reff_code"
+                                        name="p_reff_code" readonly #reff_code="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion reff_code-->
+
+                            <!--#region reff_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="reff_name" class="control-label">Reff Name</label>
+                                    <input type="text" class="form-control" [ngModel]="model.reff_name"
+                                        name="p_reff_name" readonly #reff_name="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion reff_name-->
+                        </div>
+                        <!--#endregion div-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region fa_code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="fa_code" class="control-label">FA Code</label>
+                                    <input type="text" class="form-control" [ngModel]="model.fa_code" name="p_fa_code"
+                                        readonly #fa_code="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion fa_code-->
+
+                            <!--#region fa_name-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="fa_name" class="control-label">FA Name</label>
+                                    <input type="text" class="form-control" [ngModel]="model.fa_name" name="p_fa_name"
+                                        readonly #fa_name="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion fa_name-->
+
+                            <!--#region plat no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="plat_no" class="control-label">Plat No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.plat_no" name="p_plat_no"
+                                        readonly #plat_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion plat no-->
+
+                            <!--#region plat no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="chassis_no" class="control-label">Chasis No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.chassis_no"
+                                        name="p_chassis_no" readonly #chassis_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion plat no-->
+
+                            <!--#region engine no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="engine_no" class="control-label">Engine No</label>
+                                    <input type="text" class="form-control" [ngModel]="model.engine_no"
+                                        name="p_engine_no" readonly #engine_no="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion engine no-->
+
+                            <!--#region engine no-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="colour" class="control-label">Colour</label>
+                                    <input type="text" class="form-control" [ngModel]="model.colour" name="p_colour"
+                                        readonly #colour="ngModel" />
+                                </div>
+                            </div>
+                            <!--#endregion engine no-->
+                        </div>
+                        <!--#endregion div-->
+
+                    </form>
+                    <!--#endregion form-->
+                </div>
+                <!--#region wizard-->
+                <div class=" wizard-custom-margin" [hidden]="param == null">
+                    <!--#region wizard container -->
+                    <div class="wizard-container">
+                        <div class="card-wizard" style="opacity: 1 !important; min-height: 0px;" data-color="primary"
+                            id="wizardProfile">
+                            <div class="text-center">
+                                <div class="wizard-navigation">
+                                    <ul>
+                                        <!-- <li class="nav-item">
+                                            <a class="nav-link" (click)="assetcheklistwiz()" href="#assetchecklist"
+                                                data-toggle="tab" role="tab" aria-controls="assetchecklist"
+                                                aria-selected="true">
+                                                Asset Checklist
+                                            </a>
+                                        </li> -->
+                                        <li class="nav-item">
+                                            <a class="nav-link" (click)="assetdocumentwiz()" href="#assetdocument"
+                                                data-toggle="tab" role="tab" aria-controls="assetdocument"
+                                                aria-selected="true">
+                                                Asset Document
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--#endregion wizard container-->
+                </div>
+                <!--endregion wizard-->
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Branch -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBranch"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupBranch" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Branch Name</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupbranch;let i=index">
+                                    <td style="text-align: center;">{{lookupbranch.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.description}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowBranch(row.code, row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Branch-->
+
+<!--#region lookup process status-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalProcessStatus"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <table id="datatableLookupProcessStatus" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="display: none;"></th>
+                                    <th class="disabled-sorting">No</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupprocessstatus;let i=index ">
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="text-align: center;">{{lookupprocessstatus.numberIndex+i+1}}</td>
+                                    <td style="width: 100%;">{{ row.description }}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowProcessStatus(row.description)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup process status -->

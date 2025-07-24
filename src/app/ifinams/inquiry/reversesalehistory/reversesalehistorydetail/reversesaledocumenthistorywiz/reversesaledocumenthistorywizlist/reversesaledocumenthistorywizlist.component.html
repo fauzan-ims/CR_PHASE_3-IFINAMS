@@ -1,0 +1,29 @@
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body">
+
+                <!--#region wizard container-->
+                <div class="nav-tabs-navigation">
+                    <ul id="tabs1" class="nav nav-pills nav-justified" role="tablist">
+                        <li class="nav-item" id="SaleDoct">
+                            <a class="nav-link" (click)="SaleDoctWiz()" href="#saledocumentlist" data-toggle="tab"
+                                role="tab" aria-controls="saledocumentlist" aria-selected="true">
+                                Sell Document
+                            </a>
+                        </li>
+                        <li class="nav-item" id="ReversDoct">
+                            <a class="nav-link" (click)="ReverseDoctWiz()" href="#reversedocumentlist" data-toggle="tab"
+                                role="tab" aria-controls="reversedocumentlist" aria-selected="true">
+                                Reverse Document
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <router-outlet></router-outlet>
+                <!--#endregion wizard container-->
+            </div>
+        </div>
+    </div>
+</div>

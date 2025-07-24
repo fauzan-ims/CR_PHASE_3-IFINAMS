@@ -1,0 +1,169 @@
+<div class="main-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12 buttons btn-lookup-margin">
+      <div class="card ">
+        <!--#region watermark-->
+        <div class="watermark" [hidden]="this.isWatermark === '0'">
+          <h6>{{this.companyName}}</h6>
+          <h6>{{this.userName}}</h6>
+          <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+        </div>
+        <!--#endregion watermark-->
+        <div class="card-header ">
+          <h5 class="card-title">Pricing Detail Info</h5>
+        </div>
+        <div class="card-body ">
+          <!--#region form-->
+          <form #pricingrequestdetailForm="ngForm"
+            (ngSubmit)="onFormSubmit(pricingrequestdetailForm.value, pricingrequestdetailForm.valid)">
+
+            <!--#region button submit dan back-->
+            <button hidden type="submit" class="btn btn-info btn-round" data-role="R00022290002230C">Save</button>
+            <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+            <!--#endregion button submit dan back-->
+
+            <!--#region row-->
+            <div class="row">
+              <!--#region general_code-->
+              <input hidden type="text" [ngModel]="this.params" name="p_id">
+              <!--#endregion general_code-->
+
+              <!--#region code-->
+              <div class="col-md-4" hidden>
+                <div class="form-group">
+                  <label for="asset_code" class="control-label">Code</label>
+                  <input type="text" autocomplete='off' class="form-control" [ngModel]="model.asset_code" maxlength="50"
+                    name="p_code" [readonly]="isReadOnly" required #asset_code="ngModel">
+                  <small
+                    *ngIf="(asset_code.errors?.required && asset_code.touched) || (asset_code.errors?.required && pricingrequestdetailForm.submitted)"
+                    class="text-danger">
+                    Code is required
+                  </small>
+                </div>
+              </div>
+              <!--#endregion code-->
+
+              <!--#region asset_code-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="asset_code" class="control-label">Asset Code</label>
+                  <input type="text" class="form-control" [ngModel]="model.asset_code" name="p_asset_code" disabled>
+                </div>
+              </div>
+              <!--#endregion asset_code-->
+
+              <!--#region item_name-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="item_name" class="control-label">Item Name</label>
+                  <input type="text" class="form-control" [ngModel]="model.item_name" name="p_item_name" disabled>
+                </div>
+              </div>
+              <!--#endregion item_name-->
+
+              <!--#region pricelist_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="pricelist_amount" class="control-label">Last Price</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.pricelist_amount | number : '1.2-2'" maxlength="24" amount="pricelist_amount"
+                    name="p_pricelist_amount" #pricelist_amount="ngModel" readonly>
+                </div>
+              </div>
+              <!--#endregion pricelist_amount-->
+
+              <!--#region net_book_value_fiscal-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="net_book_value_fiscal" class="control-label">Net Book Value Fiscal</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.net_book_value_fiscal | number : '1.2-2'" maxlength="24"
+                    amount="net_book_value_fiscal" name="p_net_book_value_fiscal" #net_book_value_fiscal="ngModel"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion net_book_value_fiscal-->
+
+              <!--#region net_book_value_comm-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="net_book_value_comm" class="control-label">Net Book Value Commercial</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.net_book_value_comm | number : '1.2-2'" maxlength="24" amount="net_book_value_comm"
+                    name="p_net_book_value_comm" #net_book_value_comm="ngModel" readonly>
+                </div>
+              </div>
+              <!--#endregion net_book_value_comm-->
+
+              <!--#region request_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="request_amount" class="control-label">Request Amount</label>
+                  <input type="text" readonly class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.request_amount | number : '1.2-2'" maxlength="24" amount="request_amount"
+                    name="p_request_amount" #request_amount="ngModel">
+                </div>
+              </div>
+              <!--#endregion request_amount-->
+
+              <!--#region approve_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="approve_amount" class="control-label">Approve Amount</label>
+                  <input type="text" readonly class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.approve_amount | number : '1.2-2'" maxlength="24" amount="approve_amount"
+                    name="p_approve_amount" #approve_amount="ngModel">
+                </div>
+              </div>
+              <!--#endregion approve_amount-->
+
+              <!--#region pricing_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="pricing_amount" class="control-label">Pricing Amount</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.pricing_amount | number : '1.2-2'" maxlength="24" amount="pricing_amount"
+                    name="p_pricing_amount" #pricing_amount="ngModel" readonly>
+                </div>
+              </div>
+              <!--#endregion pricing_amount-->
+
+              <!--#region estimate_gain_loss_pct-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="estimate_gain_loss_pct" class="control-label">Estimate Gain Loss (%)</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.estimate_gain_loss_pct | number : '1.6-6'" maxlength="24"
+                    amount="estimate_gain_loss_pct" name="p_estimate_gain_loss_pct" #estimate_gain_loss_pct="ngModel"
+                    readonly>
+                </div>
+              </div>
+              <!--#endregion estimate_gain_loss_pct-->
+
+              <!--#region estimate_gain_loss_amount-->
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="estimate_gain_loss_amount" class="control-label">Estimate Gain Loss Amount</label>
+                  <input type="text" class="form-control col-md-6" style="text-align: right;"
+                    [ngModel]="model.estimate_gain_loss_amount | number : '1.2-2'" maxlength="24"
+                    amount="estimate_gain_loss_amount" name="p_estimate_gain_loss_amount"
+                    #estimate_gain_loss_amount="ngModel" readonly>
+                </div>
+              </div>
+              <!--#endregion estimate_gain_loss_amount-->
+            </div>
+            <!--#endregion row -->
+          </form>
+          <!--#endregion form-->
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

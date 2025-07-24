@@ -1,0 +1,123 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card"> -->
+            <div class="card-body">
+                <div class="toolbar" [hidden]="isStatus">
+                    <!--#region button add-->
+                    <button class="btn btn-info btn-round" type="button" (click)="btnLookupGeneralSubCode()"
+                        data-target="#lookupModalGeneralSubCode" data-role="R00022320042232C" data-toggle="modal"
+                        href="#">
+                        Add</button>
+                    <button class="btn btn-danger btn-round" (click)="btnDeleteAll()" data-role="R00022320022232D">
+                        Delete
+                    </button>
+                    <button id="Servicelist" type="button" class="btn btn-danger btn-round" (click)="this.callGetrow()"
+                        hidden></button>
+                    <!--#endregion button add, delete-->
+                </div>
+
+                <!--#registerdetail list view-->
+                <table id="datatabless" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th class="disabled-sorting" [hidden]="isStatus">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" id="checkall"
+                                            [(ngModel)]="selectedAll" (change)="selectAllTable();" />
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </th>
+                            <th style="width: 90%;">Service Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listregisterdetail; let i=index">
+                            <td style="text-align: center;">{{listregisterdetail.numberIndex+i+1}}</td>
+                            <td class="disabled-sorting" [hidden]="isStatus">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                                            (change)="checkIfAllTableSelected($event, row.id);">
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td style="text-align: left;width: 100%" class="if-no-edit-btn">{{row.service_name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion registerdetail list view-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+<!--#region lookup register detail level positon-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalGeneralSubCode"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+
+                        <!--#region button add-->
+                        <button class="btn btn-info btn-round" (click)="btnSelectAllLookup()" role="R00008310000000C"
+                            id="button">
+                            add
+                        </button>
+                        <!--#endregion button add--->
+                        <table id="datatableLookupGeneralSubCode" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th class="disabled-sorting">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" id="checkallLookup"
+                                                    [(ngModel)]="selectedAllLookup" (change)="selectAllLookup();" />
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>Service Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupgeneralsubcode; let i=index">
+                                    <td style="text-align: center;">{{lookupgeneralsubcode.numberIndex+i+1}}</td>
+                                    <td class="disabled-sorting">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [(ngModel)]="row.selectedLookup"
+                                                    (change)="checkIfAllLookupSelected($event, row.code);">
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td class="if-no-edit-btn" style="text-align: left;width: 100%">{{ row.description
+                                        }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup message-->

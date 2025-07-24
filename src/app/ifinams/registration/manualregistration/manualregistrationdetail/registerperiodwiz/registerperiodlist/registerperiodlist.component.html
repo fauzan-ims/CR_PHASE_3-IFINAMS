@@ -1,0 +1,88 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="toolbar" [hidden]="model.register_status !== 'HOLD' || isReadOnly">
+        <!--#region button add, delete-->
+        <button id="reloadWiz" class="btn btn-info btn-round" (click)="this.ngOnInit()" hidden
+          data-role="R00022030012208C">
+          Reload
+        </button>
+        <button class="btn btn-info btn-round" (click)="btnAdd()" data-role="R00022030012206C">
+          Add
+        </button>
+        <button [hidden]="model.register_status !== 'HOLD'" class="btn btn-info btn-round" (click)="btnSaveList()"
+          data-role="R00022030012209C">
+          Save
+        </button>
+        <button class="btn btn-danger btn-round" (click)="btnDeleteAll()" data-role="R00022030012207D">
+          Delete
+        </button>
+        <!--#endregion button add, delete-->
+      </div>
+
+      <!--#region List view-->
+      <table id="datatables" datatable [dtOptions]="dtOptions"
+        class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th class="disabled-sorting">No</th>
+            <th class="disabled-sorting" [hidden]="model.register_status !== 'HOLD' || isReadOnly">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" id="checkall" [(ngModel)]="selectedAll"
+                    (change)="selectAllTable();" />
+                  <span class="form-check-sign"></span>
+                </label>
+              </div>
+            </th>
+            <th>Period (Year)</th>
+            <th>Sum Insured</th>
+            <th>Coverage</th>
+            <th>Main Coverage</th>
+            <!-- <th class="text-center">Action</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of listregisterperiod; let i=index">
+            <td style="text-align: center;">{{listregisterperiod.numberIndex+i+1}}</td>
+            <td class="disabled-sorting" [hidden]="model.register_status !== 'HOLD' || isReadOnly">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                    (change)="checkIfAllTableSelected($event, row.id);">
+                  <span class="form-check-sign"></span>
+                </label>
+              </div>
+              <input type="hidden" value="{{row.id}}" name="p_id_detail">
+            </td>
+            <td class="if-no-edit-btn" style="width: 15%;text-align: center;">{{row.year_periode}}</td>
+            <td style="width: 25%;text-align: right;">{{row.sum_insured_amount | number : '1.2-2'}}</td>
+            <!-- <td style="text-align: right; width: 25%;">
+              <div class="form-group">
+                <input id="sum_insured{{i}}" (blur)="onBlur($event,i,'amount','sum_insured')"
+                  (focus)="onFocus($event,i,'amount','sum_insured')" class="text-right" type="text"
+                  value="{{row.sum_insured | number : '1.2-2'}}" amount="sum_insured" name="p_sum_insured"
+                  [disabled]="row.is_main_coverage == 'Yes' || model.register_status !== 'HOLD' || row.coverage_short_name !== 'PERSPASS' && row.coverage_short_name !== 'PERSDRI' && row.coverage_short_name !== 'TPL'">
+              </div>
+            </td> -->
+            <td style="width: 45%;">{{row.coverage_name}}</td>
+            <td style="width: 15%;text-align: center;">{{row.is_main_coverage}}</td>
+            <!-- <td style="text-align: center;">
+              <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit" (click)="btnEdit(row.id)"><i
+                  class="fa fa-edit"></i></a>
+            </td> -->
+          </tr>
+        </tbody>
+      </table>
+      <!--#endregion List view-->
+    </div>
+  </div>
+</div>

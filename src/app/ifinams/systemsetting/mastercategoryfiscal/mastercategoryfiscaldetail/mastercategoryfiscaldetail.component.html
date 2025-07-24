@@ -1,0 +1,153 @@
+<div class="main-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card ">
+                <!--#region watermark-->
+                <div class="watermark" [hidden]="this.isWatermark === '0'">
+                    <h6>{{this.companyName}}</h6>
+                    <h6>{{this.userName}}</h6>
+                    <h6>{{this.sysDate | date}} {{this.currentTime}}</h6>
+                </div>
+                <!--#endregion watermark-->
+                <div class="card-header ">
+                    <h5 class="card-title">Category Fiscal Info</h5>
+                </div>
+                <div class="card-body">
+                    <!--#region form-->
+                    <form #MasterCategoryfiscalForm="ngForm"
+                        (ngSubmit)="onFormSubmit(MasterCategoryfiscalForm.value, MasterCategoryfiscalForm.valid)">
+                        <!--#region button-->
+                        <button type="submit" class="btn btn-info btn-round" data-role="R00021260012126C">Save</button>
+                        <button [hidden]="this.param == null" class="btn btn-success btn-round col-md-4" type="button"
+                            (click)="btnActive(model.code)" data-role="R00021260002126U">
+                            <span [hidden]="model.is_active === true || this.param == null">Active</span>
+                            <span [hidden]="model.is_active === false || this.param == null">Inactive</span>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                        <!--#endregion button-->
+
+                        <!--#region div-->
+                        <div class="row">
+                            <!--#region company_code-->
+                            <input type="hidden" class="form-control" [ngModel]="model.company_code"
+                                name="p_company_code" #company_code="ngModel">
+                            <!--#endregion company_code-->
+
+                            <!--#region code-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="code" class="control-label">Code *</label>
+                                    <input type="text" class="form-control" [ngModel]="model.code" name="p_code"
+                                        [readonly]="isReadOnly" required #code="ngModel" maxlength="10">
+                                    <small
+                                        *ngIf="(code.errors?.required && code.touched) || (code.errors?.required && MasterCategoryfiscalForm.submitted)"
+                                        class="text-danger">
+                                        Code is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion code-->
+
+                            <!--#region Description-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="description" class="control-label">Description *</label>
+                                    <textarea type="text" class="form-control" [ngModel]="model.description"
+                                        maxlength="250" name="p_description" required
+                                        #description="ngModel"> </textarea>
+                                    <small
+                                        *ngIf="(description.errors?.required && description.touched) || (description.errors?.required && MasterCategoryfiscalForm.submitted)"
+                                        class="text-danger">
+                                        Description is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion Description-->
+
+                            <!--#region radio button method_type-->
+                            <div class="col-md-4">
+                                <label>Method Type *</label>
+                                <div class="form-group col-md-12" (change)="changeMethodType($event)">
+                                    <div class="row">
+                                        <div class="form-check-radio form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="radio" name="p_method_type"
+                                                    value="SL" required [(ngModel)]="model.method_type">Straight Line
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                        <div class="form-check-radio form-check-inline">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="radio" name="p_method_type"
+                                                    value="RB" required [(ngModel)]="model.method_type">Double Declining
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion radio button method_type-->
+
+                            <!--#region usefull-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="usefull" class="control-label">Usefull *</label>
+                                    <input type="text" class="form-control col-md-3" [ngModel]="model.usefull"
+                                        name="p_usefull" required #usefull="ngModel" maxlength="5"
+                                        pattern="{{NumberOnlyPattern}}">
+                                    <small
+                                        *ngIf="usefull.errors?.required && usefull.touched || (usefull.errors?.required && MasterCategoryfiscalForm.submitted)"
+                                        class="text-danger">
+                                        Usefull is required
+                                    </small>
+                                    <small *ngIf="usefull.errors?.pattern && usefull.touched" class="text-danger">
+                                        Usefull is required and format should be <i>0-9</i>
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion usefull-->
+
+                            <!--#region rate-->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="rate" class="control-label">Rate *</label>
+                                    <input type="text" class="form-control col-md-6" style="text-align: right;"
+                                        [ngModel]="model.rate | number : '1.6-6'" required name="p_rate" #rate="ngModel"
+                                        maxlength="23" rate="rate">
+                                    <small
+                                        *ngIf="(rate.errors?.required && rate.touched) || (rate.errors?.required && MasterCategoryfiscalForm.submitted)"
+                                        class="text-danger">
+                                        Rate is required
+                                    </small>
+                                </div>
+                            </div>
+                            <!--#endregion rate-->
+
+                            <!--#region is_active-->
+                            <div class="col-md-4">
+                                <div class="form-check mt-3" style="margin-left: -35px;">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="checkbox" [ngModel]="model.is_active"
+                                                name="p_is_active" disabled>
+                                            Active
+                                            <span class="form-check-sign"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--#endregion is_active-->
+                        </div>
+                        <!--#endregion div-->
+                    </form>
+                    <!--#endregion form-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

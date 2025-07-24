@@ -1,0 +1,156 @@
+<router-outlet></router-outlet>
+<!-- spinner region -->
+<div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+</div>
+<!-- end spinner region -->
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card"> -->
+            <div class="card-body">
+                <div class="toolbar">
+                    <!--#region button-->
+                    <button class="btn btn-info btn-round" (click)="btnLookupDocumentGroup()" [hidden]="this.tampHiddenStatus"
+                        data-role="R00021880042188C" data-target="#lookupDocumentGroupDetail" data-toggle="modal"
+                        href="#">
+                        Add </button>
+                    <button type="submit" hidden data-role="R00021880052188C" class="btn btn-info btn-round"
+                        (click)="btnSaveList()">
+                        Save
+                    </button>
+                    <button [hidden]="this.param == null || this.tampHiddenStatus" class="btn btn-danger btn-round"
+                        data-role="R00021880012188D" (click)="btnDeleteAll()">
+                        Delete
+                    </button>
+                    <button hidden id="docdetailwiz" type="button" (click)="callGetrowHeader()"></button>
+                    <!--#endregion button-->
+                </div>
+
+                <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                <!--#region list view-->
+                <table id="datatableDocument" datatable [dtOptions]="dtOptions"
+                    class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="disabled-sorting">No</th>
+                            <th class="disabled-sorting">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" id="checkall"
+                                            [(ngModel)]="selectedAll" (change)="selectAll();" />
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                            </th>
+                            <th>Document</th>
+                            <th>File Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of listdhandoverassetdocument; let i=index">
+                            <td style="text-align: center;">{{listdhandoverassetdocument.numberIndex+i+1}}</td>
+                            <td class="disabled-sorting">
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                                            (change)="checkIfAllTableSelected($event, row.id);">
+                                        <span class="form-check-sign"></span>
+                                    </label>
+                                </div>
+                                <input hidden name="p_id" [ngModel]="row.id">
+                            </td>
+                            <td style="width: 50%;text-align: left;">{{row.document_name}}</td>
+                            <td style="width: 50%;">
+                                <input type="file" [hidden]="row.file_name != '' || pageType !=null"
+                                    (change)="onUpload($event, row.id)" />
+                                <a>{{row.file_name}}</a>
+                            </td>
+                            <td style="text-align: center;" class="if-no-edit-btn">
+                                <span>
+                                    <a [hidden]="row.file_name == '' || row.file_name == null"
+                                        (click)="previewFile(row.file_name, row.file_path)" style="cursor: pointer;">
+                                        Preview</a> <br> <br>
+                                    <a [hidden]="row.file_name == '' || row.file_name == null"
+                                        (click)="deleteImage(row.id, row.file_name, row.file_path)"
+                                        style="cursor: pointer;">
+                                        Remove</a>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--#endregion list view-->
+            </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+
+<!--#region lookup Document Group-->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupDocumentGroupDetail"
+    style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" (click)="btnLookupClose()" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12">
+                        <!--#region form-->
+                        <!-- <form #DocumetGroupDetailForm="ngForm"
+                            (ngSubmit)="onFormSubmit(DocumetGroupDetailForm.value, DocumetGroupDetailForm.valid)">
+                        </form> -->
+                        <!--#endregion form-->
+
+                        <!--#region button add //data-role="R0000041U"-->
+                        <button class="btn btn-info btn-round" (click)="btnSelectAllLookup()"
+                            data-role="R00021880052189C">
+                            Add
+                        </button>
+                        <!--#endregion button add--->
+
+                        <table id="datatableDocumentGroupDetail" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th class="disabled-sorting">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" id="checkallLookup"
+                                                    [(ngModel)]="selectedAllLookup" (change)="selectAllLookup();" />
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupDocumentGroupDetail;  let i=index">
+                                    <td style="text-align: center;">{{lookupDocumentGroupDetail.numberIndex+i+1}}</td>
+                                    <td>
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox"
+                                                    [(ngModel)]="row.selectedLookup"
+                                                    (change)="checkIfAllLookupSelected($event, row.code);">
+                                                <span class="form-check-sign"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: left;width: 100%;">{{ row.document_name }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Document Group-->

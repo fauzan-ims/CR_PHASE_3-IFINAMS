@@ -1,0 +1,139 @@
+<div class="main-content margin-wizard-content">
+    <!-- spinner region -->
+    <div class="panel-container-spinner" *ngIf="showSpinner">
+        <app-spinner class="spinner-container"></app-spinner>
+    </div>
+    <!-- end spinner region -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-body ">
+                <!--#region form-->
+                <form #SaleBiddingDetailForm="ngForm"
+                    (ngSubmit)="onFormSubmit(SaleBiddingDetailForm.value, SaleBiddingDetailForm.valid)">
+
+                    <!--#region button save dan back-->
+                    <button type="submit" class="btn btn-info btn-round" data-role="R00021720062172C">Save</button>
+                    <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
+                    <!--#endregion button save dan back-->
+
+                    <!--#region row-->
+                    <div class="row">
+                        <input type="text" [ngModel]="model.status" name="p_status" hidden>
+
+                        <!--#region bidding_code-->
+                        <input hidden type="text" [ngModel]="this.param" name="p_sale_code">
+                        <input hidden type="text" [ngModel]="this.params" name="p_bidding_code">
+                        <!--#endregion bidding_code-->
+
+                        <!--#region p_id-->
+                        <!-- <input hidden type="text" [ngModel]="this.paramss" name="p_buy_type"> -->
+                        <input hidden type="text" [ngModel]="this.paramss" name="p_id">
+                        <!--#endregion p_id-->
+
+                        <!--#region branch_code-->
+                        <input type="hidden" class="form-control" [ngModel]="model.branch_code" name="p_branch_code"
+                            #branch_code="ngModel">
+                        <!--#endregion branch_code-->
+
+                        <!--#region Lookup asset_code-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="asset_code" class="control-label" (click)="btnClearAsset()"
+                                    style="cursor: pointer;" title="Clear">Asset *</label>
+                                <div class="col-md-12 buttons">
+                                    <span>
+                                        <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
+                                            (click)="btnLookupAsset()" data-toggle="modal"
+                                            data-target="#lookupModalAsset" href="#"><i
+                                                class="fa fa-search-plus"></i></button>
+                                        {{model.asset_name}}
+                                        <input type="hidden" class="form-control" [ngModel]="model.asset_code"
+                                            name="p_asset_code" required #asset_code="ngModel">
+                                        <input type="hidden" class="form-control" [ngModel]="model.asset_name"
+                                            name="p_asset_name" #asset_name="ngModel">
+                                    </span>
+                                </div>
+                                <small
+                                    [hidden]="asset_code.valid || (asset_code.pristine && !SaleBiddingDetailForm.submitted)"
+                                    class="text-danger">
+                                    Asset is required
+                                </small>
+                            </div>
+                        </div>
+                        <!--#endregion Lookup location_code-->
+
+                        <!--#region sale_amount-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="sale_amount" class="control-label">Sell Amount
+                                </label>
+                                <div class="col-md-6" style="margin-left: -15px;">
+                                    <input [readonly]="this.paramss === 'By Batch'" type="text" style="text-align:right"
+                                        class="form-control"
+                                        [ngModel]="model.sale_amount_bidding_detail | number : '1.2-2'"
+                                        amount="sale_amount" name="p_sale_amount" #sale_amount="ngModel">
+                                </div>
+                            </div>
+                        </div>
+                        <!--#endregion sale_amount-->
+
+                        <!--#region description-->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="description" class="control-label">Description</label>
+                                <textarea readonly type="text" class="form-control"
+                                    [ngModel]="model.description_bidding_detail" name="p_description"
+                                    #description="ngModel" maxlength="4000"></textarea>
+                            </div>
+                        </div>
+                        <!--#endregion description-->
+                    </div>
+                    <!--#endregion row-->
+                </form>
+                <!--#endregion form-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--#region lookup ASset -->
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalAsset" style="margin-top: -65px">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" style="overflow:hidden;">
+                <div class="col-md-12">
+                    <div class="card-body col-md-12" style="width: 100%">
+                        <table id="datatableLookupAsset" class="table table-striped table-bordered hover"
+                            cellspacing="0" style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="disabled-sorting">No</th>
+                                    <th style="display: none;"></th>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of lookupAsset;let i=index">
+                                    <td style="text-align: center;">{{lookupAsset.numberIndex+i+1}}</td>
+                                    <td class="if-no-edit-btn" style="display: none;"></td>
+                                    <td style="width: 30%; text-align: center;">{{row.asset_code}}</td>
+                                    <td style="width: 70%; text-align: left;">{{row.item_name}}</td>
+                                    <td class="text-right">
+                                        <button class="btn btn-outline-default btn-round"
+                                            (click)="btnSelectRowAsset(row.asset_code, row.item_name, row.description_detail_lookup, row.sale_value)">Select</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--#endregion lookup Asset-->

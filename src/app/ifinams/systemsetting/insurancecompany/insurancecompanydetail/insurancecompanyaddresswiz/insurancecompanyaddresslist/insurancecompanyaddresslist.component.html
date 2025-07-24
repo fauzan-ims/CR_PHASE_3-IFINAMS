@@ -1,0 +1,73 @@
+<router-outlet></router-outlet>
+
+
+<div id="hideMainPanelWiz" class="main-content margin-wizard-content">
+  <!-- spinner region -->
+  <div class="panel-container-spinner" *ngIf="showSpinner">
+    <app-spinner class="spinner-container"></app-spinner>
+  </div>
+  <!-- end spinner region -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="toolbar">
+        <!--#region button add, delete-->
+        <button class="btn btn-info btn-round" (click)="btnAdd()" data-role="R00021390022139C">
+          Add
+        </button>
+        <button class="btn btn-danger btn-round" (click)="btnDeleteAll()" data-role="R00021390002140D">
+          Delete
+        </button>
+        <!--#endregion button add, delete-->
+      </div>
+
+      <!--#region list view-->
+      <table id="datatables" datatable [dtOptions]="dtOptions"
+        class="table table-striped table-bordered row-border hover" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th class="disabled-sorting">No</th>
+            <th class="disabled-sorting checkbox-fix-padding">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" id="checkall" [(ngModel)]="selectedAll"
+                    (change)="selectAllTable();" />
+                  <span class="form-check-sign"></span>
+                </label>
+              </div>
+            </th>
+            <th>Address</th>
+            <th>Province</th>
+            <th>City</th>
+            <th>Zip Code</th>
+            <th>Latest</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of listinsurancecompanyaddress; let i=index">
+            <td style="text-align: center;">{{listinsurancecompanyaddress.numberIndex+i+1}}</td>
+            <td class="disabled-sorting checkbox-fix-padding">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" [(ngModel)]="row.selected"
+                    (change)="checkIfAllTableSelected($event, row.id);">
+                  <span class="form-check-sign"></span>
+                </label>
+              </div>
+            </td>
+            <td style="width: 35%;">{{row.address}}</td>
+            <td style="width: 20%;">{{row.province_name}}</td>
+            <td style="width: 20%;">{{row.city_name}}</td>
+            <td style="width: 15%;text-align: center;">{{row.zip_name}}</td>
+            <td style="width: 10%;text-align: center;">{{row.is_latest}}</td>
+            <td style="text-align: center;">
+              <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit" (click)="btnEdit(row.id)"><i
+                  class="fa fa-edit"></i></a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!--#endregion list view-->
+    </div>
+  </div>
+</div>

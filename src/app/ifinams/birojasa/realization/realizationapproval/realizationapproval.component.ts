@@ -26,6 +26,7 @@ export class RealizationapprovalComponent extends BaseComponent implements OnIni
     public isCancle: Boolean = false;
     public tempFile: any;
     public lookupbank: any = [];
+    public LookupTax: any = [];
     private tampDocumentCode: String;
     private base64textString: string;
     private tamps = new Array();

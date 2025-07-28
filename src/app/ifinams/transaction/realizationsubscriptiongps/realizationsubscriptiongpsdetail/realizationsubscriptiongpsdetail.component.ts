@@ -95,7 +95,7 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
         this.Delimiter(this._elementRef);
         if (this.param != null) {
             if (this.model != 'HOLD'){
-                this.isReadOnly = true;
+                this.isReadOnly = false;
             }
             this.callGetrow();
         } else {
@@ -123,7 +123,8 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
                     // mapper dbtoui
                     Object.assign(this.model, parsedata);
                     // end mapper dbtoui
-                    console.log(this.model)
+                    // console.log(this.model)
+                    console.log(this.model.realization_date) 
 
                     this.showSpinner = false;
                 },
@@ -135,7 +136,7 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
 
     //#region button back
     btnBack() {
-        this.route.navigate(['/transaction/submonitoringgpslist']);
+        this.route.navigate(['/transaction/subrealizationsubscriptiongpslist']);
         $('#datatable').DataTable().ajax.reload();
     }
     //#endregion button back
@@ -417,7 +418,7 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
     //#endregion Tax lookup
 
     //#region onBlur
-    onBlur(event, i, type) {
+    onBlur(event, type) {
         // if (event.target.value.match('[A-Za-z]')) {
         //   event.target.value = 0;
         // }
@@ -452,13 +453,13 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
             event = parseFloat(event).toFixed(2);
         }
 
-        if (type === 'amount') {
-            $('#dp_to_public_service_amount' + i)
-                .map(function () { return $(this).val(event); }).get();
-        } else {
-            $('#dp_to_public_service_pct' + i)
-                .map(function () { return $(this).val(event); }).get();
-        }
+        // if (type === 'amount') {
+        //     $('#dp_to_public_service_amount' + i)
+        //         .map(function () { return $(this).val(event); }).get();
+        // } else {
+        //     $('#dp_to_public_service_pct' + i)
+        //         .map(function () { return $(this).val(event); }).get();
+        // }
     }
     //#endregion onBlur
 
@@ -755,6 +756,51 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
             if (result.value) {
                 // call web service
                 this.dalservice.ExecSp(this.dataRoleTamp, this.APIController, this.APIRouteForProceedApproval)
+                    .subscribe(
+                        res => {
+                            this.showSpinner = false;
+                            const parse = JSON.parse(res);
+                            if (parse.result === 1) {
+                                this.showNotification('bottom', 'right', 'success');
+                                this.callGetrow();
+                            } else {
+                                this.swalPopUpMsg(parse.data);
+                            }
+                        },
+                        error => {
+                            this.showSpinner = false;
+                            const parse = JSON.parse(error);
+                            this.swalPopUpMsg(parse.data);
+                        });
+            } else {
+                this.showSpinner = false;
+            }
+        });
+    }
+    //#endregion button proceed
+
+    //#region button proceed
+    btnCancel() {
+        // param tambahan untuk button Proceed dynamic
+        this.dataRoleTamp = [{
+            'p_code': this.param,
+            'action': ''
+        }];
+        // param tambahan untuk button Proceed dynamic
+
+        swal({
+            title: 'Are you sure?',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger',
+            confirmButtonText: this._deleteconf,
+            buttonsStyling: false
+        }).then((result) => {
+            this.showSpinner = true;
+            if (result.value) {
+                // call web service
+                this.dalservice.ExecSp(this.dataRoleTamp, this.APIController, this.APIRouteForCancel)
                     .subscribe(
                         res => {
                             this.showSpinner = false;

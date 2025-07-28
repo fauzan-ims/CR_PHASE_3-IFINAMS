@@ -415,7 +415,7 @@
 </div>
 
 <!--#region lookup bank-->
-<!-- <div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBank" style="margin-top: -65px">
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalBank" style="margin-top: -65px">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -453,11 +453,11 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 <!--#endregion lookup bank-->
 
 <!--#region lookup Tax-->
-<!-- <div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTax" style="margin-top: -65px">
+<div class="modal bd-example-modal-lg" tabindex="-1" aria-hidden="true" id="lookupModalTax" style="margin-top: -65px">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -479,9 +479,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let row of lookupTax;let i=index ">
+                                <tr *ngFor="let row of LookupTax;let i=index ">
                                     <td class="if-no-edit-btn" style="display: none;"></td>
-                                    <td style="text-align: center;">{{lookupTax.numberIndex+i+1}}</td>
+                                    <td style="text-align: center;">{{LookupTax.numberIndex+i+1}}</td>
                                     <td style="width: 70%;">{{ row.name }}</td>
                                     <td style="width: 15%;">{{ row.ppn_pct | number : '1.6-6'}}</td>
                                     <td style="width: 15%;">{{ row.pph_pct | number : '1.6-6'}}</td>
@@ -497,5 +497,5 @@
             </div>
         </div>
     </div>
-</div> -->
+</div>
 <!--#endregion lookup Tax -->

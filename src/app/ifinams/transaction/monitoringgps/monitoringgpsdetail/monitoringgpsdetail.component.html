@@ -144,7 +144,7 @@
                                     <label for="paid_date" class="control-label">First Payment Date</label>
                                     <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
                                         [ngModel]="model.paid_date" name="paid_date"  readonly 
-                                        [ngStyle]="getStyles()"
+                                        [options]="myDatePickerOptions" [ngStyle]="getStyles()"
                                         (click)="paid_date.toggleCalendar()" #paid_date="ngModel"
                                         #paid_date="angular-mydatepicker" autocomplete="off" />
                                 </div>

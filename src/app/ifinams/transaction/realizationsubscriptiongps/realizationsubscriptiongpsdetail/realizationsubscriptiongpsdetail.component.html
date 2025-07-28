@@ -19,23 +19,25 @@
                 </div>
                 <div class="card-body ">
                     <!--#region form-->
-                    <form #RealizationSubscriptionGpsForm="ngForm" (ngSubmit)="onFormSubmit(RealizationSubscriptionGpsForm.value, RealizationSubscriptionGpsForm.valid)">
+                    <form #RealizationSubscriptionGpsForm="ngForm"
+                        (ngSubmit)="onFormSubmit(RealizationSubscriptionGpsForm.value, RealizationSubscriptionGpsForm.valid)">
                         <!--#region button-->
-                        <button type="submit" class="btn btn-info btn-round" [hidden]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"
+                        <button type="submit" class="btn btn-info btn-round"
+                            [hidden]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"
                             data-role="R00024730000002C">Save</button>
-                        <button type="button"
-                            class="btn btn-success btn-round custom-button-width" (click)="btnProceed(RealizationSubscriptionGpsForm.value, RealizationSubscriptionGpsForm.valid)"
-                            data-role="R00024730000003O" [hidden]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
+                        <button type="button" class="btn btn-success btn-round custom-button-width"
+                            (click)="btnProceed(RealizationSubscriptionGpsForm.value, RealizationSubscriptionGpsForm.valid)"
+                            data-role="R00024730000003O"
+                            [hidden]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
                             Proceed</button>
-                        <button type="button"
-                            class="btn btn-warning btn-round custom-button-width" (click)="btnCancel()"
-                            data-role="R00024730000004R">Cancel Payment</button>
+                        <button type="button" class="btn btn-warning btn-round custom-button-width"
+                            (click)="btnCancel()" data-role="R00024730000004R">Cancel Payment</button>
 
                         <button type="button" class="btn btn-danger btn-round" (click)="btnBack()">Back</button>
 
-                        <button
-                            type="button" style='float: right;' class="btn btn-success btn-round custom-button-width"
-                            (click)="btnViewApproval()" data-toggle="modal" data-target="#lookupModalApproval" href="#">
+                        <button type="button" style='float: right;'
+                            class="btn btn-success btn-round custom-button-width" (click)="btnViewApproval()"
+                            data-toggle="modal" data-target="#lookupModalApproval" href="#">
                             View Approval
                         </button>
                         <!--#endregion button-->
@@ -46,9 +48,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Realization No</label>
-                                    <input type="text" class="form-control" 
-                                        [ngModel]="model.realization_no" name="p_realization_no" readonly 
-                                        #realization_no="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.realization_no"
+                                        name="p_realization_no" readonly #realization_no="ngModel" />
                                 </div>
                             </div>
                             <!--#endregion asset code-->
@@ -58,8 +59,8 @@
                                 <div class="form-group col-md-8" style="margin-left: -15px;">
                                     <label for="payment_date" class="control-label">Payment Date</label>
                                     <input class="form-control col-md-6" placeholder="dd/mm/yyyy" angular-mydatepicker
-                                        [ngModel]="model.payment_date" name="p_payment_date" 
-                                        readonly [options]="myDatePickerOptions" [ngStyle]="getStyles(isReadOnly)"
+                                        [ngModel]="model.payment_date" name="p_payment_date" readonly
+                                        [options]="myDatePickerOptions" [ngStyle]="getStyles(isReadOnly)"
                                         (click)="payment_date.toggleCalendar()" #p_payment_date="ngModel"
                                         #payment_date="angular-mydatepicker" autocomplete="off" />
                                 </div>
@@ -70,9 +71,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <input type="text" class="form-control"
-                                        [ngModel]="model.status" name="p_status" readonly 
-                                        #status="ngModel"/>
+                                    <input type="text" class="form-control" [ngModel]="model.status" name="p_status"
+                                        readonly #status="ngModel" />
                                 </div>
                             </div>
                             <!--#endregion status-->
@@ -86,13 +86,13 @@
                                 </div>
                             </div>
                             <!--#endregion asset code-->
-                            
+
                             <!--#region asset_name-->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="item_name" class="control-label">Asset Name</label>
-                                    <input type="text" class="form-control" [ngModel]="model.item_name" name="p_item_name"
-                                        readonly #item_name="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.item_name"
+                                        name="p_item_name" readonly #item_name="ngModel" />
                                 </div>
                             </div>
                             <!--#endregion asset_name-->
@@ -101,13 +101,12 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="remark" class="control-label">Remarks</label>
-                                    <textarea type="text" class="form-control"
-                                        [ngModel]="model.remark" name="p_remark" #remark="ngModel" readonly
-                                        maxlength="4000"></textarea>
+                                    <textarea type="text" class="form-control" [ngModel]="model.remark" name="p_remark"
+                                        #remark="ngModel" readonly maxlength="4000"></textarea>
                                 </div>
                             </div>
                             <!--#endregion remarks-->
-                            
+
                             <!--#region plat_no-->
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -122,32 +121,32 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="engine_no" class="control-label">Engine No</label>
-                                    <input type="text" class="form-control" [ngModel]="model.engine_no" name="p_engine_no"
-                                        readonly #engine_no="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.engine_no"
+                                        name="p_engine_no" readonly #engine_no="ngModel" />
                                 </div>
                             </div>
                             <!--#endregion engine_no-->
-                            
+
                             <!--#region chasis_no-->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="chassis_no" class="control-label">Chasis No</label>
-                                    <input type="text" class="form-control" [ngModel]="model.chassis_no" name="p_chassis_no"
-                                        readonly #chassis_no="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.chassis_no"
+                                        name="p_chassis_no" readonly #chassis_no="ngModel" />
                                 </div>
                             </div>
                             <!--#endregion chasis_no-->
-                            
+
                             <!--#region agreement_no-->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="agreement_external_no" class="control-label">Agreement No</label>
-                                    <input type="text" class="form-control" [ngModel]="model.agreement_external_no" name="p_agreement_external_no"
-                                        readonly #agreement_external_no="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.agreement_external_no"
+                                        name="p_agreement_external_no" readonly #agreement_external_no="ngModel" />
                                 </div>
                             </div>
                             <!--#endregion agreement_no-->
-                            
+
                             <!--#region agremenet_period-->
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -156,16 +155,14 @@
                                         <div class="col-md-4">
                                             <input type="text" readonly
                                                 class="form-control area-code input-mini aid-primary-phone1-lbl"
-                                                [ngModel]="model.first_period"
-                                                name="p_first_period" #first_period="ngModel"
-                                                maxlength="4" pattern={{NumberOnlyPattern}}>
+                                                [ngModel]="model.first_period" name="p_first_period"
+                                                #first_period="ngModel" maxlength="4" pattern={{NumberOnlyPattern}}>
                                         </div>
                                         -
                                         <div class="col-md-4">
                                             <input type="text" class="form-control" readonly
-                                                [ngModel]="model.last_period" name="p_last_period"
-                                                maxlength="15" #last_period="ngModel"
-                                                pattern={{NumberOnlyPattern}}>
+                                                [ngModel]="model.last_period" name="p_last_period" maxlength="15"
+                                                #last_period="ngModel" pattern={{NumberOnlyPattern}}>
                                         </div>
                                     </div>
                                 </div>
@@ -176,8 +173,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="vendor_name" class="control-label">Vendor</label>
-                                    <input type="text" class="form-control" [ngModel]="model.vendor_name" name="p_vendor_name"
-                                        readonly #vendor_name="ngModel" />
+                                    <input type="text" class="form-control" [ngModel]="model.vendor_name"
+                                        name="p_vendor_name" readonly #vendor_name="ngModel" />
                                 </div>
                             </div>
                             <!--#endregion vendor_name-->
@@ -216,12 +213,13 @@
                                     <label for="bank" class="control-label">Bank Name *</label>
                                     <div class="col-md-12 buttons btn-lookup-margin">
                                         <button class="btn btn-icon btn-outline-default btn-round btn-md" type="button"
-                                            [disabled]="getStyles(isReadOnly)"
-                                            (click)="btnLookupBank()" data-target="#lookupModalBank" data-toggle="modal"
-                                            href="#">
+                                            [disabled]="getStyles(isReadOnly)" (click)="btnLookupBank()"
+                                            data-target="#lookupModalBank" data-toggle="modal" href="#">
                                             <i class="fa fa-search-plus"></i></button>{{model.bank_name}}
+                                        <!-- <input type="hidden" name="p_bank_name" [ngModel]="model.bank_name"
+                                            #bank="ngModel" [required]="this.tampReimburse == true" /> -->
                                         <input type="hidden" name="p_bank_name" [ngModel]="model.bank_name"
-                                            #bank="ngModel" [required]="this.tampReimburse == true" />
+                                            #bank="ngModel" [required] />
                                         <input type="hidden" name="p_bank_code" [ngModel]="model.bank_code" />
                                     </div>
                                     <small
@@ -241,28 +239,29 @@
                                     <label for="bank_account_no" class="control-label">Bank Account No *</label>
                                     <input type="text" class="form-control" [ngModel]="model.bank_account_no"
                                         maxlength="50" name="p_bank_account_no" pattern="{{NumberOnlyPattern}}"
-                                        #bank_account_no="ngModel" [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
+                                        #bank_account_no="ngModel"
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
                                 </div>
                                 <small
                                     *ngIf="(bank_account_no.errors?.required && bank_account_no.touched) || (bank_account_no.errors?.required && RealizationSubscriptionGpsForm.submitted)"
                                     class="text-danger">
                                     To Bank Account No is required
                                 </small>
-                                <small
-                                    *ngIf="bank_account_no.errors?.pattern && bank_account_no.touched"
+                                <small *ngIf="bank_account_no.errors?.pattern && bank_account_no.touched"
                                     class="text-danger">
                                     To Bank Account No is required and format should be <i>0-9</i>
                                 </small>
                             </div>
                             <!--#endregion bank account no-->
-                            
+
                             <!--#region bank account name-->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="bank_account_name" class="control-label">Bank Account Name *</label>
                                     <input type="text" class="form-control" [ngModel]="model.bank_account_name"
-                                        maxlength="250" name="p_bank_account_name" [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"
-                                       #bank_account_name="ngModel">
+                                        maxlength="250" name="p_bank_account_name"
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"
+                                        #bank_account_name="ngModel">
                                 </div>
                                 <small
                                     *ngIf="(bank_account_name.errors?.required && bank_account_name.touched) || (bank_account_name.errors?.required && RealizationSubscriptionGpsForm.submitted)"
@@ -274,18 +273,20 @@
 
                             <!--#region realization date-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="realization_date" class="control-label">Realization Date *</label>
                                     <input [ngStyle]="getStyles(isReadOnly)" class="form-control col-md-6"
-                                                        placeholder="dd/mm/yyyy" angular-mydatepicker [(ngModel)]="model.realization_date"
-                                                        name="p_realization_date" [options]="myDatePickerOptions" required #p_realization_date="ngModel"
-                                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'" 
-                                                        #realization_date="angular-mydatepicker" autocomplete="off"
-                                                        (click)="realization_date.toggleCalendar()" />
-                                    <small 
+                                        placeholder="dd/mm/yyyy" angular-mydatepicker
+                                        [(ngModel)]="model.realization_date" name="p_realization_date"
+                                        [options]="myDatePickerOptions" required #p_realization_date="ngModel"
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"
+                                        #realization_date="angular-mydatepicker" autocomplete="off"
+                                        (click)="realization_date.toggleCalendar()" />
+                                    <small
                                         *ngIf="(realization_date.errors?.required && realization_date.touched) || 
                                         (realization_date.errors?.required && RealizationSubscriptionGpsForm.submitted) ||
-                                        (realization_date.errors?.required && RealizationSubscriptionGpsForm.submitted)" class="text-danger">
+                                        (realization_date.errors?.required && RealizationSubscriptionGpsForm.submitted)"
+                                        class="text-danger">
                                         Realization Date is required
                                     </small>
                                 </div>
@@ -294,11 +295,14 @@
 
                             <!--#region invoice no-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="invoice_no" class="control-label">Invoice No *</label>
-                                    <input type="text" class="form-control" [ngModel]="model.invoice_no" name="p_invoice_no" required
-                                        #invoice_no="ngModel" [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
-                                    <small *ngIf="(invoice_no.errors?.required && invoice_no.touched) || (invoice_no.errors?.required && RealizationSubscriptionGpsForm.submitted)" class="text-danger">
+                                    <input type="text" class="form-control" [ngModel]="model.invoice_no"
+                                        name="p_invoice_no" required #invoice_no="ngModel"
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
+                                    <small
+                                        *ngIf="(invoice_no.errors?.required && invoice_no.touched) || (invoice_no.errors?.required && RealizationSubscriptionGpsForm.submitted)"
+                                        class="text-danger">
                                         Invoice No is required
                                     </small>
                                 </div>
@@ -307,18 +311,19 @@
 
                             <!--#region Invoice Date-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="invoice_date" class="control-label">Invoice Date *</label>
                                     <input [ngStyle]="getStyles(isReadOnly)" class="form-control col-md-6"
-                                                        placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.invoice_date"
-                                                        name="p_invoice_date" [options]="myDatePickerOptions" required #p_invoice_date="ngModel"
-                                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'" 
-                                                        #invoice_date="angular-mydatepicker" autocomplete="off"
-                                                        (click)="invoice_date.toggleCalendar()" />
-                                    <small 
-                                        *ngIf="(invoice_date.errors?.required && invoice_date.touched) || 
+                                        placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.invoice_date"
+                                        name="p_invoice_date" [options]="myDatePickerOptions" required
+                                        #p_invoice_date="ngModel"
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"
+                                        #invoice_date="angular-mydatepicker" autocomplete="off"
+                                        (click)="invoice_date.toggleCalendar()" />
+                                    <small *ngIf="(invoice_date.errors?.required && invoice_date.touched) || 
                                         (invoice_date.errors?.required && RealizationSubscriptionGpsForm.submitted) ||
-                                        (invoice_date.errors?.required && RealizationSubscriptionGpsForm.submitted)" class="text-danger">
+                                        (invoice_date.errors?.required && RealizationSubscriptionGpsForm.submitted)"
+                                        class="text-danger">
                                         Invoice Date is required
                                     </small>
                                 </div>
@@ -327,11 +332,14 @@
 
                             <!--#region Faktur No-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="faktur_no" class="control-label">Faktur No *</label>
-                                    <input type="text" class="form-control" [ngModel]="model.faktur_no" name="p_faktur_no" required
-                                        #faktur_no="ngModel" [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
-                                    <small *ngIf="(faktur_no.errors?.required && faktur_no.touched) || (faktur_no.errors?.required && RealizationSubscriptionGpsForm.submitted)" class="text-danger">
+                                    <input type="text" class="form-control" [ngModel]="model.faktur_no"
+                                        name="p_faktur_no" required #faktur_no="ngModel"
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
+                                    <small
+                                        *ngIf="(faktur_no.errors?.required && faktur_no.touched) || (faktur_no.errors?.required && RealizationSubscriptionGpsForm.submitted)"
+                                        class="text-danger">
                                         Faktur No is required
                                     </small>
                                 </div>
@@ -340,18 +348,19 @@
 
                             <!--#region Faktur Date-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="faktur_date" class="control-label">Faktur Date *</label>
                                     <input [ngStyle]="getStyles(isReadOnly)" class="form-control col-md-6"
-                                                        placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.faktur_date"
-                                                        name="p_faktur_date" [options]="myDatePickerOptions" required #p_faktur_date="ngModel"
-                                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'" 
-                                                        #faktur_date="angular-mydatepicker" autocomplete="off"
-                                                        (click)="faktur_date.toggleCalendar()" />
-                                    <small 
-                                        *ngIf="(faktur_date.errors?.required && faktur_date.touched) || 
+                                        placeholder="dd/mm/yyyy" angular-mydatepicker [ngModel]="model.faktur_date"
+                                        name="p_faktur_date" [options]="myDatePickerOptions" required
+                                        #p_faktur_date="ngModel"
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"
+                                        #faktur_date="angular-mydatepicker" autocomplete="off"
+                                        (click)="faktur_date.toggleCalendar()" />
+                                    <small *ngIf="(faktur_date.errors?.required && faktur_date.touched) || 
                                         (faktur_date.errors?.required && RealizationSubscriptionGpsForm.submitted) ||
-                                        (faktur_date.errors?.required && RealizationSubscriptionGpsForm.submitted)" class="text-danger">
+                                        (faktur_date.errors?.required && RealizationSubscriptionGpsForm.submitted)"
+                                        class="text-danger">
                                         Faktur Date is required
                                     </small>
                                 </div>
@@ -370,18 +379,17 @@
                                                 data-toggle="modal" href="#" [disabled]="getStyles(isReadOnly)">
                                                 <i class="fa fa-search-plus"></i></button>
                                             {{model.tax_name}}
-                                            <input type="hidden" name="p_tax_code"
-                                                [ngModel]="model.tax_code" required #tax_code="ngModel" />
-                                            <input type="hidden" name="p_tax_name"
-                                                [ngModel]="model.tax_name" #tax_name="ngModel" />
-                                            <input type="hidden" name="p_tax_ppn"
-                                                [ngModel]="model.tax_ppn" #tax_ppn="ngModel" />
-                                            <input type="hidden" name="p_tax_pph"
-                                                [ngModel]="model.tax_pph" #tax_pph="ngModel" />
+                                            <input type="hidden" name="p_tax_code" [ngModel]="model.tax_code" required
+                                                #tax_code="ngModel" />
+                                            <input type="hidden" name="p_tax_name" [ngModel]="model.tax_name"
+                                                #tax_name="ngModel" />
+                                            <input type="hidden" name="p_tax_ppn" [ngModel]="model.tax_ppn"
+                                                #tax_ppn="ngModel" />
+                                            <input type="hidden" name="p_tax_pph" [ngModel]="model.tax_pph"
+                                                #tax_pph="ngModel" />
                                         </span>
                                     </div>
-                                    <small
-                                        *ngIf="tax_code.errors?.required && tax_code.touched || 
+                                    <small *ngIf="tax_code.errors?.required && tax_code.touched || 
                                         (tax_code.errors?.required && RealizationSubscriptionGpsForm.submitted)"
                                         class="text-danger">
                                         Tax is required
@@ -392,14 +400,16 @@
 
                             <!--#region billing amount-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="billing_amount" class="control-label">Billing Amount *</label>
-                                    <input 
-                                        type="text" style="text-align: right;" class="form-control col-md-6" [ngModel]="model.billing_amount | number : '1.2-2'" 
-                                        name="p_billing_amount" #billing_amount="ngModel" amount="billing_amount" (blur)="onBlur($event,'amount')" (focus)="onFocus($event,'amount')" 
-                                        required [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'"/>
+                                    <input type="text" style="text-align: right;" class="form-control col-md-6"
+                                        [ngModel]="model.billing_amount | number : '1.2-2'" name="p_billing_amount"
+                                        #billing_amount="ngModel" amount="billing_amount"
+                                        (blur)="onBlur($event,'amount')" (focus)="onFocus($event,'amount')" required
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'" />
                                     <small *ngIf="(billing_amount.errors?.required && billing_amount.touched) || 
-                                    (billing_amount.errors?.required && RealizationSubscriptionGpsForm.submitted)" class="text-danger">
+                                    (billing_amount.errors?.required && RealizationSubscriptionGpsForm.submitted)"
+                                        class="text-danger">
                                         Billing Amount is required
                                     </small>
                                 </div>
@@ -411,11 +421,10 @@
                                 <div class="form-group">
                                     <label for="ppn_amount " class="control-label">PPN Amount *</label>
                                     <input type="text" class="form-control text-right col-md-6"
-                                        [ngModel]="model.ppn_amount | number : '1.2-2'" name="p_ppn_amount" 
+                                        [ngModel]="model.ppn_amount | number : '1.2-2'" name="p_ppn_amount"
                                         #ppn_amount="ngModel" maxlength="24" amount="ppn_amount" required
                                         [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
-                                    <small
-                                        *ngIf="(ppn_amount.errors?.required && ppn_amount.touched) || 
+                                    <small *ngIf="(ppn_amount.errors?.required && ppn_amount.touched) || 
                                         (ppn_amount.errors?.required && RealizationSubscriptionGpsForm.submitted)"
                                         class="text-danger">
                                         PPN Amount is required
@@ -423,17 +432,16 @@
                                 </div>
                             </div>
                             <!--#endregion PPN Amount-->
-                            
+
                             <!--#region PPH Amount-->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="pph_amount " class="control-label">PPH Amount*</label>
                                     <input type="text" class="form-control text-right col-md-6"
-                                        [ngModel]="model.pph_amount | number : '1.2-2'" name="p_pph_amount" 
+                                        [ngModel]="model.pph_amount | number : '1.2-2'" name="p_pph_amount"
                                         #pph_amount="ngModel" maxlength="24" amount="pph_amount" required
-                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'" >
-                                    <small
-                                        *ngIf="(pph_amount.errors?.required && pph_amount.touched) || 
+                                        [readonly]="model.status === 'ON PROCESS' || model.status === 'APPROVE'">
+                                    <small *ngIf="(pph_amount.errors?.required && pph_amount.touched) || 
                                         (pph_amount.errors?.required && RealizationSubscriptionGpsForm.submitted)"
                                         class="text-danger">
                                         PPH Amount is required
@@ -444,12 +452,12 @@
 
                             <!--#region Invoice Amount-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="invoice_amount" class="control-label">Invoice Amount *</label>
-                                    <input 
-                                        type="text" style="text-align: right;" class="form-control col-md-6" [ngModel]="model.invoice_amount | number : '1.2-2'" 
-                                        name="p_invoice_amount" #invoice_amount="ngModel" amount="invoice_amount" (blur)="onBlur($event,'amount')" (focus)="onFocus($event,'amount')" 
-                                        readonly />
+                                    <input type="text" style="text-align: right;" class="form-control col-md-6"
+                                        [ngModel]="model.invoice_amount | number : '1.2-2'" name="p_invoice_amount"
+                                        #invoice_amount="ngModel" amount="invoice_amount"
+                                        (blur)="onBlur($event,'amount')" (focus)="onFocus($event,'amount')" readonly />
                                     <!-- <small *ngIf="(invoice_amount.errors?.required && invoice_amount.touched) || (invoice_amount.errors?.required && RealizationSubscriptionGpsForm.submitted)" class="text-danger">
                                         Invoice Amount is required
                                     </small> -->
@@ -485,8 +493,9 @@
                                         <!-- TAMPILKAN INPUT FILE JIKA BELUM ADA FILE -->
                                         <div *ngIf="!model.invoice_file_name">
                                             <span class="btn btn-info btn-round btn-file">
-                                            <input type="file" (change)="onUpload($event, this.param)" id="fileControl" [disabled]="getStyles(isReadOnly)"/>
-                                            <span><i class="fa fa-upload"></i></span> Upload
+                                                <input type="file" (change)="onUpload($event, this.param)"
+                                                    id="fileControl" [disabled]="getStyles(isReadOnly)" />
+                                                <span><i class="fa fa-upload"></i></span> Upload
                                             </span>
                                             <div *ngIf="tempFile">{{ tempFile }}</div>
                                         </div>
@@ -494,24 +503,18 @@
                                         <!-- TAMPILKAN TOMBOL PREVIEW & DELETE JIKA SUDAH ADA FILE -->
                                         <div *ngIf="model.invoice_file_name">
                                             <span>
-                                            <a
-                                                class="btn btn-danger btn-round btn-file"
-                                                type="button"
-                                                (click)="deleteImage(model.invoice_file_name, model.invoice_path, model.realization_no)"
-                                            >
-                                                <span><i class="fa fa-trash"></i></span> Hapus
-                                            </a>
-                                            <a
-                                                class="btn btn-primary btn-round btn-file"
-                                                type="button"
-                                                (click)="previewFile(model.invoice_file_name, model.invoice_path, model.realization_no)"
-                                            >
-                                                <span><i class="fa fa-eye"></i></span> Lihat
-                                            </a>
+                                                <a class="btn btn-danger btn-round btn-file" type="button"
+                                                    (click)="deleteImage(model.invoice_file_name, model.invoice_path, model.realization_no)">
+                                                    <span><i class="fa fa-trash"></i></span> Hapus
+                                                </a>
+                                                <a class="btn btn-primary btn-round btn-file" type="button"
+                                                    (click)="previewFile(model.invoice_file_name, model.invoice_path, model.realization_no)">
+                                                    <span><i class="fa fa-eye"></i></span> Lihat
+                                                </a>
                                             </span>
                                             <div>{{ model.invoice_file_name }}</div>
                                         </div>
-                                        </div>
+                                    </div>
 
                                 </div>
                             </div>
@@ -519,7 +522,7 @@
 
                             <!--#region Voucher-->
                             <div class="col-md-4">
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label for="voucher" class="control-label">Voucher</label>
                                     <input type="text" class="form-control" [ngModel]="model.voucher" name="p_voucher"
                                         #voucher="ngModel" readonly>

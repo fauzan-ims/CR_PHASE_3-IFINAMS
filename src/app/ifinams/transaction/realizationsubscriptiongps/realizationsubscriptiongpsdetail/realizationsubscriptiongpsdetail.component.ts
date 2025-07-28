@@ -464,7 +464,7 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
     //#endregion onBlur
 
     //#region onFocus
-    onFocus(event, i, type) {
+    onFocus(event, type) {
         event = '' + event.target.value;
 
         if (event != null) {
@@ -472,11 +472,11 @@ export class RealizationSubscriptionGpsDetailComponent extends BaseComponent imp
         }
 
         if (type === 'amount') {
-            $('#dp_to_public_service_amount' + i)
+            $('#dp_to_public_service_amount')
                 .map(function () { return $(this).val(event); }).get();
 
         } else {
-            $('#dp_to_public_service_pct' + i)
+            $('#dp_to_public_service_pct')
                 .map(function () { return $(this).val(event); }).get();
         }
     }

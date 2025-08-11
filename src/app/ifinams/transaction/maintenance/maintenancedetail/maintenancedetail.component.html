@@ -59,7 +59,7 @@
                             (click)="btnReject()">Reject</button> -->
 
                         <button
-                            [hidden]="this.param == null || model.status != 'ON PROCESS' && model.status != 'APPROVE'"
+                            [hidden]="this.param == null "
                             type="button" style='float: right;' class="btn btn-success btn-round custom-button-width"
                             (click)="btnViewApproval()" data-toggle="modal" data-target="#lookupModalApproval" href="#">
                             View Approval
@@ -943,10 +943,16 @@
                             <div class="col-md-4" [hidden]="this.param == null">
                                 <div class="form-group">
                                     <label for="call_center_ticket_no" class="control-label">Call Center Ticket
-                                        No</label>
-                                    <input [readonly]="model.status !== 'HOLD'" type="text" class="form-control"
-                                        [ngModel]="model.call_center_ticket_no" name="p_call_center_ticket_no"
-                                        #call_center_ticket_no="ngModel" maxlength="50" />
+                                        No *</label>
+                                    <input [required]="this.param != null" [readonly]="model.status !== 'HOLD'"
+                                        type="text" class="form-control" [ngModel]="model.call_center_ticket_no"
+                                        name="p_call_center_ticket_no" #call_center_ticket_no="ngModel"
+                                        maxlength="50" />
+                                    <small
+                                        *ngIf="(p_estimated_finish_date.errors?.required && p_estimated_finish_date.touched) || (p_estimated_finish_date.errors?.required && MaintenanceForm.submitted)"
+                                        class="text-danger">
+                                        Call Center Ticket No
+                                    </small>
                                 </div>
                             </div>
                             <!--#endregion call_center_ticket_no-->
@@ -966,7 +972,7 @@
                                 </div>
                             </div>
                             <!--#endregion is_request_replacement-->
-
+                            <!-- fauzan -->
                             <!--#region delivery_address-->
                             <div class="col-md-4" [hidden]="isRequestReplacement === false">
                                 <div class="form-group">

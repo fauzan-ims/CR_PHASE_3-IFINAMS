@@ -56,6 +56,7 @@ export class SoldRequestDetailwizlistComponent extends BaseComponent implements 
     // checklist
     public selectedAll: any;
     private checkedList: any = [];
+    private assetcode: any = [];
     private checkedLookup: any = [];
     public selectedAllLookup: any;
 
@@ -180,7 +181,10 @@ export class SoldRequestDetailwizlistComponent extends BaseComponent implements 
 
     //#region button edit
     btnEdit(codeEdit: string) {
-        this.route.navigate(['/sellanddisposal/subsale/saledetail/' + this.param + '/saledetaillist/' + this.param + '/saledetaildetail', this.param, codeEdit], { skipLocationChange: true });
+        // this.route.navigate(['/sellanddisposal/subsoldrequestlist/soldrequestdetail/' + this.param], { skipLocationChange: true });
+        console.log(codeEdit);
+
+        this.route.navigate(['/sellanddisposal/subsoldrequestlist/soldrequestdetail/' + this.param + '/soldrequestassetlist/' + this.param + '/soldrequestassetdetail/', this.param, codeEdit], { skipLocationChange: true });
     }
     //#endregion button edit
 
@@ -190,6 +194,13 @@ export class SoldRequestDetailwizlistComponent extends BaseComponent implements 
         for (let i = 0; i < this.listsaledetail.length; i++) {
             if (this.listsaledetail[i].selected) {
                 this.checkedList.push(this.listsaledetail[i].id);
+            }
+        }
+
+        this.assetcode = [];
+        for (let i = 0; i < this.listsaledetail.length; i++) {
+            if (this.listsaledetail[i].selected) {
+                this.assetcode.push(this.listsaledetail[i].asset_code);
             }
         }
 
@@ -253,8 +264,11 @@ export class SoldRequestDetailwizlistComponent extends BaseComponent implements 
                 (function loopAgreementMaturity() {
                     if (j < th.checkedList.length) {
                         const code = th.checkedList[j];
+                        const assetcode = th.assetcode[j];
                         th.dataTamp = [{
-                            'p_id': code
+                            'p_id': code,
+                            'p_asset_code': assetcode,
+                            'p_sale_code': th.param
                         }];
 
                         th.dalservice.Delete(th.dataTamp, th.APIController, th.APIRouteForGetDelete)
@@ -799,6 +813,8 @@ export class SoldRequestDetailwizlistComponent extends BaseComponent implements 
     //#endregion onFocus
 
     //#endregion button save list
+
+
 }
 
 

@@ -57,6 +57,7 @@
                             <th>Purchase Price / Net Book Value / Residual value</th>
                             <th>Auction Base Price/Asset Selling Price (Incl. VAT)</th>
                             <th>Gain-Loss Sale / Gain-Loss Profit</th>
+                            <th style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -169,6 +170,10 @@
                                 '1.2-2'}}
                             </td>
                             <!-- <td style="width: 10%;text-align: center;">{{row.sale_detail_status}}</td> -->
+                            <td style="text-align: center;">
+                                <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit"
+                                    (click)="btnEdit(row.asset_code)"><i class="fa fa-edit"></i></a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -198,6 +203,7 @@
                             <th>Purchase Price / Net Book Value / Residual value</th>
                             <th>Asset Selling Price (Incl. VAT)</th>
                             <th>Gain-Loss Sale / Gain-Loss Profit</th>
+                            <th style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -240,6 +246,10 @@
                                 '1.2-2'}} <br> {{row.gain_loss_profit | number :
                                 '1.2-2'}}
                             </td>
+                            <td style="text-align: center;">
+                                <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit"
+                                    (click)="btnEdit(row.asset_code)"><i class="fa fa-edit"></i></a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -269,6 +279,7 @@
                             <th>Purchase Price / Net Book Value / Residual value</th>
                             <th>Asset Selling Price (Incl. VAT)</th>
                             <th>Gain-Loss Sale / Gain-Loss Profit</th>
+                            <th style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -311,6 +322,10 @@
                                 '1.2-2'}} <br> {{row.gain_loss_profit | number :
                                 '1.2-2'}}
                             </td>
+                            <td style="text-align: center;">
+                                <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit"
+                                    (click)="btnEdit(row.asset_code)"><i class="fa fa-edit"></i></a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -340,6 +355,7 @@
                             <th>Purchase Price / Net Book Value / Residual value</th>
                             <th>Claim Amount</th>
                             <th>Gain-Loss Sale / Gain-Loss Profit</th>
+                            <th style="text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -381,6 +397,10 @@
                                 number :
                                 '1.2-2'}} <br> {{row.gain_loss_profit | number :
                                 '1.2-2'}}
+                            </td>
+                            <td style="text-align: center;">
+                                <a class="btn btn-warning btn-link btn-icon btn-sm edit" title="Edit"
+                                    (click)="btnEdit(row.asset_code)"><i class="fa fa-edit"></i></a>
                             </td>
                         </tr>
                     </tbody>

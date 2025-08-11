@@ -30,22 +30,23 @@ import { SoldSettlementListComponent } from './soldsettlement/soldsettlementlist
 import { DisposedApprovalComponent } from './disposed/disposalapproval/disposalapproval.component';
 import { SoldRequestApprovalComponent } from './soldrequest/soldrequestapproval/soldrequestapproval.component';
 import { SoldRequestAttachmentWizlistComponent } from './soldrequest/soldrequestdetail/soldrequestattachmentwiz/soldrequestattachmentwizlist/soldrequestattachmentwizlist.component';
+import { SoldrequestassetwizdetailComponent } from './soldrequest/soldrequestdetail/soldrequestassetwiz/soldrequestassetwizdetail/soldrequestassetwizdetail.component';
 
 export const Sellanddisposal: Routes = [{
     path: '',
     children: [
         {
             path: 'subpricingrequestlist',
-            component : PricingrequestlistComponent,
-            canActivate : [AuthGuard],
-            children : [
+            component: PricingrequestlistComponent,
+            canActivate: [AuthGuard],
+            children: [
                 {
-                    path : 'pricingrequestdetail', /*add*/
-                    component : PricingrequestdetailComponent
+                    path: 'pricingrequestdetail', /*add*/
+                    component: PricingrequestdetailComponent
                 },
                 {
-                    path : 'pricingrequestdetail/:id', /*edit*/
-                    component : PricingrequestdetailComponent
+                    path: 'pricingrequestdetail/:id', /*edit*/
+                    component: PricingrequestdetailComponent
                 },
                 {
                     path: 'pricingrequestdetaildetail/:id', /*add*/
@@ -61,10 +62,10 @@ export const Sellanddisposal: Routes = [{
             path: 'subsellpermitlist',
             component: SellpermitlistComponent,
             canActivate: [AuthGuard],
-            children : [
+            children: [
                 {
-                    path : 'sellpermitdetail/:id', /*edit*/
-                    component : SellpermitdetailComponent,
+                    path: 'sellpermitdetail/:id', /*edit*/
+                    component: SellpermitdetailComponent,
                     children: [
                         {
                             path: 'salepermitassetelectronic/:id',
@@ -94,10 +95,10 @@ export const Sellanddisposal: Routes = [{
             path: 'subinquirylist',
             component: InquirylistComponent,
             canActivate: [AuthGuard],
-            children : [
+            children: [
                 {
-                    path : 'inquirydetail/:id', /*edit*/
-                    component : InquirydetailComponent,
+                    path: 'inquirydetail/:id', /*edit*/
+                    component: InquirydetailComponent,
                     children: [
                         {
                             path: 'inquiryassetvehicle/:id',
@@ -159,12 +160,18 @@ export const Sellanddisposal: Routes = [{
                     children: [
                         {
                             path: 'soldrequestassetlist/:id',
-                            component: SoldRequestDetailwizlistComponent
+                            component: SoldRequestDetailwizlistComponent,
+                            children: [
+                                {
+                                    path: 'soldrequestassetdetail/:id/:id2',
+                                    component: SoldrequestassetwizdetailComponent
+                                }
+                            ]
                         },
-                        {
-                            path: 'soldrequestattachmentlist/:id',
-                            component: SoldRequestAttachmentWizlistComponent
-                        }
+                        // {
+                        //     path: 'soldrequestattachmentlist/:id',
+                        //     component: SoldRequestAttachmentWizlistComponent
+                        // }
                     ]
                 }
             ]

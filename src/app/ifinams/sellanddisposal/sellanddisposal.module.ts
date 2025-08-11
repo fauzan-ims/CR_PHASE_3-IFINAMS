@@ -41,6 +41,7 @@ import { SoldSettlementDetailFeewizlistComponent } from './soldsettlement/soldse
 import { DisposedApprovalComponent } from './disposed/disposalapproval/disposalapproval.component';
 import { SoldRequestApprovalComponent } from './soldrequest/soldrequestapproval/soldrequestapproval.component';
 import { SoldRequestAttachmentWizlistComponent } from './soldrequest/soldrequestdetail/soldrequestattachmentwiz/soldrequestattachmentwizlist/soldrequestattachmentwizlist.component';
+import { SoldrequestassetwizdetailComponent } from './soldrequest/soldrequestdetail/soldrequestassetwiz/soldrequestassetwizdetail/soldrequestassetwizdetail.component';
 
 @NgModule({
     imports: [
@@ -82,7 +83,8 @@ import { SoldRequestAttachmentWizlistComponent } from './soldrequest/soldrequest
         SoldSettlementDetailFeewizlistComponent,
         DisposedApprovalComponent,
         SoldRequestApprovalComponent,
-        SoldRequestAttachmentWizlistComponent
+        SoldRequestAttachmentWizlistComponent,
+        SoldrequestassetwizdetailComponent
     ],
     providers: [
         DALService,
